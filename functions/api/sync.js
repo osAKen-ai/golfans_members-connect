@@ -1,6 +1,6 @@
 // functions/api/sync.js — Golfans Members' Connect クラウド同期API (Cloudflare Pages Functions)
 //
-// 宝塚ゴルフ倶楽部ポータル等のデータを、Supabase (Golfans専用ストア) と同期・永続化する。
+// 宝塚ゴルフ倶楽部ポータル等のデータを、Supabase (Golfans専用テーブル: golfans_player_states) と同期・永続化する。
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -22,28 +22,19 @@ export async function onRequestOptions() {
 
 export async function onRequestGet({ request, env }) {
   const supabaseUrl = env.SUPABASE_URL || "https://ojbhbjqxmdieqfwnwvuy.supabase.co";
-  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY;
+  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY || "sb_secret_gJAYZF4f-hDqG-mKFi16Gw_gEsQCwkE";
+
+  if (!supabaseKey) {
+    return json({ ok: false, error: "Server configuration error: SUPABASE_KEY missing" }, 500);
+  }
 
   const url = new URL(request.url);
   const memberId = (url.searchParams.get("member_id") || "0889582").trim();
   const playerKey = `TKZ_${memberId}`;
 
-  // Supabase REST API または KV/フォールバックから取得
   try {
-    if (!supabaseKey) {
-      // 開発用の初期フォールバック
-      return json({
-        ok: true,
-        found: true,
-        member_id: memberId,
-        player_key: playerKey,
-        storage: "golfans_cloud",
-        state: null,
-      });
-    }
-
     const resp = await fetch(
-      `${supabaseUrl}/rest/v1/tcc_mm_players?player_key=eq.${encodeURIComponent(playerKey)}&select=*`,
+      `${supabaseUrl}/rest/v1/golfans_player_states?player_key=eq.${encodeURIComponent(playerKey)}&select=*`,
       {
         headers: {
           apikey: supabaseKey,
@@ -60,7 +51,7 @@ export async function onRequestGet({ request, env }) {
     const rows = await resp.json();
     const found = rows && rows.length > 0 ? rows[0] : null;
 
-    if (!found || !found.staff_memo) {
+    if (!found || !found.state) {
       return json({
         ok: true,
         found: false,
@@ -71,21 +62,14 @@ export async function onRequestGet({ request, env }) {
       });
     }
 
-    let parsedState = null;
-    try {
-      parsedState = JSON.parse(found.staff_memo);
-    } catch {
-      parsedState = null;
-    }
-
     return json({
       ok: true,
-      found: Boolean(parsedState),
+      found: true,
       member_id: memberId,
       player_key: playerKey,
       updated_at: found.updated_at || null,
       storage: "golfans_cloud",
-      state: parsedState,
+      state: found.state,
     });
   } catch (e) {
     return json({ ok: false, error: String(e?.message || e) }, 502);
@@ -94,7 +78,11 @@ export async function onRequestGet({ request, env }) {
 
 export async function onRequestPost({ request, env }) {
   const supabaseUrl = env.SUPABASE_URL || "https://ojbhbjqxmdieqfwnwvuy.supabase.co";
-  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY;
+  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY || "sb_secret_gJAYZF4f-hDqG-mKFi16Gw_gEsQCwkE";
+
+  if (!supabaseKey) {
+    return json({ ok: false, error: "Server configuration error: SUPABASE_KEY missing" }, 500);
+  }
 
   let body;
   try {
@@ -107,18 +95,9 @@ export async function onRequestPost({ request, env }) {
   const playerKey = `TKZ_${memberId}`;
   const stateObj = body.state || {};
 
-  const serialized = JSON.stringify({
-    ...stateObj,
-    _syncedAt: new Date().toISOString(),
-  });
-
   try {
-    if (!supabaseKey) {
-      return json({ ok: true, saved: true, storage: "golfans_cloud_local" });
-    }
-
     // Upsert (POST with Prefer: resolution=merge-duplicates)
-    const resp = await fetch(`${supabaseUrl}/rest/v1/tcc_mm_players`, {
+    const resp = await fetch(`${supabaseUrl}/rest/v1/golfans_player_states`, {
       method: "POST",
       headers: {
         apikey: supabaseKey,
@@ -128,8 +107,9 @@ export async function onRequestPost({ request, env }) {
       },
       body: JSON.stringify({
         player_key: playerKey,
+        member_id: memberId,
         name: body.member_name || "宝塚GC メンバー",
-        staff_memo: serialized,
+        state: stateObj,
         updated_at: new Date().toISOString(),
       }),
     });

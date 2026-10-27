@@ -90,10 +90,10 @@
       if (data && data.ok && data.found && data.state) {
         isHydrating = true;
         const remote = data.state;
-        if (Array.isArray(remote.reservations) && remote.reservations.length) {
+        if (Array.isArray(remote.reservations)) {
           state.reservations = remote.reservations;
         }
-        if (Array.isArray(remote.companions) && remote.companions.length) {
+        if (Array.isArray(remote.companions)) {
           const existingMap = new Map((state.companions || []).map(c => [c.name, c]));
           state.companions = remote.companions.map(rc => {
             const ex = existingMap.get(rc.name);
