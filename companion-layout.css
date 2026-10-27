@@ -1,0 +1,29 @@
+/* Shared desktop layout: candidate list and selection tray remain visible. */
+@media(min-width:900px){
+.sheet.companion-picker-view,.proxy-unified-flow:has(.cp-picker){width:min(1100px,calc(100vw - 32px));max-width:1100px;height:calc(100dvh - 24px);max-height:calc(100dvh - 24px);margin:auto}
+.proxy-unified-flow:has(.cp-picker){inset:12px 0}
+.companion-picker-view .cp-picker{display:grid;grid-template-columns:minmax(0,1fr) 280px;grid-template-rows:auto auto auto minmax(0,1fr);overflow:hidden}
+.companion-picker-view .cp-reservation-heading{grid-column:1;grid-row:1;padding:10px 20px}
+.companion-picker-view .cp-reservation-heading p{margin-bottom:5px;font-size:15px}
+.companion-picker-view .cp-reservation-heading>b{font-size:15px;display:inline-block;margin-right:18px}
+.companion-picker-view .bk-guest-tabs{grid-column:1;grid-row:2}
+.companion-picker-view .bk-guest-tabs button{padding:10px 2px;font-size:15px}
+.companion-picker-view .bk-new-member{grid-column:1;grid-row:3;margin:8px 20px;padding:8px;max-height:170px}
+.companion-picker-view #bookingGuestChoices{grid-column:1;grid-row:4;padding:8px 20px 16px;overflow:auto;min-height:0}
+.companion-picker-view .cp-bottom.cp-player-selection{grid-column:2;grid-row:1 / 5;display:flex;flex-direction:column;position:static;min-height:0;align-self:stretch;border-left:1px solid #ddd;box-shadow:none;background:#102e50;color:white;padding:16px 12px;margin:0}
+.companion-picker-view .cp-bottom-head{padding:8px 0 12px;flex:none}
+.companion-picker-view .cp-bottom-head>strong{font-size:17px;display:block}
+.companion-picker-view .cp-bottom-head small{font-size:14px;margin-top:8px;display:block}
+.companion-picker-view .cp-bottom .bk-selected-guests{padding:10px 0;overflow:auto}
+.companion-picker-view .bk-selected-guests .cp-selected-grid{grid-template-columns:1fr;gap:12px}
+.companion-picker-view .bk-selected-guests .cp-selected-person{min-height:48px;border-bottom:1px solid #ffffff25;padding-bottom:10px;gap:8px}
+.companion-picker-view .cp-selected-person>strong{font-size:16px}
+.companion-picker-view .cp-order{width:24px;height:26px;font-size:14px}
+.companion-picker-view .cp-next{margin:auto 0 0;width:100%;font-size:16px;line-height:1.6;min-height:64px}
+.companion-picker-view .cp-person{padding:10px 4px;min-height:68px}
+.companion-picker-view .cp-person-open .cp-person-name b{font-size:17px}
+.companion-picker-view .sheethead{min-height:54px;padding:5px 14px}
+}
+@media(min-width:700px) and (max-width:899px){
+.companion-picker-view .cp-reservation-heading{padding:8px 16px}.companion-picker-view .cp-reservation-heading p{margin-bottom:4px}.companion-picker-view .cp-reservation-heading>b{display:inline-block;margin-right:14px;font-size:14px}.companion-picker-view .bk-guest-tabs button{padding:8px 2px}.companion-picker-view .bk-new-member{margin:6px 16px;padding:6px}
+}
