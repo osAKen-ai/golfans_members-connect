@@ -29,7 +29,7 @@ function proxyContext(){
 }
 function proxyToggleMenu(){const el=$('#proxyMenu');el.hidden=!el.hidden;$('#proxyMenuButton').setAttribute('aria-expanded',String(!el.hidden));}
 function proxyGo(k,arg=null,replace=false){$('#proxyMenu').hidden=true;$('#proxyMenuButton').setAttribute('aria-expanded','false');const publicRoutes=['members','account','invite','switch'];if(!publicRoutes.includes(k)&&!proxyCanAct()){proxyMember=null;k='members';arg=null;}current={k,arg};history[replace?'replaceState':'pushState']({proxy:true,k,arg,member:proxyMember},'',location.pathname+location.search+'#'+k);proxyRender();$('#proxyMain').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
-function proxySelectMember(id){if(!Delegation.access(proxyAgent,id)){toast('このメンバーの代理予約は利用できません。');return;}proxyMember=id;draft=null;state=proxyReadReservations(id);proxyGo('home');}
+function proxySelectMember(id){if(!Delegation.access(proxyAgent,id)){toast('このメンバーの代理予約は利用できません。');return;}proxyMember=id;draft=null;state=proxyReadReservations(id);if(id==='ito'&&window.GolfansSync&&typeof window.GolfansSync.pull==='function'){window.GolfansSync.pull(false);}proxyGo('home');}
 function proxyRequestSwitch(){if(draft&&['booking','times','guests','confirm'].includes(current.k))proxyGo('switch');else{proxyMember=null;draft=null;proxyGo('members');}}
 function proxyDiscardSwitch(){proxyMember=null;draft=null;proxyGo('members');}
 function proxyReturnDraft(){proxyGo(draft?.time?'guests':'booking');}
