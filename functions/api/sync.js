@@ -22,7 +22,7 @@ export async function onRequestOptions() {
 
 export async function onRequestGet({ request, env }) {
   const supabaseUrl = env.SUPABASE_URL || "https://ojbhbjqxmdieqfwnwvuy.supabase.co";
-  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY || "sb_secret_gJAYZF4f-hDqG-mKFi16Gw_gEsQCwkE";
+  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY || "sb_publishable_m7CtXfRXlURu1V5hOuVkXQ_qV-n8QAc";
 
   if (!supabaseKey) {
     return json({ ok: false, error: "Server configuration error: SUPABASE_KEY missing" }, 500);
@@ -78,7 +78,7 @@ export async function onRequestGet({ request, env }) {
 
 export async function onRequestPost({ request, env }) {
   const supabaseUrl = env.SUPABASE_URL || "https://ojbhbjqxmdieqfwnwvuy.supabase.co";
-  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY || "sb_secret_gJAYZF4f-hDqG-mKFi16Gw_gEsQCwkE";
+  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY || "sb_publishable_m7CtXfRXlURu1V5hOuVkXQ_qV-n8QAc";
 
   if (!supabaseKey) {
     return json({ ok: false, error: "Server configuration error: SUPABASE_KEY missing" }, 500);
