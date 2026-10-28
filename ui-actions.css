@@ -118,3 +118,10 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 .cp-group-registered>span{font-size:16px}
 .cp-registration-success>.cp-save-warning{margin-top:12px;font-size:13px;color:#863e25}
 @media(max-width:350px){.cp-registration-success{padding:20px 10px 16px}.rs-detail-page .cp-registration-success h3{font-size:23px}}
+
+/* Keep completed groups visible above the current group's player list. */
+.companion-picker-view .cp-completed-groups{display:flex;flex-wrap:wrap;gap:7px;flex:none;margin:0;padding:10px 12px 2px;max-height:24dvh;overflow:auto}
+.cp-completed-group{display:flex;align-items:center;justify-content:center;gap:9px;flex:1 1 140px;min-height:44px;padding:8px 12px;border:1px solid #c1ddcb;border-radius:5px;background:#eaf5ee;color:#205d3b;line-height:1.5}
+.cp-completed-group>strong{font-size:16px;font-weight:800;white-space:nowrap}
+.cp-completed-check{display:grid;place-items:center;flex:none;width:23px;height:23px;border-radius:50%;background:#28764a;color:#fff;font-size:16px;font-weight:850}
+@media(min-width:900px){.companion-picker-view .cp-completed-groups{padding:14px 0 4px}.cp-completed-group{flex-basis:100%;min-height:48px}}
