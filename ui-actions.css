@@ -106,3 +106,15 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
  .companion-picker-view .cp-bottom-head>strong{font-size:17px}
  .companion-picker-view .cp-selected-person>strong{font-size:16px}
 }
+
+/* Persistent registration confirmation, including when the booking is reopened. */
+.cp-registration-success{margin:0 0 24px;padding:24px 16px 20px;text-align:center;background:#eef7f0;border:1px solid #c8dfcc;border-radius:12px;color:#215d3b}
+.cp-success-check{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:#28764a;color:#fff;box-shadow:0 0 0 7px #dfeee2}
+.cp-success-check svg{display:block;width:42px;height:42px}
+.rs-detail-page .cp-registration-success h3{margin:0;font-size:25px;line-height:1.5;font-weight:850;letter-spacing:-.02em;color:#215d3b}
+.cp-registration-success>p{margin:10px 0 0;font-size:15px;font-weight:750;line-height:1.7}
+.cp-registration-success>small{display:block;margin-top:4px;font-size:13px;font-weight:600;line-height:1.7;color:#45654d}
+.rs-batch-slot>p.cp-group-registered{display:inline-flex;align-items:center;gap:6px;margin:12px 0 2px;padding:5px 10px;border-radius:20px;background:#e9f3eb;color:#215d3b;font-size:13px;font-weight:800;line-height:1.5}
+.cp-group-registered>span{font-size:16px}
+.cp-registration-success>.cp-save-warning{margin-top:12px;font-size:13px;color:#863e25}
+@media(max-width:350px){.cp-registration-success{padding:20px 10px 16px}.rs-detail-page .cp-registration-success h3{font-size:23px}}
