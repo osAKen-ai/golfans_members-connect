@@ -88,31 +88,40 @@ def decode(rel, raw):
 
 HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 SYNC_SCRIPT_RE = re.compile(
-    r'<script\b[^>]*\bsrc=["\']/?supabase-sync\.js(?:\?[^"\']*)?["\'][^>]*>\s*</script>',
+    r'<script(?:\s+(?:src=["\']/?supabase-sync\.js(?:\?[^"\']*)?["\']|defer|async))+\s*>\s*</script>',
     re.I,
 )
 
 
-def _strip_js_comments(code):
-    """文字列リテラルを壊さずに JS の // 行コメントと /* */ ブロックコメントを除去する。"""
+def _strip_js_comments_and_strings(code):
+    """行コメント(//, <!--, -->)・ブロックコメント(/* */)を除去し、さらにコード断片を含む文字列リテラルを無害化する。"""
     pattern = re.compile(
-        r'("(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|`(?:\\.|[^`\\])*`)|(/\*.*?\*/|//[^\r\n]*)',
-        re.S,
+        r'("(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\')|(/\*.*?\*/|//[^\r\n]*|<!--[^\r\n]*|^\s*-->[^\r\n]*)',
+        re.S | re.M,
     )
-    return pattern.sub(lambda m: m.group(1) if m.group(1) is not None else "", code)
+    def _repl(m):
+        s = m.group(1)
+        if s is None:
+            return ""
+        if any(tok in s for tok in ("GolfansSync", "proxyReadReservations", "proxyGo", ";")):
+            return "'__STR__'"
+        return s
+    return pattern.sub(_repl, code)
 
 
 def _has_active_html_sync_tag(text):
     active_html = HTML_COMMENT_RE.sub("", text)
+    active_html = re.sub(r"<template\b[^>]*>.*?</template>", "", active_html, flags=re.S | re.I)
     return bool(SYNC_SCRIPT_RE.search(active_html))
 
 
 def _has_active_proxy_hook(text):
-    active_js = _strip_js_comments(text)
+    active_js = _strip_js_comments_and_strings(text)
+    expected_exec = _strip_js_comments_and_strings(PROXY_HOOK)
     return (
         "window.GolfansSync" in active_js
         and "window.GolfansSync.pull(" in active_js
-        and PROXY_HOOK in active_js
+        and expected_exec in active_js
     )
 
 
@@ -128,8 +137,9 @@ def apply_hooks(rel, text):
             raise SyncError(f"{rel}: supabase-sync.js の有効な <script> 読込タグが入っていない（コメントのみ等は不可）")
     elif rel == "proxy.js":
         if not _has_active_proxy_hook(text):
-            active_js = _strip_js_comments(text)
-            if active_js.count(PROXY_ANCHOR) != 1 or text.count(PROXY_ANCHOR) != 1:
+            active_js = _strip_js_comments_and_strings(text)
+            expected_anchor = _strip_js_comments_and_strings(PROXY_ANCHOR)
+            if active_js.count(expected_anchor) != 1 or text.count(PROXY_ANCHOR) != 1:
                 raise SyncError(
                     "proxy.js: Supabase pull フックの差し込み位置が見つからない（上流の書き方が変わった）。"
                     "このまま出すと代理予約のクラウド同期が黙って止まるため取り込みを中止する。"
