@@ -31,7 +31,7 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 .event-card-compact .event-status-text.open{background:#fce7ec;color:#a51f3c}
 .event-card-compact .event-status-text.joined{background:#e5f2e9;color:#24613a}
 .event-card-compact .event-status-text.upcoming{background:#f3ead4;color:#70551e}
-.event-card-actions .event-action.joined{background:#eaf5ee;color:#24613a;border:1px solid #9fc3aa}
+.event-card-actions .event-action.joined{background:#f5f0e3;color:#24613a;border:1px solid #9fc3aa}
 .event-card-actions .event-action.joined>span:first-child{font-size:18px;margin-right:4px}
 .event-card-actions .event-action.joined>span:last-child{float:right;margin-right:5px;font-size:19px;line-height:1}
 .event-detail-action .event-action.cancel-action{background:#fff;color:#062852;border:1px solid #062852}
@@ -81,7 +81,7 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 @media(min-width:1000px){.booking-times-view .bk-selection,.booking-times-view .bk-selection[hidden]{display:flex;max-height:none;padding:18px 12px}.bk-chosen-summary>header{display:block}.bk-chosen-summary>header>span{display:block;margin-top:6px}.bk-chosen-list{max-height:none;overflow:visible}.booking-times-view .bk-selection>.bk-selection-actions{display:flex;flex-direction:column;margin-top:auto;padding-top:18px}.booking-times-view .bk-selection .bk-selection-actions>.bk-primary{flex:none;width:100%}.booking-times-view .bk-selection .bk-clear-all{flex:none;width:100%}.bk-selection .bk-chosen-row>strong{font-size:21px}.bk-chosen-row{gap:4px}.bk-chosen-row>strong>.bk-chosen-people{font-size:16px;margin-left:2px}.bk-remove-selection{min-width:56px;font-size:12px}}
 @media(max-width:360px){.bk-selection .bk-chosen-row>strong{font-size:21px}.bk-chosen-row{gap:4px}.bk-chosen-row>strong>.bk-chosen-people{font-size:16px;margin-left:2px}.bk-remove-selection{min-width:60px;font-size:13px}.bk-selection .bk-chosen-summary>header>strong{font-size:17px}}
 .booking-times-view .bk-selection .bk-selection-actions>.bk-primary{background:#b50927;border:1px solid #b50927;color:#fff;border-radius:7px}
-.companion-picker-view .cp-selected-person>strong{font-size:14px;line-height:1.5}.companion-picker-view .cp-bottom-head>strong{font-size:14px}.bk-other-group{min-width:65px;flex:none;text-align:center;font-size:12px;line-height:1.5;font-weight:700;color:#576f62;background:#edf2ed;padding:7px 5px;border-radius:5px}
+.companion-picker-view .cp-selected-person>strong{font-size:14px;line-height:1.5}.companion-picker-view .cp-bottom-head>strong{font-size:14px}.bk-other-group{min-width:65px;flex:none;text-align:center;font-size:12px;line-height:1.5;font-weight:700;color:#756337;background:#f5f0e3;padding:7px 5px;border-radius:5px}
 
 .bk-confirm .bk-register-later,.bk-register-later{margin:14px 16px;padding:12px;border:1px solid #cbbf9c;border-radius:6px;background:#f6f1e4;color:#062852;font-size:16px;font-weight:750;line-height:1.7;text-align:left}.bk-confirm .bk-register-later{margin:12px 0}.bk-batch-group .bk-pending-guests{font-size:15px;color:#655d50}.bk-pending-guests small{display:block;font-size:13px;margin-top:5px}.bk-register-after{background:#062852;color:#fff;font-size:17px}.bk-register-after small{font-size:13px;margin-left:6px}
 
@@ -108,22 +108,22 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 }
 
 /* Persistent registration confirmation, including when the booking is reopened. */
-.cp-registration-success{margin:0 0 24px;padding:24px 16px 20px;text-align:center;background:#eef7f0;border:1px solid #c8dfcc;border-radius:12px;color:#215d3b}
-.cp-success-check{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:#28764a;color:#fff;box-shadow:0 0 0 7px #dfeee2}
+.cp-registration-success{margin:0 0 24px;padding:24px 16px 20px;text-align:center;background:#faf7ef;border:1px solid #c3b17f;border-radius:12px;color:#7d6a35}
+.cp-success-check{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:#f5f0e3;color:#7d6a35;border:2px solid #a18b50;box-shadow:none}
 .cp-success-check svg{display:block;width:42px;height:42px}
-.rs-detail-page .cp-registration-success h3{margin:0;font-size:25px;line-height:1.5;font-weight:850;letter-spacing:-.02em;color:#215d3b}
+.rs-detail-page .cp-registration-success h3{margin:0;font-size:25px;line-height:1.5;font-weight:850;letter-spacing:-.02em;color:#7d6a35}
 .cp-registration-success>p{margin:10px 0 0;font-size:15px;font-weight:750;line-height:1.7}
-.cp-registration-success>small{display:block;margin-top:4px;font-size:13px;font-weight:600;line-height:1.7;color:#45654d}
-.rs-batch-slot>p.cp-group-registered{display:inline-flex;align-items:center;gap:6px;margin:12px 0 2px;padding:5px 10px;border-radius:20px;background:#e9f3eb;color:#215d3b;font-size:13px;font-weight:800;line-height:1.5}
+.cp-registration-success>small{display:block;margin-top:4px;font-size:13px;font-weight:600;line-height:1.7;color:#756337}
+.rs-batch-slot>p.cp-group-registered{display:inline-flex;align-items:center;gap:6px;margin:12px 0 2px;padding:5px 10px;border-radius:20px;background:#f5f0e3;color:#7d6a35;font-size:13px;font-weight:800;line-height:1.5}
 .cp-group-registered>span{font-size:16px}
 .cp-registration-success>.cp-save-warning{margin-top:12px;font-size:13px;color:#863e25}
 @media(max-width:350px){.cp-registration-success{padding:20px 10px 16px}.rs-detail-page .cp-registration-success h3{font-size:23px}}
 
 /* Keep completed groups visible above the current group's player list. */
 .companion-picker-view .cp-completed-groups{display:flex;flex-wrap:wrap;gap:7px;flex:none;margin:0;padding:10px 12px 2px;max-height:24dvh;overflow:auto}
-.cp-completed-group{display:flex;align-items:center;justify-content:center;gap:9px;flex:1 1 140px;min-height:44px;padding:8px 12px;border:1px solid #c1ddcb;border-radius:5px;background:#eaf5ee;color:#205d3b;line-height:1.5}
+.cp-completed-group{display:flex;align-items:center;justify-content:center;gap:9px;flex:1 1 140px;min-height:44px;padding:8px 12px;border:1px solid #c3b17f;border-radius:5px;background:#f5f0e3;color:#7d6a35;line-height:1.5}
 .cp-completed-group>strong{font-size:16px;font-weight:800;white-space:nowrap}
-.cp-completed-check{display:grid;place-items:center;flex:none;width:23px;height:23px;border-radius:50%;background:#28764a;color:#fff;font-size:16px;font-weight:850}
+.cp-completed-check{display:grid;place-items:center;flex:none;width:23px;height:23px;border-radius:50%;background:#7d6a35;color:#fff;font-size:16px;font-weight:850}
 @media(min-width:900px){.companion-picker-view .cp-completed-groups{padding:14px 0 4px}.cp-completed-group{flex-basis:100%;min-height:48px}}
 
 /* On phones, reserve the viewport for choosing companions. */
@@ -165,3 +165,57 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
  .companion-picker-view .cp-completed-group>strong{font-size:13px}
  .companion-picker-view .cp-completed-check{width:19px;height:19px;font-size:13px}
 }
+/* Explicit undecided seats are available identically in both booking portals. */
+.cp-undecided-controls{flex:none;padding:0 12px 7px;color:#fff}.cp-undecided-controls:empty{display:none}.cp-undecided-controls button{display:block;width:100%;min-height:40px;border:1px solid #b6c8dd;border-radius:6px;background:#fff;color:#062852;font:inherit;font-size:14px;font-weight:750;padding:8px}.cp-undecided-controls p{margin:0;font-size:13px;line-height:1.5}.cp-undecided-followup{padding:12px;margin:16px 0;background:#f6f1e4;border:1px solid #cbbf9c;border-radius:6px}.cp-undecided-followup p{font-size:14px;line-height:1.5}.cp-undecided-followup .bk-secondary{width:100%}
+
+/* Member time is an individual booking, with no companion registration. */
+.member-time-status{display:inline-flex;align-items:center;gap:8px;background:#f5f0e3;color:#756337;border:2px solid #a18b50;border-radius:6px;padding:8px 14px;font-size:18px;font-weight:800;line-height:1.4;margin:12px 0;}
+.member-time-status>span{font-size:24px;line-height:1;}
+.bk-completion-slot>.member-time-status{grid-column:1/-1;justify-self:start;margin:0 0 8px;font-size:18px;color:#756337;}
+.member-time-note{color:#756337;font-weight:700;}
+
+.bk-completion-slot:has(>.member-time-status){display:grid;grid-template-columns:auto 1fr auto;}
+
+/* Shared member / delegate reservation detail finish. */
+.sheet:has(.rs-detail-page),.proxy-unified-flow:has(.rs-detail-page){background:#fff;}
+.rs-detail-page{background:#fff;color:#102b51;}
+.rs-detail-page .cp-registration-success{
+ display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:14px;row-gap:0;
+ text-align:left;margin:0 0 28px;padding:22px 20px;
+ background:#faf7ef;border:1px solid #ded4b9;border-top:3px solid #a18b50;
+ border-radius:10px;color:#756337;box-shadow:0 5px 18px rgba(93,75,36,.04);
+}
+.rs-detail-page .cp-registration-success .cp-success-check{
+ grid-column:1;grid-row:1 / span 3;width:44px;height:44px;margin:2px 0 0;
+ border:1.5px solid #a18b50;background:#f5f0e3;color:#7d6a35;
+}
+.rs-detail-page .cp-success-check svg{width:28px;height:28px;}
+.rs-detail-page .cp-registration-success h3{
+ grid-column:2;margin:0;font-size:22px;line-height:1.5;letter-spacing:0;
+ font-weight:800;color:#756337;text-wrap:pretty;
+}
+.rs-detail-page .cp-registration-success>p{
+ grid-column:2;margin:8px 0 0;font-size:14px;line-height:1.7;font-weight:650;color:#756337;
+}
+.rs-detail-page .cp-registration-success>small{
+ grid-column:2;margin-top:4px;font-size:12px;line-height:1.7;font-weight:500;color:#7a7467;
+}
+.rs-detail-page .cp-registration-success>.cp-save-warning{grid-column:1/-1;color:#863e25;}
+.rs-detail-page>.rs-status.reserved{
+ background:#f5f0e3;color:#756337;border:1px solid #ded4b9;border-radius:5px;
+ padding:5px 10px;font-size:13px;line-height:1.4;font-weight:750;vertical-align:middle;
+}
+.rs-detail-page>.member-time-status{margin-left:8px;vertical-align:middle;}
+.rs-detail-page>.cp-facts{background:#faf9f5;border:1px solid #eee9de;border-radius:10px;}
+.rs-detail-page .rs-batch-slot .cp-group-registered{
+ display:inline-flex;align-items:center;gap:6px;padding:5px 10px;margin:8px 0 0;
+ border:1px solid #ded4b9;border-radius:5px;background:#f5f0e3;color:#756337;
+ font-size:13px;line-height:1.5;font-weight:700;
+}
+@media(max-width:360px){
+ .rs-detail-page .cp-registration-success{padding:18px 14px;grid-template-columns:38px minmax(0,1fr);column-gap:12px;}
+ .rs-detail-page .cp-registration-success .cp-success-check{width:38px;height:38px;}
+ .rs-detail-page .cp-registration-success h3{font-size:20px;}
+}
+
+.rs-detail-page .cp-registration-success h3>span{display:inline-block;white-space:nowrap;}
