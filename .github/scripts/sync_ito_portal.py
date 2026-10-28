@@ -33,7 +33,7 @@ import urllib.request
 
 BASE_URL = "https://takarazuka-members-portal-demo.tsuyoshi-ito515118.chatgpt.site"
 BASE_HOST = urllib.parse.urlparse(BASE_URL).netloc
-SYNC_TAG = '<script src="supabase-sync.js?v=20261028-cloud-sync"></script>'
+SYNC_TAG = '<script src="supabase-sync.js?v=20261029-nobanner"></script>'
 
 # 取得元パス → 保存名。proxy は ?agent= 付きで配信されるため明示的に対応付ける
 PAGES = {"index.html": "/", "proxy.html": "/proxy?agent=agent-yamada"}

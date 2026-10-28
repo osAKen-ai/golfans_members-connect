@@ -12,42 +12,16 @@
   const isProxyPage = location.pathname.endsWith('proxy') || location.pathname.endsWith('proxy.html');
 
   function ensureSyncBanner() {
-    let bar = document.getElementById('sb-sync-bar');
-    if (bar) return bar;
-    bar = document.createElement('div');
-    bar.id = 'sb-sync-bar';
-    bar.style.cssText = 'background:#041b38;color:#d8e6f8;padding:6px 16px;font-size:11.5px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(177,122,37,.45);z-index:99;position:relative;';
-    bar.innerHTML =
-      '<span id="sb-sync-status">⚡ Golfans クラウドDB 接続確認中...</span>' +
-      '<button type="button" id="sb-sync-btn" style="background:#b17a25;color:#fff;border:0;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;">🔄 DB同期</button>';
-
-    if (isProxyPage) {
-      const demoBar = document.querySelector('.proxy-demo-bar');
-      if (demoBar && demoBar.parentNode) {
-        demoBar.parentNode.insertBefore(bar, demoBar.nextSibling);
-      } else {
-        document.body.prepend(bar);
-      }
-    } else {
-      const welcome = document.querySelector('.welcome');
-      if (welcome && welcome.parentNode) {
-        welcome.parentNode.insertBefore(bar, welcome.nextSibling);
-      } else {
-        document.body.prepend(bar);
-      }
+    const existing = document.getElementById('sb-sync-bar');
+    if (existing && existing.parentNode) {
+      existing.parentNode.removeChild(existing);
     }
-
-    document.getElementById('sb-sync-btn').onclick = () => pullFromSupabase(true);
-    return bar;
+    return null;
   }
 
   function setSyncStatus(text, ok = true) {
     ensureSyncBanner();
-    const el = document.getElementById('sb-sync-status');
-    if (el) {
-      el.textContent = text;
-      el.style.color = ok ? '#a5f3c4' : '#ffd280';
-    }
+    window.__golfansLastSyncStatus = { text, ok, updatedAt: new Date().toISOString() };
   }
 
   function getLocalPortalData() {
