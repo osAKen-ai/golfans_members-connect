@@ -14,12 +14,12 @@
 .companion-picker-view .cp-bottom-head{padding:8px 0 12px;flex:none}
 .companion-picker-view .cp-bottom-head>strong{font-size:17px;display:block}
 .companion-picker-view .cp-bottom-head small{font-size:14px;margin-top:8px;display:block}
-.companion-picker-view .cp-bottom .bk-selected-guests{padding:10px 0;overflow:auto}
+.companion-picker-view .cp-bottom .bk-selected-guests{padding:10px 0;overflow-y:auto;flex:1 1 auto;min-height:0}
 .companion-picker-view .bk-selected-guests .cp-selected-grid{grid-template-columns:1fr;gap:12px}
 .companion-picker-view .bk-selected-guests .cp-selected-person{min-height:48px;border-bottom:1px solid #ffffff25;padding-bottom:10px;gap:8px}
 .companion-picker-view .cp-selected-person>strong{font-size:16px}
 .companion-picker-view .cp-order{width:24px;height:26px;font-size:14px}
-.companion-picker-view .cp-next{margin:auto 0 0;width:100%;font-size:16px;line-height:1.6;min-height:64px}
+.companion-picker-view .cp-next{margin:16px 0 0;width:100%;font-size:16px;line-height:1.6;min-height:64px;flex:0 0 auto}
 .companion-picker-view .cp-person{padding:10px 4px;min-height:68px}
 .companion-picker-view .cp-person-open .cp-person-name b{font-size:17px}
 .companion-picker-view .sheethead{min-height:54px;padding:5px 14px}
