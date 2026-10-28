@@ -34,7 +34,7 @@ jobs:
     # osaken55 側のミラーでは走らせない（2 つの repo が別々に commit して分岐するのを防ぐ）
     if: github.repository == 'osAKen-ai/golfans_members-connect'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -91,19 +91,23 @@ jobs:
           prod_path() { case "$1" in index.html) echo "/";; *.html) echo "/${1%.html}";; *) echo "/$1";; esac; }
           git ls-files -- '*.html' '*.js' '*.css' 'assets/*' ':!functions/*' ':!.github/*' > "$RUNNER_TEMP/verify_targets.txt"
           if [ -s "$RUNNER_TEMP/changed.txt" ]; then
-            cat "$RUNNER_TEMP/changed.txt" "$RUNNER_TEMP/verify_targets.txt" | sort -u > "$RUNNER_TEMP/all_targets.txt"
+            awk '!seen[$0]++' "$RUNNER_TEMP/changed.txt" "$RUNNER_TEMP/verify_targets.txt" > "$RUNNER_TEMP/all_targets.txt"
           else
             cp "$RUNNER_TEMP/verify_targets.txt" "$RUNNER_TEMP/all_targets.txt"
           fi
-          max_tries=6
-          [ "${{ steps.push.outputs.pushed }}" = "true" ] && max_tries=30
+          max_tries=20
+          [ "${{ steps.push.outputs.pushed }}" = "true" ] && max_tries=60
           for i in $(seq 1 "$max_tries"); do
             pending=0
             while IFS= read -r f; do
               [ -z "$f" ] && continue
               want=$(git show "HEAD:$f" | sha256sum | cut -d' ' -f1)
               got=$(curl -fsSL --connect-timeout 5 --max-time 10 "$PROD_URL$(prod_path "$f")?nocache=$(date +%s)" | sha256sum | cut -d' ' -f1 || true)
-              [ "$got" = "$want" ] || { pending=1; echo "waiting ($i/$max_tries): $f (want=$want got=$got)"; }
+              if [ "$got" != "$want" ]; then
+                pending=1
+                echo "waiting ($i/$max_tries): $f (want=$want got=$got)"
+                break
+              fi
             done < "$RUNNER_TEMP/all_targets.txt"
             if [ "$pending" = 0 ]; then
               echo "✅ 本番反映確認: 全 $(wc -l < "$RUNNER_TEMP/all_targets.txt") ファイルの sha256 が HEAD (${{ steps.push.outputs.sha }}) と一致" >> "$GITHUB_STEP_SUMMARY"
