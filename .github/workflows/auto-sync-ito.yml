@@ -1,115 +1,114 @@
-name: Auto Sync Ito-san Portal (chatgpt.site -> GitHub & Cloudflare Pages)
+name: Auto Sync Ito-san Portal (chatgpt.site -> GitHub -> Cloudflare Pages)
+
+# 2026-10-28 Claude Code 改修
+# - 書き手はこのワークフローだけ（M5Pro launchd 15分は停止・退避済み）。手元PCから同期 push しない。
+# - 取り込みは .github/scripts/sync_ito_portal.py に一本化（ロジックの二重持ちをやめる）。
+#   取得・検証に1つでも失敗したら何も書かずに失敗 → Issue で通知。
+# - push 後、本番 URL の index.html が今回 commit と一致するまで確認する（「push した＝反映した」とみなさない）。
+# - 頻度：伊藤さんのご要望「1日2回程度」に対し、日中 2 時間おき（JST 8〜22時・1日8回）。手動実行も可。
 
 on:
   schedule:
-    # 30分おきに自動チェック（1日48回・伊藤さんご要望「1日2回」の24倍の頻度で常時同期）
-    - cron: '*/30 * * * *'
+    # UTC 表記。JST 8,10,12,14,16,18,20,22 時
+    - cron: '0 23,1,3,5,7,9,11,13 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
+
+concurrency:
+  group: auto-sync-ito
+  cancel-in-progress: false
+
+env:
+  PROD_URL: https://golfans-members-connect.pages.dev
 
 jobs:
   sync:
+    # osaken55 側のミラーでは走らせない（2 つの repo が別々に commit して分岐するのを防ぐ）
+    if: github.repository == 'osAKen-ai/golfans_members-connect'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Pull latest files from chatgpt.site and preserve Supabase sync hooks
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch, validate and apply Ito-san portal
+        run: python3 .github/scripts/sync_ito_portal.py --list "$RUNNER_TEMP/changed.txt"
+
+      - name: Commit and push (named files only)
+        id: push
         run: |
-          python3 - << 'PY'
-          import os, re, urllib.parse, urllib.request
-
-          BASE_URL = "https://takarazuka-members-portal-demo.tsuyoshi-ito515118.chatgpt.site"
-          SYNC_TAG = '<script src="supabase-sync.js?v=20261028-cloud-sync"></script>'
-
-          def fetch_bytes(rel_path):
-              url = urllib.parse.urljoin(BASE_URL + "/", rel_path.lstrip("/"))
-              req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-              with urllib.request.urlopen(req, timeout=20) as r:
-                  return r.read()
-
-          def strip_cf_beacon(html):
-              return re.sub(r'<script>\(function\(\)\{function c\(\)\{var b=a\.contentDocument.*?</script>', '', html, flags=re.S)
-
-          def inject_hooks(filename, text):
-              if filename in ("index.html", "proxy.html"):
-                  text = strip_cf_beacon(text)
-                  if "supabase-sync.js" not in text:
-                      text = text.replace("</body>", f"{SYNC_TAG}</body>")
-              elif filename == "proxy.js":
-                  old = "state=proxyReadReservations(id);proxyGo('home');"
-                  new = "state=proxyReadReservations(id);if(id==='ito'&&window.GolfansSync&&typeof window.GolfansSync.pull==='function'){window.GolfansSync.pull(false);}proxyGo('home');"
-                  if old in text and "window.GolfansSync" not in text:
-                      text = text.replace(old, new)
-              return text
-
-          idx_raw = fetch_bytes("/").decode("utf-8", errors="replace")
-          prx_raw = fetch_bytes("/proxy?agent=agent-yamada").decode("utf-8", errors="replace")
-
-          discovered = set()
-          for html in (idx_raw, prx_raw):
-              for m in re.findall(r'(?:src|href)="([^"#?]+)', html):
-                  if not m.startswith(("http:", "https:", "data:", "mailto:")):
-                      rel = m.lstrip("/")
-                      if rel != "supabase-sync.js":
-                          discovered.add(rel)
-
-          text_files = {
-              "index.html": inject_hooks("index.html", idx_raw),
-              "proxy.html": inject_hooks("proxy.html", prx_raw),
-          }
-          binary_files = {}
-
-          for rel in sorted(discovered):
-              if rel in ("index.html", "proxy.html"):
-                  continue
-              raw = fetch_bytes(rel)
-              if rel.endswith((".js", ".css", ".html")):
-                  txt = inject_hooks(rel, raw.decode("utf-8", errors="replace"))
-                  text_files[rel] = txt
-                  for a in re.findall(r"assets/[A-Za-z0-9_.\-/]+", txt):
-                      discovered.add(a)
-              else:
-                  binary_files[rel] = raw
-
-          for rel in sorted(discovered):
-              if rel not in text_files and rel not in binary_files:
-                  try:
-                      binary_files[rel] = fetch_bytes(rel)
-                  except Exception as e:
-                      print(f"Warn: {rel}: {e}")
-
-          for rel, content in text_files.items():
-              if os.path.dirname(rel):
-                  os.makedirs(os.path.dirname(rel), exist_ok=True)
-              with open(rel, "wb") as f:
-                  f.write(content.encode("utf-8"))
-
-          for rel, raw in binary_files.items():
-              if os.path.dirname(rel):
-                  os.makedirs(os.path.dirname(rel), exist_ok=True)
-              with open(rel, "wb") as f:
-                  f.write(raw)
-          PY
-
-      - name: Commit and push if changed
-        run: |
-          git config user.name "Golfans Auto-Sync Bot"
-          git config user.email "50192666+osaken55@users.noreply.github.com"
-          if [ -n "$(git status --porcelain)" ]; then
-            git add -A
-            git commit -m "feat(auto-sync): sync latest updates from Ito-san chatgpt.site"
-            git push origin HEAD:main
-            echo "Synced and pushed new changes."
-          else
+          set -euo pipefail
+          if [ ! -s "$RUNNER_TEMP/changed.txt" ]; then
             echo "No changes detected."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          git config user.name "Golfans Auto-Sync Bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          xargs -d '\n' git add -- < "$RUNNER_TEMP/changed.txt"
+          git commit -m "feat(auto-sync): sync Ito-san portal ($(wc -l < "$RUNNER_TEMP/changed.txt") files)" \
+                     -m "$(cat "$RUNNER_TEMP/changed.txt")"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && break
+            [ "$i" = 3 ] && { echo "push failed 3 times"; exit 1; }
+            sleep 10
+          done
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Verify production reflects this commit (hash match)
+        if: steps.push.outputs.pushed == 'true'
+        run: |
+          set -euo pipefail
+          # 今回変わった全ファイルについて、本番配信物の sha256 が commit 内容と一致するまで待つ
+          prod_path() { case "$1" in index.html) echo "/";; *.html) echo "/${1%.html}";; *) echo "/$1";; esac; }
+          for i in $(seq 1 30); do
+            pending=0
+            while IFS= read -r f; do
+              want=$(git show "HEAD:$f" | sha256sum | cut -d' ' -f1)
+              got=$(curl -fsSL "$PROD_URL$(prod_path "$f")?nocache=$(date +%s)" | sha256sum | cut -d' ' -f1 || true)
+              [ "$got" = "$want" ] || { pending=1; echo "waiting: $f"; }
+            done < "$RUNNER_TEMP/changed.txt"
+            if [ "$pending" = 0 ]; then
+              echo "✅ 本番反映確認: 変更 $(wc -l < "$RUNNER_TEMP/changed.txt") ファイルの sha256 が ${{ steps.push.outputs.sha }} と一致" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "Production did not reflect commit ${{ steps.push.outputs.sha }} within 10 minutes"
+          exit 1
+
+      - name: Notify failure via Issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          body="伊藤さんポータル自動同期が失敗しました（本番は前回の正常版のまま・何も上書きしていません）。"$'\n\n'"Run: $url"
+          gh label create auto-sync-failure --color B60205 --description "Ito portal auto-sync failure" 2>/dev/null || true
+          n=$(gh issue list --label auto-sync-failure --state open --json number --jq '.[0].number' || true)
+          if [ -n "$n" ]; then
+            gh issue comment "$n" --body "$body"
+          else
+            gh issue create --title "🔴 伊藤さんポータル自動同期 失敗" --label auto-sync-failure --assignee osaken55 --body "$body" \
+              || gh issue create --title "🔴 伊藤さんポータル自動同期 失敗" --label auto-sync-failure --body "$body"
+          fi
+
+      - name: Close failure Issue on recovery
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --label auto-sync-failure --state open --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "復旧しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          done

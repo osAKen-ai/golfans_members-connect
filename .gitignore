@@ -3,6 +3,6 @@ ito_latest/
 patrol.py
 .patrol_checkpoint.json
 .venv/
-scripts/
+/scripts/
 logs/
 
