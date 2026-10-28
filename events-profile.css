@@ -28,3 +28,64 @@
 .compact-public-profile .cp-profile-head{margin-bottom:20px}.compact-public-profile .member-profile-photo{width:82px;height:82px;flex:none}.compact-public-profile .cp-profile-head h3{font-size:22px}.public-basic{display:grid;grid-template-columns:1fr 1fr;background:white;border-radius:8px;padding:8px 16px;margin:0 0 16px;font-size:15px}.public-basic dt,.public-basic dd{margin:0;padding:12px 0;border-bottom:1px solid #eee8da;font-weight:700}.public-basic dt{color:#675a40}.public-basic dd{text-align:right}.public-basic :nth-last-child(-n+2){border:0}.shared-rounds{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:14px 18px;border-radius:8px;color:var(--navy)}.shared-rounds>span{font-size:15px;font-weight:700}.shared-rounds>strong{font-size:30px}.shared-rounds small{font-size:14px;margin-left:5px}.profile-settings{padding:20px 16px 24px}.settings-intro,.visibility-summary{font-size:14px;font-weight:600;line-height:1.7;color:#445467;margin:0 0 16px}.visibility-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}.visibility-presets button{padding:12px 3px;border:1px solid #c9bea4;background:white;color:#645434;border-radius:7px;min-height:68px}.visibility-presets strong{font-size:16px}.visibility-presets small{display:block;font-size:11px;font-weight:700;margin-top:5px}.visibility-presets button.active{background:#746238;color:white;border-color:#746238}.visibility-section{border:1px solid #e2dac7;background:white;border-radius:8px;overflow:hidden;margin:16px 0}.visibility-section h3{font-size:16px;background:#ede8db;margin:0;padding:12px 14px}.visibility-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid #eee9de;min-height:64px;font-size:14px;font-weight:700;color:#233c57}.visibility-row:last-child{border:0}.visibility-row>span:first-child{flex:1;min-width:0}.visibility-row select{max-width:135px;min-height:42px;padding:6px;border:1px solid #b6ad97;background:white;border-radius:5px;font-size:14px;font-weight:700;color:#344456}.visibility-control{display:flex;align-items:center;gap:8px;flex:none}.visibility-control input{appearance:none;width:44px;height:26px;margin:0;border-radius:20px;background:#dbdcd9;position:relative;border:1px solid #92998f;cursor:pointer}.visibility-control input:before{content:'';position:absolute;width:20px;height:20px;border-radius:50%;top:2px;left:2px;background:#fff;box-shadow:0 1px 3px #0002}.visibility-control input:checked{background:#756138;border-color:#756138}.visibility-control input:checked:before{left:20px}.visibility-control b{font-size:12px;min-width:36px;color:#62583f}.visibility-control input:focus-visible,.visibility-presets button:focus-visible{outline:3px solid #1769a0;outline-offset:3px}.profile-settings .bk-note{font-size:12px;font-weight:600;line-height:1.8;color:#635d50}.profile-settings-link{display:flex;justify-content:space-between;width:100%;padding:14px;margin-bottom:14px;min-height:48px;background:#fff;color:var(--navy);border:1px solid #cbbf9e;border-radius:7px;font-size:16px;font-weight:700}.public-context{font-size:13px;font-weight:700;color:#635940;margin:0 0 22px}.profile-preview .cp-profile-head h3{font-size:24px;margin:5px 0}.profile-preview .member-profile-photo{width:84px;height:84px}.own-public-photo{display:block;width:100%;height:100%;background:url('assets/member-profile.png') 50% 25.75% / 281% auto no-repeat}.public-extra{padding:15px;background:#fff;border-radius:8px;margin-bottom:15px}.public-extra h4{font-size:15px;color:var(--navy);margin:0 0 12px}.public-extra p{font-size:14px;font-weight:600;color:#435064;line-height:1.8;margin:8px 0;overflow-wrap:anywhere}.public-extra p strong{float:right;color:#786031}.profile-preview .profile-social a{overflow-wrap:anywhere}.social-icon.line{background:#078737;color:white}.directory-visits{min-width:75px}.directory-visits>small:last-child{font-size:11px;white-space:nowrap}@media(min-width:700px){.profile-settings{padding:24px 28px}.visibility-row{font-size:16px}.visibility-presets strong{font-size:18px}}
 
 .event-facts .event-applicant-count{color:#b50927;font-weight:800}.event-facts .event-count-date{display:block;margin-top:5px;font-size:12px;font-weight:600;color:#655d50}
+
+/* Make booking-profile visibility and its current status easy to find. */
+.profile-disclosure-card{margin:16px 0 0;padding:18px;border:1px solid #cbb783;border-top:4px solid #062852;border-radius:10px;background:#fff;box-shadow:0 3px 12px #0628520b;color:#062852}
+.profile-disclosure-card .disclosure-card-message{margin:0 0 14px;font-size:16px;font-weight:700;line-height:1.75;text-align:left;overflow-wrap:anywhere}
+.disclosure-status{display:flex;align-items:center;gap:12px;width:100%;min-height:78px;padding:13px 14px;border:1px solid #e0d4b8;border-radius:8px;background:#f6f1e6;color:#062852;text-align:left}
+.disclosure-status-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;background:#fff;color:#8b743d}
+.disclosure-status-icon svg{width:32px;height:32px}
+.disclosure-status-copy{flex:1;min-width:0}
+.disclosure-status-copy small{display:block;font-size:13px;font-weight:600;line-height:1.5;color:#62583f}
+.disclosure-status-copy strong{display:block;margin-top:3px;font-size:19px;font-weight:750;line-height:1.4}
+.disclosure-status-arrow{font-size:26px;font-weight:700;color:#8b743d}
+.disclosure-preview-button{position:relative;width:100%;min-height:48px;margin-top:14px;padding:12px 30px;border:1px solid #062852;border-radius:7px;background:#062852;color:#fff;font-size:17px;font-weight:700;text-align:center}
+.disclosure-preview-button>span{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:24px}
+.disclosure-status:focus-visible,.disclosure-preview-button:focus-visible{outline:3px solid #2476b5;outline-offset:3px}
+@media(max-width:360px){.profile-disclosure-card{padding:14px}.disclosure-status{gap:9px;padding:12px}.disclosure-status-copy strong{font-size:18px}}
+
+/* Keep key My Page figures legible while preserving gold navigation accents. */
+.profile-lower .profile-visits strong,.profile-lower .profile-result strong{color:#062852;font-weight:800}
+.profile-lower .profile-number-arrow{color:#796030;font-weight:800}
+
+/* Present the event title and schedule as one readable card. */
+.event-tile{border-color:#d9ceb3;border-left:4px solid #aa9865;border-radius:9px}
+.event-tile header{background:#fff;padding:16px 14px 5px;gap:12px}
+.event-tile h3{font-size:20px;font-weight:800;line-height:1.45;color:#062852}
+.event-tile header .event-action{flex-shrink:0}
+.event-tile summary{padding:8px 14px 17px;min-height:0;align-items:flex-end;font-size:18px;font-weight:750;line-height:1.5;color:#062852}
+.event-tile summary>span:first-child{min-width:0}
+.event-tile summary small{margin-top:5px;font-size:20px;font-weight:800;line-height:1.5;color:#062852}
+.event-tile .event-expand{flex-shrink:0;font-size:13px;white-space:nowrap;padding-bottom:4px}
+@media(max-width:360px){.event-tile header{padding:14px 12px 5px}.event-tile h3{font-size:18px}.event-tile summary{padding:8px 12px 15px;font-size:17px}.event-tile summary small{font-size:18px}}
+
+.event-detail-action{padding:4px 14px 18px}.event-detail-action .event-action{width:100%;min-height:48px;font-size:17px;font-weight:800;border-radius:7px}.event-detail-action .event-action.open{background:#b30028;color:#fff;border-color:#b30028}
+
+.event-closed-label{display:inline-block;flex-shrink:0;color:#646258;font-size:14px;font-weight:700;line-height:1.5}.event-detail-action:has(.event-closed-label){text-align:center;padding-top:8px}
+
+/* Event browsing: readable hierarchy, visible capacity, consistent actions. */
+.event-card-v2{border:1px solid #d9ceb3;border-radius:10px;margin-bottom:16px;box-shadow:0 3px 10px #06285208}
+.event-card-v2 header{padding:18px 16px 10px;align-items:flex-start}
+.event-card-v2 h3{font-size:22px;line-height:1.4;font-weight:800}
+.event-status-text{flex:none;margin-top:5px;font-size:12px;font-weight:700;color:#646258;white-space:nowrap}
+.event-status-text.open{color:#062852}.event-status-text.joined{color:#246335}
+.event-card-schedule{padding:0 16px 14px;color:#062852}
+.event-card-date{font-size:21px;font-weight:750;line-height:1.5}
+.event-card-time{margin-top:3px;font-size:19px;font-weight:750;line-height:1.5}
+.event-card-time span{font-size:17px}
+.event-card-capacity{margin:0 16px;padding:12px 14px;background:#f7f4ec;border-radius:6px;color:#062852;font-size:14px;font-weight:650}
+.event-card-capacity strong{font-size:24px;font-weight:800;color:#b50927;margin-left:3px}
+.event-card-capacity strong small{font-size:14px;margin-left:3px}
+.event-capacity-total{margin-left:8px;white-space:nowrap}
+.event-card-capacity>small{display:block;margin-top:3px;font-size:11px;font-weight:600;color:#655d50}
+.event-card-actions{display:flex;gap:10px;padding:14px 16px 16px}
+.event-card-actions button{flex:1;min-width:0;min-height:46px;border-radius:6px;font-size:15px;font-weight:750;padding:10px 8px}
+.event-more-button{background:#fff;border:1px solid #062852;color:#062852}.event-more-button span{margin-left:8px}
+.event-card-actions .event-action.open,.event-detail-action .event-action.open{background:#062852;border-color:#062852;color:#fff}
+.event-card-actions .event-action.joined{background:#fff;border:1px solid #062852;color:#062852}
+.event-own-group{margin:14px 0;border:1px solid #d9ceb3;border-radius:7px;background:#f0ecdf}
+.event-own-group>summary{display:flex;align-items:center;gap:8px;padding:13px 12px;list-style:none;font-size:13px;font-weight:700;color:#062852;cursor:pointer}
+.event-own-group>summary::-webkit-details-marker{display:none}.event-own-group>summary>span{margin-left:auto;font-size:12px;color:#735b2e}
+.event-own-group .event-own{margin:0 10px 10px;border-left-width:2px}.event-own-group .event-own-label{display:none}
+.club-event-confirm #eventSubmit{background:#062852;border-color:#062852;color:#fff;border-radius:6px}
+@media(max-width:360px){.event-card-v2 h3{font-size:20px}.event-card-v2 header{padding:16px 12px 9px}.event-card-schedule{padding:0 12px 12px}.event-card-capacity{margin:0 12px;padding:10px}.event-card-actions{padding:12px}.event-card-date{font-size:20px}.event-card-time{font-size:18px}.event-card-time span{font-size:16px}}

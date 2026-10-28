@@ -139,3 +139,69 @@
 .booking-flow:has(.bk-calendar) .bk-day small{font-size:11px;padding:1px 7px;line-height:1.1}
 .booking-flow:has(.bk-calendar) .bk-note{margin:5px 18px;font-size:11px}
 }
+
+/* My Page identity: real text, matching the approved compact reference. */
+.profile-identity{container-type:inline-size;text-align:center;color:#062852;padding:0 0 3%;background:var(--paper)}
+.profile-portrait{position:relative;width:36%;aspect-ratio:1;margin:5% auto 0}
+.profile-portrait .reference-photo-overlay{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:50%;background:transparent;overflow:visible}
+.profile-portrait .own-public-photo,.profile-portrait .own-photo{border-radius:50%;width:100%;height:100%;object-fit:cover}
+.profile-identity .profile-member-name{margin:3.8% 0 0;font-size:7cqw;line-height:1.3;font-weight:800;letter-spacing:.02em;color:#062852}
+.profile-member-name small{font-size:4.5cqw;font-weight:700}
+.profile-identity .profile-english-name{margin:1% 0 0;font-size:4.1cqw;line-height:1.4}
+.profile-identity .profile-tenure{margin:3.5% 0 0;font-size:4.7cqw;line-height:1.4;font-weight:750}
+.profile-identity .profile-joined{margin:.5% 0 0;font-size:3.5cqw;line-height:1.5}
+.profile-identity .profile-birthday{margin:2.5% 0 0;font-size:4.1cqw;line-height:1.5;font-weight:700;white-space:nowrap}
+.profile-handicap{width:80%;margin:2.5% auto 0;display:grid;grid-template-columns:1fr 1fr;border:1px solid #dfb574;border-radius:6px;background:#fff;overflow:hidden}
+.profile-handicap-cell{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6cqw;padding:2.3cqw 0;color:#062852;background:none;border:0;font:inherit}
+.profile-handicap-cell>span{font-size:3.5cqw;line-height:1.3;white-space:nowrap}
+.profile-handicap-cell>strong{font-size:7cqw;line-height:1.05;font-weight:750;font-variant-numeric:tabular-nums}
+.profile-course-handicap:before{content:'';position:absolute;left:0;top:27%;bottom:27%;border-left:1px solid #dfb574}
+.profile-course-handicap .profile-handicap-details{position:absolute;right:2.5cqw;bottom:2.8cqw;font-size:3cqw;line-height:1.3;color:#777;font-weight:400}
+.profile-course-handicap:focus-visible{outline:3px solid #062852;outline-offset:-4px}
+.profile-course-handicap:hover{background:#faf7f1}
+.profile-membership{display:flex;align-items:center;justify-content:center;gap:2.4cqw;margin:3% 0 0}
+.profile-membership>span{background:#b4965f;color:white;border-radius:4px;padding:.5cqw 1.8cqw;font-size:3.7cqw;font-weight:700;line-height:1.4}
+.profile-membership>strong{font-size:6cqw;line-height:1.3;font-weight:750}
+.profile-barcode{width:44%;height:11cqw;margin:3.5% auto 0;background-image:url('assets/member-profile.png');background-repeat:no-repeat;background-size:226.5% 132.6cqw;background-position:50% 69.75%;mix-blend-mode:multiply}
+.profile-identity .profile-barcode-number{margin:1.8% 0 0;font-size:3.5cqw;line-height:1.3;letter-spacing:.28em;padding-left:.28em}
+.profile-handicap-modal{text-align:center;color:#062852;padding:20px 8px}
+.profile-handicap-modal-label{font-size:18px;margin:0}
+.profile-handicap-modal-value{font-size:48px;font-weight:750;margin:12px 0}
+
+.profile-handicap-dialog{width:min(360px,calc(100% - 40px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #dfc79e;border-radius:12px;background:var(--paper);color:#062852;box-shadow:0 14px 60px #0003}
+.profile-handicap-dialog::backdrop{background:rgb(13 25 39 / 45%)}
+.profile-handicap-dialog-content>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #e7dcc9}
+.profile-handicap-dialog-content>header h3{margin:0;font-size:18px;font-weight:750}
+.handicap-dialog-close{width:40px;height:40px;border:1px solid #e4cbd0;border-radius:50%;background:#fff;color:#b50927;font-size:28px;font-weight:800;line-height:1}
+.profile-handicap-dialog .profile-handicap-modal{padding:24px}
+.profile-handicap-dialog .secondary{margin-top:22px}
+
+/* Match My Page's navy text and name hierarchy, retaining the check-in order. */
+.member-view.checkin-view .checkin-reservation{color:#062852}
+.checkin-identity{padding-bottom:8%}
+.checkin-identity .checkin-barcode{height:13.5cqw;margin-top:3%;background-image:url('assets/member-checkin.png');background-size:226.5% 216.7cqw;background-position:50% 36.88%}
+.checkin-identity .profile-barcode-number{margin-top:4%;font-size:3.5cqw}
+.checkin-identity .profile-portrait{margin-top:8%}
+.checkin-identity .profile-member-name{margin-top:3.8%}
+.checkin-tenure-row{display:flex;align-items:baseline;justify-content:center;gap:3cqw;margin-top:4%}
+.checkin-tenure-row .profile-tenure{margin:0;font-size:4.5cqw;line-height:1.4}
+.checkin-tenure-row .profile-joined{margin:0;font-size:3.8cqw;line-height:1.4}
+.checkin-identity .profile-membership{margin-top:5%}
+
+/* Compact tee-by-course table within the existing dialog footprint. */
+.profile-handicap-dialog-content>header{gap:6px;padding:12px 14px}
+.profile-handicap-dialog-content>header>div{flex:1;min-width:0;text-align:center}
+.profile-handicap-dialog-content>header h3{font-size:16px;line-height:1.4;white-space:nowrap}
+.handicap-updated{margin:4px 0 0;font-size:12px;line-height:1.4;font-weight:600;color:#062852}
+.profile-handicap-dialog .handicap-dialog-close{flex:none;width:32px;height:32px;font-size:24px}
+.profile-handicap-dialog .profile-handicap-modal{padding:12px 16px 16px}
+.course-handicap-table{width:100%;border-collapse:collapse;table-layout:fixed;color:#062852}
+.course-handicap-table th,.course-handicap-table td{border-bottom:1px solid #e7dcc9;padding:6px 2px;line-height:1.2;white-space:nowrap}
+.course-handicap-table thead th{font-size:14px;font-weight:700;text-align:center;height:30px}
+.course-handicap-table tbody th{font-size:15px;font-weight:700;text-align:left}
+.course-handicap-table td{font-size:20px;font-weight:750;text-align:center;font-variant-numeric:tabular-nums}
+.course-handicap-table tbody tr:last-child>*{border-bottom:0}
+.handicap-sample{margin:8px 0 0;font-size:11px;line-height:1.3;color:#687078;font-weight:500}
+.profile-handicap-dialog .secondary{margin-top:12px;min-height:40px;padding:8px;font-size:15px;font-weight:700}
+.handicap-sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:360px){.profile-handicap-dialog-content>header h3{font-size:14px}.course-handicap-table tbody th{font-size:14px}.course-handicap-table thead th{font-size:13px}}
