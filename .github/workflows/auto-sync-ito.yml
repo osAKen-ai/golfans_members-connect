@@ -47,12 +47,14 @@ jobs:
           node-version: '20'
 
       - name: Self-test of the failure alert path
+        id: selftest
         if: inputs.selftest_failure
         run: |
           echo "selftest_failure=true: 意図的に失敗させて通知経路を点検します"
           exit 1
 
       - name: Fetch, validate and apply Ito-san portal
+        id: fetch_sync
         run: python3 .github/scripts/sync_ito_portal.py --list "$RUNNER_TEMP/changed.txt"
 
       - name: Commit and push (named files only)
@@ -62,6 +64,7 @@ jobs:
           if [ ! -s "$RUNNER_TEMP/changed.txt" ]; then
             echo "No changes detected."
             echo "pushed=false" >> "$GITHUB_OUTPUT"
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "Golfans Auto-Sync Bot"
@@ -77,26 +80,36 @@ jobs:
           echo "pushed=true" >> "$GITHUB_OUTPUT"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Verify production reflects this commit (hash match)
-        if: steps.push.outputs.pushed == 'true'
+      - name: Verify production reflects HEAD (hash match on every run)
+        id: verify_prod
         run: |
           set -euo pipefail
-          # 今回変わった全ファイルについて、本番配信物の sha256 が commit 内容と一致するまで待つ
+          # 差分有無に関わらず毎回 HEAD の配信対象ファイルと本番 URL の sha256 一致を検証する
+          # （前回 push 後に配信確認で失敗したまま次回「差分なし」で復旧 close されるのを防ぐ）
           prod_path() { case "$1" in index.html) echo "/";; *.html) echo "/${1%.html}";; *) echo "/$1";; esac; }
-          for i in $(seq 1 30); do
+          git ls-files -- '*.html' '*.js' '*.css' 'assets/*' > "$RUNNER_TEMP/verify_targets.txt"
+          if [ -s "$RUNNER_TEMP/changed.txt" ]; then
+            cat "$RUNNER_TEMP/changed.txt" "$RUNNER_TEMP/verify_targets.txt" | sort -u > "$RUNNER_TEMP/all_targets.txt"
+          else
+            cp "$RUNNER_TEMP/verify_targets.txt" "$RUNNER_TEMP/all_targets.txt"
+          fi
+          max_tries=6
+          [ "${{ steps.push.outputs.pushed }}" = "true" ] && max_tries=30
+          for i in $(seq 1 "$max_tries"); do
             pending=0
             while IFS= read -r f; do
+              [ -z "$f" ] && continue
               want=$(git show "HEAD:$f" | sha256sum | cut -d' ' -f1)
               got=$(curl -fsSL "$PROD_URL$(prod_path "$f")?nocache=$(date +%s)" | sha256sum | cut -d' ' -f1 || true)
-              [ "$got" = "$want" ] || { pending=1; echo "waiting: $f"; }
-            done < "$RUNNER_TEMP/changed.txt"
+              [ "$got" = "$want" ] || { pending=1; echo "waiting ($i/$max_tries): $f (want=$want got=$got)"; }
+            done < "$RUNNER_TEMP/all_targets.txt"
             if [ "$pending" = 0 ]; then
-              echo "✅ 本番反映確認: 変更 $(wc -l < "$RUNNER_TEMP/changed.txt") ファイルの sha256 が ${{ steps.push.outputs.sha }} と一致" >> "$GITHUB_STEP_SUMMARY"
+              echo "✅ 本番反映確認: 全 $(wc -l < "$RUNNER_TEMP/all_targets.txt") ファイルの sha256 が HEAD (${{ steps.push.outputs.sha }}) と一致" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
-            sleep 20
+            sleep 15
           done
-          echo "Production did not reflect commit ${{ steps.push.outputs.sha }} within 10 minutes"
+          echo "Production did not match HEAD (${{ steps.push.outputs.sha }}) within timeout"
           exit 1
 
       - name: Notify failure via Issue
@@ -105,7 +118,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          body="伊藤さんポータル自動同期が失敗しました（本番は前回の正常版のまま・何も上書きしていません）。"$'\n\n'"Run: $url"
+          if [ "${{ steps.selftest.outcome }}" = "failure" ]; then
+            stage_msg="通知経路の自己診断（selftest_failure=true）によるテスト失敗です（リポジトリ・本番ともに変更していません）。"
+          elif [ "${{ steps.fetch_sync.outcome }}" = "failure" ]; then
+            stage_msg="上流取得または事前検証（sync_ito_portal.py）で異常を検出したため中断しました（リポジトリ・本番ともに一切上書きしていません）。"
+          elif [ "${{ steps.push.outcome }}" = "failure" ]; then
+            stage_msg="GitHub リポジトリへの commit/push 段階で失敗しました（本番は更新されていません）。"
+          elif [ "${{ steps.verify_prod.outcome }}" = "failure" ]; then
+            stage_msg="本番 URL ($PROD_URL) の配信物 sha256 とリポジトリ HEAD (${{ steps.push.outputs.sha }}) の不一致が解消されませんでした。Cloudflare Pages のデプロイ状態を確認してください。"
+          else
+            stage_msg="ワークフロー実行中にエラーが発生しました。"
+          fi
+          body="伊藤さんポータル自動同期が失敗しました。"$'\n'"状態: $stage_msg"$'\n\n'"Run: $url"
           gh label create auto-sync-failure --color B60205 --description "Ito portal auto-sync failure" 2>/dev/null || true
           n=$(gh issue list --label auto-sync-failure --state open --json number --jq '.[0].number' || true)
           if [ -n "$n" ]; then
@@ -116,10 +140,10 @@ jobs:
           fi
 
       - name: Close failure Issue on recovery
-        if: success()
+        if: success() && steps.verify_prod.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           for n in $(gh issue list --label auto-sync-failure --state open --json number --jq '.[].number'); do
-            gh issue close "$n" --comment "復旧しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            gh issue close "$n" --comment "本番 URL 全ファイルの sha256 一致を確認し復旧しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           done

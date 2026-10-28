@@ -19,8 +19,10 @@
 """
 
 import argparse
+import hashlib
 import json
 import os
+import posixpath
 import re
 import shutil
 import subprocess
@@ -84,27 +86,58 @@ def decode(rel, raw):
         raise SyncError(f"{rel}: UTF-8 として読めない（文字化けしたまま上書きしない）: {e}") from e
 
 
+HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+SYNC_SCRIPT_RE = re.compile(
+    r'<script\b[^>]*\bsrc=["\']/?supabase-sync\.js(?:\?[^"\']*)?["\'][^>]*>\s*</script>',
+    re.I,
+)
+
+
+def _strip_js_comments(code):
+    """文字列リテラルを壊さずに JS の // 行コメントと /* */ ブロックコメントを除去する。"""
+    pattern = re.compile(
+        r'("(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|`(?:\\.|[^`\\])*`)|(/\*.*?\*/|//[^\r\n]*)',
+        re.S,
+    )
+    return pattern.sub(lambda m: m.group(1) if m.group(1) is not None else "", code)
+
+
+def _has_active_html_sync_tag(text):
+    active_html = HTML_COMMENT_RE.sub("", text)
+    return bool(SYNC_SCRIPT_RE.search(active_html))
+
+
+def _has_active_proxy_hook(text):
+    active_js = _strip_js_comments(text)
+    return (
+        "window.GolfansSync" in active_js
+        and "window.GolfansSync.pull(" in active_js
+        and PROXY_HOOK in active_js
+    )
+
+
 def apply_hooks(rel, text):
-    """Golfans 側フックを注入し、注入できたことを確認する。外れたら SyncError。"""
+    """Golfans 側フックを注入し、コメント外の実行コードとして存在することを確認する。外れたら SyncError。"""
     if rel in PAGES:
         text = CF_BEACON_RE.sub("", text)
-        if "supabase-sync.js" not in text:
+        if not _has_active_html_sync_tag(text):
             if text.count("</body>") != 1:
                 raise SyncError(f"{rel}: </body> が 1 個ではないため supabase-sync.js を注入できない")
             text = text.replace("</body>", f"{SYNC_TAG}</body>")
-        if "supabase-sync.js" not in text:
-            raise SyncError(f"{rel}: supabase-sync.js の読込タグが入っていない")
+        if not _has_active_html_sync_tag(text):
+            raise SyncError(f"{rel}: supabase-sync.js の有効な <script> 読込タグが入っていない（コメントのみ等は不可）")
     elif rel == "proxy.js":
-        if "window.GolfansSync" not in text:
-            if text.count(PROXY_ANCHOR) != 1:
+        if not _has_active_proxy_hook(text):
+            active_js = _strip_js_comments(text)
+            if active_js.count(PROXY_ANCHOR) != 1 or text.count(PROXY_ANCHOR) != 1:
                 raise SyncError(
                     "proxy.js: Supabase pull フックの差し込み位置が見つからない（上流の書き方が変わった）。"
                     "このまま出すと代理予約のクラウド同期が黙って止まるため取り込みを中止する。"
                     f" 期待した文字列: {PROXY_ANCHOR}"
                 )
             text = text.replace(PROXY_ANCHOR, PROXY_HOOK)
-        if "window.GolfansSync.pull" not in text:
-            raise SyncError("proxy.js: Supabase pull フックが入っていない")
+        if not _has_active_proxy_hook(text):
+            raise SyncError("proxy.js: コメント外の有効な Supabase pull フックが入っていない")
     return text
 
 
@@ -139,19 +172,64 @@ def node_check(path):
         raise SyncError(f"{os.path.basename(path)}: JS 構文エラー\n{p.stderr[-800:]}")
 
 
+def _validate_asset_payload(rel, raw, ctype):
+    if not raw:
+        raise SyncError(f"{rel}: 0 バイト")
+    ct = (ctype or "").lower()
+    low_rel = rel.lower()
+    if low_rel.endswith(".pdf"):
+        if "text/html" in ct or not raw.startswith(b"%PDF-"):
+            raise SyncError(f"{rel}: PDF ではない応答または破損データ (Content-Type={ctype!r}, magic={raw[:8]!r})")
+    elif low_rel.endswith(".png"):
+        if "text/html" in ct or not raw.startswith(b"\x89PNG\r\n\x1a\n"):
+            raise SyncError(f"{rel}: PNG ではない応答または破損データ (Content-Type={ctype!r})")
+    elif low_rel.endswith((".jpg", ".jpeg")):
+        if "text/html" in ct or not raw.startswith(b"\xff\xd8\xff"):
+            raise SyncError(f"{rel}: JPEG ではない応答または破損データ (Content-Type={ctype!r})")
+    elif low_rel.endswith(".webp"):
+        if "text/html" in ct or not (raw.startswith(b"RIFF") and raw[8:12] == b"WEBP"):
+            raise SyncError(f"{rel}: WEBP ではない応答または破損データ (Content-Type={ctype!r})")
+    elif low_rel.endswith(".svg"):
+        txt = decode(rel, raw)
+        if "text/html" in ct or "<svg" not in txt.lower():
+            raise SyncError(f"{rel}: SVG ではない応答 (Content-Type={ctype!r})")
+    else:
+        if "text/html" in ct and not low_rel.endswith(".html"):
+            raise SyncError(f"{rel}: アセットに対して HTML が返された (Content-Type={ctype!r})")
+
+
+def _resolve_rel_ref(base_rel, ref):
+    ref = (ref or "").strip()
+    if not ref or ref.startswith(("http:", "https:", "data:", "mailto:", "tel:", "javascript:", "blob:", "//", "#", "/cdn-cgi/", "cdn-cgi/")):
+        return None
+    ref = ref.split("#", 1)[0].split("?", 1)[0].strip()
+    if not ref:
+        return None
+    if ref.startswith("/"):
+        norm = posixpath.normpath(ref.lstrip("/"))
+    else:
+        base_dir = posixpath.dirname(base_rel)
+        norm = posixpath.normpath(posixpath.join(base_dir, ref) if base_dir else ref)
+    if norm in ("", ".") or norm.startswith("../") or "/../" in f"/{norm}/":
+        raise SyncError(f"{base_rel}: 不正な相対パス参照 ({ref})")
+    return norm
+
+
 def collect(repo_dir):
     """上流から全ファイルを取得してメモリ上に {rel: bytes} を作る。失敗は即 SyncError。"""
     files = {}
     discovered = set()
     for rel, src in PAGES.items():
         raw, ctype = fetch(src)
-        if "text/html" not in ctype:
+        if "text/html" not in ctype.lower():
             raise SyncError(f"{rel}: Content-Type が HTML ではない ({ctype})")
         text = apply_hooks(rel, decode(rel, raw))
         validate_page(rel, text)
         for m in re.findall(r'(?:src|href)=["\']([^"\'#?]+)', text):
-            if not m.startswith(("http:", "https:", "data:", "mailto:", "//", "/cdn-cgi/", "cdn-cgi/")):
-                discovered.add(m.lstrip("/"))
+            resolved = _resolve_rel_ref(rel, m)
+            if resolved and resolved not in PAGES and resolved not in LOCAL_ONLY:
+                if "." in posixpath.basename(resolved):
+                    discovered.add(resolved)
         files[rel] = text.encode("utf-8")
 
     queue = sorted(discovered - set(PAGES) - LOCAL_ONLY)
@@ -160,18 +238,28 @@ def collect(repo_dir):
         rel = queue.pop(0)
         if ".." in rel.split("/"):
             raise SyncError(f"{rel}: 不正なパス")
-        raw, _ = fetch(rel)
+        raw, ctype = fetch(rel)
         if rel.endswith((".js", ".css", ".html")):
+            if rel.endswith((".js", ".css")) and "text/html" in (ctype or "").lower():
+                raise SyncError(f"{rel}: JS/CSS に対して HTML が返された ({ctype})")
             text = apply_hooks(rel, decode(rel, raw))
             files[rel] = text.encode("utf-8")
-            for a in re.findall(r"assets/[A-Za-z0-9_.\-/]+", text):
-                a = a.rstrip(".")
-                if a not in seen:
-                    seen.add(a)
-                    queue.append(a)
+            refs = set(re.findall(r"assets/[A-Za-z0-9_.\-/]+", text))
+            if rel.endswith(".css"):
+                for u in re.findall(r'url\(\s*["\']?([^"\')\s]+)["\']?\s*\)', text):
+                    refs.add(u)
+            elif rel.endswith(".html"):
+                for m in re.findall(r'(?:src|href)=["\']([^"\'#?]+)', text):
+                    refs.add(m)
+            for raw_ref in sorted(refs):
+                cleaned = raw_ref.rstrip(".")
+                resolved = _resolve_rel_ref(rel, cleaned)
+                if resolved and resolved not in PAGES and resolved not in LOCAL_ONLY and "." in posixpath.basename(resolved):
+                    if resolved not in seen:
+                        seen.add(resolved)
+                        queue.append(resolved)
         else:
-            if not raw:
-                raise SyncError(f"{rel}: 0 バイト")
+            _validate_asset_payload(rel, raw, ctype)
             files[rel] = raw
 
     if "proxy.js" not in files:
