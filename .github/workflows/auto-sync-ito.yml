@@ -1,0 +1,115 @@
+name: Auto Sync Ito-san Portal (chatgpt.site -> GitHub & Cloudflare Pages)
+
+on:
+  schedule:
+    # 30分おきに自動チェック（1日48回・伊藤さんご要望「1日2回」の24倍の頻度で常時同期）
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Pull latest files from chatgpt.site and preserve Supabase sync hooks
+        run: |
+          python3 - << 'PY'
+          import os, re, urllib.parse, urllib.request
+
+          BASE_URL = "https://takarazuka-members-portal-demo.tsuyoshi-ito515118.chatgpt.site"
+          SYNC_TAG = '<script src="supabase-sync.js?v=20261028-cloud-sync"></script>'
+
+          def fetch_bytes(rel_path):
+              url = urllib.parse.urljoin(BASE_URL + "/", rel_path.lstrip("/"))
+              req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+              with urllib.request.urlopen(req, timeout=20) as r:
+                  return r.read()
+
+          def strip_cf_beacon(html):
+              return re.sub(r'<script>\(function\(\)\{function c\(\)\{var b=a\.contentDocument.*?</script>', '', html, flags=re.S)
+
+          def inject_hooks(filename, text):
+              if filename in ("index.html", "proxy.html"):
+                  text = strip_cf_beacon(text)
+                  if "supabase-sync.js" not in text:
+                      text = text.replace("</body>", f"{SYNC_TAG}</body>")
+              elif filename == "proxy.js":
+                  old = "state=proxyReadReservations(id);proxyGo('home');"
+                  new = "state=proxyReadReservations(id);if(id==='ito'&&window.GolfansSync&&typeof window.GolfansSync.pull==='function'){window.GolfansSync.pull(false);}proxyGo('home');"
+                  if old in text and "window.GolfansSync" not in text:
+                      text = text.replace(old, new)
+              return text
+
+          idx_raw = fetch_bytes("/").decode("utf-8", errors="replace")
+          prx_raw = fetch_bytes("/proxy?agent=agent-yamada").decode("utf-8", errors="replace")
+
+          discovered = set()
+          for html in (idx_raw, prx_raw):
+              for m in re.findall(r'(?:src|href)="([^"#?]+)', html):
+                  if not m.startswith(("http:", "https:", "data:", "mailto:")):
+                      rel = m.lstrip("/")
+                      if rel != "supabase-sync.js":
+                          discovered.add(rel)
+
+          text_files = {
+              "index.html": inject_hooks("index.html", idx_raw),
+              "proxy.html": inject_hooks("proxy.html", prx_raw),
+          }
+          binary_files = {}
+
+          for rel in sorted(discovered):
+              if rel in ("index.html", "proxy.html"):
+                  continue
+              raw = fetch_bytes(rel)
+              if rel.endswith((".js", ".css", ".html")):
+                  txt = inject_hooks(rel, raw.decode("utf-8", errors="replace"))
+                  text_files[rel] = txt
+                  for a in re.findall(r"assets/[A-Za-z0-9_.\-/]+", txt):
+                      discovered.add(a)
+              else:
+                  binary_files[rel] = raw
+
+          for rel in sorted(discovered):
+              if rel not in text_files and rel not in binary_files:
+                  try:
+                      binary_files[rel] = fetch_bytes(rel)
+                  except Exception as e:
+                      print(f"Warn: {rel}: {e}")
+
+          for rel, content in text_files.items():
+              if os.path.dirname(rel):
+                  os.makedirs(os.path.dirname(rel), exist_ok=True)
+              with open(rel, "wb") as f:
+                  f.write(content.encode("utf-8"))
+
+          for rel, raw in binary_files.items():
+              if os.path.dirname(rel):
+                  os.makedirs(os.path.dirname(rel), exist_ok=True)
+              with open(rel, "wb") as f:
+                  f.write(raw)
+          PY
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "Golfans Auto-Sync Bot"
+          git config user.email "50192666+osaken55@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "feat(auto-sync): sync latest updates from Ito-san chatgpt.site"
+            git push origin HEAD:main
+            echo "Synced and pushed new changes."
+          else
+            echo "No changes detected."
+          fi

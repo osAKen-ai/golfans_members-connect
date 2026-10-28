@@ -1,0 +1,7 @@
+.git/
+.venv/
+ito_latest/
+scripts/
+logs/
+patrol.py
+.patrol_checkpoint.json
