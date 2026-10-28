@@ -95,8 +95,7 @@ jobs:
           else
             cp "$RUNNER_TEMP/verify_targets.txt" "$RUNNER_TEMP/all_targets.txt"
           fi
-          max_tries=20
-          [ "${{ steps.push.outputs.pushed }}" = "true" ] && max_tries=60
+          max_tries=60
           for i in $(seq 1 "$max_tries"); do
             pending=0
             while IFS= read -r f; do
