@@ -11,8 +11,15 @@ function undecidedSeatSummary(r=draft){
  return {missing:seats.filter(n=>!n).length,pending:seats.filter(n=>n==='未定').length,selected:seats.filter(Boolean).length+Number(r.people)-seats.length};
 }
 function undecidedControlsMarkup(){
- const {missing}=undecidedSeatSummary();
- return `<div id="undecidedControls" class="cp-undecided-controls"${missing?'':' hidden'}>${missing?`<div class="cp-person cp-undecided-person"><div class="cp-undecided-label"><strong>残り${missing}名を未定にする</strong><small id="undecidedHint">お名前は後から登録できます</small></div><button type="button" class="cp-select" aria-label="残り${missing}名を未定として選択" aria-describedby="undecidedHint" onclick="markRemainingUndecided()">選択</button></div>`:''}</div>`;
+ const {missing,pending}=undecidedSeatSummary();
+ const selected=!missing&&pending>0;
+ return `<div id="undecidedControls" class="cp-undecided-controls"${missing||pending?'':' hidden'}>${missing||pending?`<div class="cp-person cp-undecided-person ${selected?'chosen':''}"><div class="cp-undecided-label"><strong>${selected?`未定${pending}名`:`残り${missing}名を未定にする`}</strong><small id="undecidedHint">お名前は後から登録できます</small></div><button type="button" class="cp-select ${selected?'selected':''}" aria-label="${selected?`未定${pending}名の選択を解除`:`残り${missing}名を未定として選択`}" aria-pressed="${selected}" aria-describedby="undecidedHint" onclick="toggleUndecidedSelection()">${selected?'✓ 選択済':'選択'}</button></div>`:''}</div>`;
+}
+function toggleUndecidedSelection(){
+ if(isDelegateBooking&&!proxyCanAct())return;
+ if(undecidedSeatSummary().missing){markRemainingUndecided();return;}
+ draft.guests=draft.guests.map(n=>n==='未定'?'':n);
+ refreshCompanionChoices();
 }
 function undecidedGuestCountMarkup(){
  const {selected,pending}=undecidedSeatSummary();
@@ -25,7 +32,6 @@ function markRemainingUndecided(){
  draft.guests=Array.from({length:guestSeatCount()},(_,i)=>draft.guests[i]||'未定');
  refreshCompanionChoices();
  $('#memberGuestNext')?.focus({preventScroll:true});
- toast(`${missing}名を未定として選択しました。登録ボタンで保存してください`);
 }
 const undecidedPicker=companionPickerMarkup;
 companionPickerMarkup=function(){
