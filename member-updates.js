@@ -24,7 +24,7 @@ function registerDirectoryCompanion(){
 }
 
 function validProfilePhoto(){return typeof state.profilePhoto==='string'&&/^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(state.profilePhoto);}
-function ownPhotoMarkup(){return validProfilePhoto()?`<img class="own-photo" src="${state.profilePhoto}" alt="ご自身の顔写真">`:'<span class="own-public-photo" role="img" aria-label="伊藤様の顔写真"></span>';}
+function ownPhotoMarkup(){return validProfilePhoto()?`<img class="own-photo" src="${state.profilePhoto}" alt="ご自身の顔写真">`:'<img class="own-photo" src="assets/tsuyoshi-ito-portrait.jpeg" alt="伊藤様の顔写真">';}
 function memberPhotoOverlay(checkin){
  if(checkin)return validProfilePhoto()?`<span class="reference-photo-overlay">${ownPhotoMarkup()}</span>`:'';
  return `<button class="reference-photo-overlay editable-photo" onclick="openPanel('profilePhoto')" aria-label="顔写真をタップして編集">${ownPhotoMarkup()}<span class="photo-edit-badge" aria-hidden="true">✎</span></button>`;

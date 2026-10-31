@@ -29,12 +29,12 @@ function ensureMemberSampleData(data){
  // Its stable ID prevents duplicates and respects cancellation/removal to history.
  if(!Array.isArray(data.reservations))data.reservations=[];
  const phoneDemoId='phone-reservation-demo-20261031';
- if(![...data.reservations,...(data.reservationHistory||[])].some(r=>r.id===phoneDemoId)){
+ if(![...data.reservations,...(data.reservationHistory||[]),...(data.demoReservationCleanupBackup||[])].some(r=>r.id===phoneDemoId)){
   data.reservations.push({id:phoneDemoId,date:'2027-04-11',course:'旧コース',side:'OUT',time:'9:15',people:4,guests:['佐藤 花子','鈴木 健一','田中 美咲'],status:'reserved',source:'電話予約',proxy:false,createdAt:'2027-04-10'});
  }
  // A visible introduction example, without overwriting existing reservations.
  const introDemoId='intro-reservation-demo-20261031';
- if(![...data.reservations,...(data.reservationHistory||[])].some(r=>r.id===introDemoId)){
+ if(![...data.reservations,...(data.reservationHistory||[]),...(data.demoReservationCleanupBackup||[])].some(r=>r.id===introDemoId)){
   data.reservations.push({id:introDemoId,date:'2027-04-13',course:'旧コース',side:'OUT',time:'8:40',people:4,kind:'intro',memberPlaying:false,guests:['井上 一郎','小林 さくら','未定','未定'],status:'reserved',source:'WEB予約',proxy:false,createdAt:'2027-04-10'});
  }
  if(!Array.isArray(data.companions))data.companions=guestSeeds.map(([name,kana,type],i)=>({id:'person'+i,name,kana,type,phone:'090-****-'+String(1800+i*173).padStart(4,'0'),extraVisits:[]}));
@@ -44,5 +44,25 @@ function ensureMemberSampleData(data){
  data.reservationHistory.push(...sampleHistory().filter(r=>!ids.has(r.id)));
  }
  data.sampleHistoryReady=true;
- return rebalanceSampleCompanions(data);
+ return organizeDemoReservations(rebalanceSampleCompanions(data));
+}
+
+// One-time cleanup of accumulated demo submissions; a multi-group submission stays intact.
+function organizeDemoReservations(data){
+ if(data.demoReservationCleanupVersion===1)return data;
+ const records=data.reservations||[],chosen=new Map();
+ const active=r=>!r.status||r.status==='reserved';
+ const key=r=>r.batchId?'batch:'+r.batchId:'single:'+r.id;
+ for(const [i,r] of records.entries()){
+  if(!active(r))continue;
+  const score=String(r.updatedAt||r.createdAt||'');
+  const prior=chosen.get(r.date);
+  if(!prior||score>prior.score||score===prior.score&&i>prior.index)chosen.set(r.date,{key:key(r),score,index:i});
+ }
+ const removed=records.filter(r=>active(r)&&chosen.get(r.date)?.key!==key(r));
+ data.demoReservationCleanupBackup=[...(data.demoReservationCleanupBackup||[]),...removed];
+ const removedIds=new Set(removed.map(r=>r.id));
+ data.reservations=records.filter(r=>!removedIds.has(r.id));
+ data.demoReservationCleanupVersion=1;
+ return data;
 }

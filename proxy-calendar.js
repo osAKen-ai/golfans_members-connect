@@ -25,7 +25,7 @@ function bookingSlots(date,side=draft.side||'OUT'){
  });
 }
 function bookingMatch(slot){return (bookingUI.type==='all'||slot.kind===bookingUI.type)&&(!bookingUI.party||slot.choices.includes(bookingUI.party));}
-function bookingCount(date){if(date<=now)return 0;return ['OUT','IN'].flatMap(side=>bookingSlots(date,side)).filter(s=>s.available&&bookingMatch(s)).length;}
+function bookingCount(date){if(date<=now)return 0;return ['OUT','IN'].flatMap(side=>bookingSlots(date,side)).filter(s=>s.available&&!s.currentReservation&&bookingMatch(s)).length;}
 function bookingCalendar(){
  return `${bookingControls()}${bookingMonthNavigationMarkup(year,month,'proxyPickMonth')}${bookingCalendarPairMarkup(year,month,'proxyPickDate')}<p class="bk-note">操作体験版・空き枠は表示例です。複数のスタート枠を選択できます。</p>`;
 }

@@ -98,12 +98,46 @@
 .rs-card .rs-card-top { align-items: center; }
 .rs-introducer { gap: 0; }
 .rs-introducer-label { color: #665020; font-weight: 750; }
-/* Course and count above a full-width start row, matching the approved preview. */
-.rs-card .rs-card-facts { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px 8px; }
-.rs-card .rs-card-facts > span:first-child { grid-column: 1; grid-row: 1; color: #062852; font-size: 16px; }
-.rs-card .rs-card-facts > span:last-child { grid-column: 2; grid-row: 1; margin-left: 0; }
-.rs-card .rs-card-facts > b { grid-column: 1 / -1; grid-row: 2; border-top: 1px solid #e3ddce; padding-top: 12px; }
 .rs-batch-slot > .rs-group-caption { margin-bottom: 5px; }
 .rs-batch-slot > .rs-group-caption > .rs-intro-badge { color: #665020; font-size: 14px; }
 .rs-batch-slot > .rs-batch-start { gap: 12px; }
 .rs-batch-start > strong { flex: 1; }
+
+/* The play date leads each list card; the year appears once above its cards. */
+.rs-year-heading { grid-column: 1 / -1; margin: 22px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #d5cbb4; color: #062852; font-size: 20px; font-weight: 750; line-height: 1.4; }
+.rs-card > h3.rs-play-date { font-size: clamp(28px, 8vw, 34px); font-weight: 850; line-height: 1.35; margin: 16px 0 18px; color: #062852; }
+.rs-play-date time { white-space: nowrap; }
+.rs-play-date time > span { font-size: .78em; margin-left: .15em; }
+@media (max-width: 350px) { .rs-card > h3.rs-play-date { font-size: 26px; } }
+
+/* Match the TOP card: start, course, and people in three labelled columns. */
+.rs-card .rs-start-facts { display: grid; grid-template-columns: minmax(0,1.42fr) minmax(0,1.08fr) minmax(0,.5fr); gap: 0; margin: 14px 0 18px; color: #062852; }
+.rs-card .rs-start-facts > div { min-width: 0; padding: 0 12px; border-left: 1px solid #e5e5e5; }
+.rs-card .rs-start-facts > div:first-child { padding-left: 0; border-left: 0; }
+.rs-card .rs-start-facts > div:last-child { padding-right: 0; }
+.rs-card .rs-start-facts dt { color: #586675; font-size: 12px; font-weight: 650; line-height: 1.5; margin: 0 0 4px; }
+.rs-card .rs-start-facts dd { margin: 0; font-size: 22px; font-weight: 850; line-height: 1.4; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rs-card .rs-batch-total { justify-content: flex-end; }
+@media (max-width: 360px) {
+ .rs-card .rs-start-facts > div { padding-inline: 8px; }
+ .rs-card .rs-start-facts > div:first-child { padding-left: 0; }
+ .rs-card .rs-start-facts > div:last-child { padding-right: 0; }
+ .rs-card .rs-start-facts dd { font-size: 19px; }
+}
+
+/* Course names support the start time; member-time belongs beside the member. */
+.rs-card .rs-start-facts > div:nth-child(2) dd { font-size: 18px; font-weight: 700; line-height: 1.4; }
+.rs-card .rs-self-player { align-items: center; gap: 6px; }
+.rs-card .rs-self-player > .member-time-status { gap: 4px; margin: 0 0 0 2px; padding: 3px 6px; border-width: 1px; border-radius: 4px; font-size: 12px; font-weight: 750; line-height: 1.4; white-space: nowrap; }
+.rs-card .rs-self-player > .member-time-status > span { font-size: 14px; }
+@media (max-width: 360px) {
+ .rs-card .rs-start-facts > div:nth-child(2) dd { font-size: 17px; line-height: 1.4; }
+}
+
+/* Compact, readable cancellation history below the current reservation actions. */
+.rs-card .rs-cancel-history { margin: 16px 0; padding: 12px 14px; background: #f5f4f0; border-radius: 6px; color: #404950; }
+.rs-card .rs-cancel-history h4 { margin: 0 0 5px; padding: 0; border: 0; color: #a32636; font-size: 14px; font-weight: 750; line-height: 1.5; }
+.rs-card .rs-cancel-history-entry p { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.65; overflow-wrap: anywhere; }
+.rs-card .rs-cancel-history-entry + .rs-cancel-history-entry { margin-top: 8px; padding-top: 8px; border-top: 1px solid #dedbd3; }
+.rs-card .rs-cancel-history-entry .rs-operation-date { color: #545b62; font-size: 13px; font-weight: 500; }
+.rs-card .rs-slot-date { margin: 0 0 8px; font-size: 16px; font-weight: 700; }

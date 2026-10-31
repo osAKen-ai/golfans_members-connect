@@ -257,3 +257,12 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 /* Cancellation is a separate, explicit confirmation flow. */
 .rs-detail-page .rs-cancel,.reservation-cancel-entry{display:block;width:100%;min-height:48px;margin:20px 0 12px;padding:12px;border:1px solid #b50927;border-radius:8px;background:#fff;color:#b50927;font-size:16px;font-weight:750;text-decoration:none}
 .rs-cancellation{padding:20px;color:#062852;max-width:760px;margin:auto}.rs-cancellation>h2{font-size:23px;margin:0 0 14px}.rs-cancellation>p{line-height:1.7}.rs-cancel-slot{padding:18px;margin:18px 0;border:1px solid #d9d1bf;border-radius:10px;background:#fbf9f4}.rs-cancel-slot label{display:flex;align-items:center;gap:12px;min-height:44px}.rs-cancel-slot input{width:24px;height:24px;accent-color:#b50927;flex-shrink:0}.rs-cancel-slot h3{font-size:22px;margin:12px 0}.rs-cancel-slot p{line-height:1.7;margin:8px 0}.rs-cancel-guests{color:#655d50;font-size:14px}.rs-cancel-warning,#cancellationError{color:#b50927;font-weight:700}.rs-cancellation .bk-primary,.rs-cancellation .bk-secondary{display:block;width:100%;margin:14px 0;min-height:52px}.rs-cancellation .reservation-cancel-confirm{background:#b50927;color:#fff;border-color:#b50927}.rs-cancellation .reservation-cancel-confirm:disabled{opacity:.45;cursor:default}.rs-cancellation .cp-registration-success{display:block;padding:22px}.rs-cancellation .cp-registration-success h3{font-size:23px}
+
+/* Confirmation uses the existing page title and one companion-registration note. */
+.bk-batch-confirm .bk-batch-date{margin:14px 0 12px}
+.bk-batch-confirm .bk-register-later{padding:10px 12px;line-height:1.5;color:#655d50}
+.bk-batch-confirm .bk-batch-group{margin:12px 0;padding:12px 14px}
+.bk-batch-confirm .bk-batch-group h4{margin:0}
+.bk-batch-confirm .bk-batch-group h4>strong{margin-top:0}
+.bk-batch-confirm .bk-batch-group h4>span+strong{margin-top:4px}
+.bk-batch-confirm .bk-batch-group p{margin-top:6px}
