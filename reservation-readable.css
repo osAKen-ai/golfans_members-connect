@@ -1,0 +1,109 @@
+/* Shared member/delegate reservation cards, including single and multiple groups. */
+.rs-card .rs-guest-names,
+.rs-detail-page .rs-batch-slot > .rs-guest-names {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.75;
+  color: #404950;
+  overflow-wrap: anywhere;
+}
+.rs-card .rs-created {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+}
+.rs-card .rs-detail {
+  font-size: 16px;
+  font-weight: 750;
+  color: #062852;
+  min-height: 48px;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+.rs-card .rs-detail > span { font-size: 23px; }
+.rs-card .rs-detail:focus-visible { outline: 3px solid #062852; outline-offset: 3px; }
+.rs-card .rs-card-top { align-items: flex-start; }
+.rs-booking-origin {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.rs-card .rs-source {
+  margin-left: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #34475f;
+}
+.rs-card .rs-proxy {
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.5;
+  padding: 3px 7px;
+  color: #665020;
+  background: #f6f1e5;
+  border: 1px solid #9a8148;
+  white-space: nowrap;
+}
+.rs-card .rs-status { font-size: 14px; font-weight: 750; }
+.rs-card .rs-status.reserved { color: #fff; background: #062852; }
+.proxy-main > .rs-card { margin-top: 12px; }
+@media (max-width: 350px) {
+  .rs-booking-origin { gap: 5px; }
+  .rs-card .rs-proxy { padding-inline: 5px; }
+}
+
+/* Start times share one emphasis level for single and multiple-group cards. */
+.rs-card .rs-card-facts > b,
+.rs-card .rs-batch-slot strong {
+  font-size: 22px;
+  font-weight: 850;
+  line-height: 1.5;
+  color: #062852;
+  white-space: nowrap;
+}
+.rs-card .rs-card-facts { gap: 8px; flex-wrap: wrap; }
+.rs-card .rs-card-facts > span { white-space: nowrap; }
+
+/* Fit typical three-companion lists on one line; keep longer names intact. */
+.rs-card .rs-guest-names { font-size: 14px; }
+.rs-guest-name { display: inline-block; white-space: nowrap; }
+
+/* The right-hand count always means players in this group. */
+.rs-card .rs-card-facts > span:last-child,
+.rs-card .rs-batch-slot > div > b {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #062852;
+  white-space: nowrap;
+}
+
+/* Pending names and the member's own participation are explicit text labels. */
+.rs-pending-name,
+.rs-detail-guests b.rs-pending-name { color: #ab2236; }
+.rs-self-player { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; font-size: 14px; font-weight: 600; color: #404950; margin-bottom: 4px; }
+.rs-self-player .rs-self-label { color: #ab2236; font-weight: 750; }
+.rs-detail-page > .rs-self-player { margin: 20px 0; font-size: 16px; }
+.rs-card .rs-register { font-size: 16px; font-weight: 750; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; text-align: center; }
+.rs-card .rs-register > span { font-size: 14px; font-weight: 600; margin: 0; flex: 0 0 auto; }
+
+/* Status and slot type stay together; booking channel remains at the right. */
+.rs-status-group { display: inline-flex; align-items: center; gap: 7px; flex-wrap: nowrap; }
+.rs-intro-badge { display: inline-block; padding: 3px 7px; border: 1px solid #9a8148; border-radius: 3px; background: #f6f1e5; color: #665020; font-size: 14px; line-height: 1.5; font-weight: 750; white-space: nowrap; }
+.rs-card .rs-card-top { align-items: center; }
+.rs-introducer { gap: 0; }
+.rs-introducer-label { color: #665020; font-weight: 750; }
+/* Course and count above a full-width start row, matching the approved preview. */
+.rs-card .rs-card-facts { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px 8px; }
+.rs-card .rs-card-facts > span:first-child { grid-column: 1; grid-row: 1; color: #062852; font-size: 16px; }
+.rs-card .rs-card-facts > span:last-child { grid-column: 2; grid-row: 1; margin-left: 0; }
+.rs-card .rs-card-facts > b { grid-column: 1 / -1; grid-row: 2; border-top: 1px solid #e3ddce; padding-top: 12px; }
+.rs-batch-slot > .rs-group-caption { margin-bottom: 5px; }
+.rs-batch-slot > .rs-group-caption > .rs-intro-badge { color: #665020; font-size: 14px; }
+.rs-batch-slot > .rs-batch-start { gap: 12px; }
+.rs-batch-start > strong { flex: 1; }

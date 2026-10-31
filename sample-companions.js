@@ -15,6 +15,28 @@ function sampleHistory(){let records=[];for(const y of [2022,2023,2024,2025,2026
 }
 
 function ensureMemberSampleData(data){
+ // Both member and delegate views use the same built-in booking origins.
+ // Fill missing sample metadata only; never relabel saved or user-created bookings.
+ const origins={sample1:{source:'WEB予約',proxy:false},sample2:{source:'WEB予約',proxy:true},sample3:{source:'WEB予約',proxy:false}};
+ for(const r of data.reservations||[]){
+  const origin=origins[r.id];
+  if(!origin)continue;
+  if(!r.source)r.source=origin.source;
+  if(r.proxy===undefined)r.proxy=origin.proxy;
+  if(!r.createdAt)r.createdAt=bookingShift(r.date,-30);
+ }
+ // Add one visible phone-booking example to existing demo sessions as well.
+ // Its stable ID prevents duplicates and respects cancellation/removal to history.
+ if(!Array.isArray(data.reservations))data.reservations=[];
+ const phoneDemoId='phone-reservation-demo-20261031';
+ if(![...data.reservations,...(data.reservationHistory||[])].some(r=>r.id===phoneDemoId)){
+  data.reservations.push({id:phoneDemoId,date:'2027-04-11',course:'旧コース',side:'OUT',time:'9:15',people:4,guests:['佐藤 花子','鈴木 健一','田中 美咲'],status:'reserved',source:'電話予約',proxy:false,createdAt:'2027-04-10'});
+ }
+ // A visible introduction example, without overwriting existing reservations.
+ const introDemoId='intro-reservation-demo-20261031';
+ if(![...data.reservations,...(data.reservationHistory||[])].some(r=>r.id===introDemoId)){
+  data.reservations.push({id:introDemoId,date:'2027-04-13',course:'旧コース',side:'OUT',time:'8:40',people:4,kind:'intro',memberPlaying:false,guests:['井上 一郎','小林 さくら','未定','未定'],status:'reserved',source:'WEB予約',proxy:false,createdAt:'2027-04-10'});
+ }
  if(!Array.isArray(data.companions))data.companions=guestSeeds.map(([name,kana,type],i)=>({id:'person'+i,name,kana,type,phone:'090-****-'+String(1800+i*173).padStart(4,'0'),extraVisits:[]}));
  if(!Array.isArray(data.reservationHistory))data.reservationHistory=[];
  if(!data.reservationHistory.some(r=>r.status==='visited')&&!data.sampleHistoryReady){

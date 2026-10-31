@@ -56,8 +56,8 @@ function companionRegistrationExitMarkup(){
 }
 function companionRegistrationActionsMarkup(r){
  const action=isDelegateBooking?`proxyEdit('${r.id}',true)`:`startGuestEditor('${r.id}')`;
- if(!guestSeatsComplete(r))return `<button class="bk-primary" onclick="${action}">同伴者を登録する</button>`;
- return `<div class="cp-registration-actions">${current?.k==='registered'?companionRegistrationExitMarkup():''}<button type="button" class="bk-secondary" onclick="${action}">同伴者を変更する</button></div>`;
+ if(registrationMissing(r)>0)return `<button class="bk-primary" onclick="${action}">${reservationPlayerTerm(r)}を登録する</button>`;
+ return `<div class="cp-registration-actions">${current?.k==='registered'?companionRegistrationExitMarkup():''}<button type="button" class="bk-secondary" onclick="${action}">${reservationPlayerTerm(r)}を変更する</button></div>`;
 }
 function completedRegistrationReturnMarkup(rows,original){
  const active=rows.filter(r=>(!r.status||r.status==='reserved')&&guestSeatCount(r)>0);
