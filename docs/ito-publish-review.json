@@ -1,0 +1,47 @@
+{
+  "feature": "伊藤さん用・最新の内容を反映するボタン",
+  "route": "/publish",
+  "repository": "osAKen-ai/golfans_members-connect",
+  "workflow": ".github/workflows/auto-sync-ito.yml",
+  "branch": "codex/ito-publish-button-20261101",
+  "base_commit": "0e86b56",
+  "behavior": [
+    "専用の更新リンクでセッション開始",
+    "既存workflowを固定のmain向けに手動実行",
+    "request_idとrun_idで本人の実行を追跡",
+    "既存workflowの本番hash照合成功後だけ成功表示"
+  ],
+  "server_bindings": {
+    "ITO_PUBLISH_KEY_SHA256": "伊藤さん用のランダムな更新キーのSHA-256。値は未作成・未設定。原キーはInfisicalで管理し共有リンクのfragmentにだけ含める。",
+    "GITHUB_ITO_SYNC_TOKEN": "対象repoのActions read/writeが可能なサーバー用認証情報。ブラウザへ渡さない。未設定。"
+  },
+  "security": [
+    "同一originからのPOSTだけ受け付ける",
+    "キーはHttpOnly/Secure/SameSite=Strict cookieに交換しURL fragmentを除去",
+    "Web Storageにはキーを残さない",
+    "任意repo/branch/workflow指定を受け付けない",
+    "GitHubのエラー本文や認証情報を利用者へ転送しない"
+  ],
+  "validation": {
+    "tests_passed": 15,
+    "command": "node --test tests/publish.test.mjs tests/publish-client.test.mjs",
+    "workflow_yaml": "parsed",
+    "browser": "mock APIでready/accepted/success/failure。320px/390px。console error/warnなし。"
+  },
+  "not_performed": [
+    "remote push",
+    "production deploy",
+    "production secrets update",
+    "live workflow dispatch",
+    "伊藤さんへのリンク送信"
+  ],
+  "other_requests": [
+    "Googleカレンダー連携",
+    "キャンセル料発生日の2日前の自動メール：別途仕様確認が必要"
+  ],
+  "documentation": [
+    "https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event",
+    "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#run-name",
+    "https://developers.cloudflare.com/pages/configuration/headers/"
+  ]
+}

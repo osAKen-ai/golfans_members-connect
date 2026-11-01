@@ -5,3 +5,5 @@ scripts/
 logs/
 patrol.py
 .patrol_checkpoint.json
+tests/
+docs/
