@@ -133,7 +133,9 @@ if(typeof document!=='undefined')(() => {
   if(!host||host.querySelector('.rf-details'))return;
   const rows=savedRows();if(!rows.length)return;
   const details=document.createElement('details');details.className='rf-details';
-  details.innerHTML='<summary>料金・キャンセル規定を確認する</summary><div class="rf-saved-scroll" tabindex="0" role="region" aria-label="この予約の料金・キャンセル規定">'+policy(rows)+'</div>';
+  const showPolicy=['detail','groupDetail','reservationGroup','archiveDetail'].includes(current.k);
+  details.open=showPolicy;
+  details.innerHTML='<summary>'+(showPolicy?'キャンセル料金・ゲスト料金':'料金・キャンセル規定を確認する')+'</summary><div class="rf-saved-scroll" tabindex="0" role="region" aria-label="この予約の料金・キャンセル規定">'+policy(rows)+'</div>';
   const anchor=host.querySelector('.bk-completion-reservation,.rs-detail-line,.rs-batch-slots,.bk-confirm-facts');
   if(anchor)anchor.after(details);else host.append(details);
  }
