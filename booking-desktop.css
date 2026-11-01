@@ -1,9 +1,15 @@
 /* Shared PC reservation surfaces. Phone styling and booking logic stay in their original modules. */
 .bd-month-label{display:none}
 @media(min-width:1000px){
+ body .sheet,body .proxy-unified-flow,body .proxy-original-booking,body dialog{
+  width:min(780px,calc(100vw - 40px))!important;max-width:780px!important;
+  max-height:calc(100dvh - 32px);box-sizing:border-box;
+ }
+}
+@media(min-width:1000px){
  :is(.sheet.booking-view:has(.bk-calendar-pair),.sheet.booking-times-view,.sheet.companion-picker-view,.proxy-unified-flow:has(.bk-calendar-pair),.proxy-unified-flow:has(.cp-picker),.proxy-original-booking.booking-times-view){
-  --bd-sidebar:300px;--bd-ink:#202e40;--bd-paper:#eee8dc;
-  width:min(1000px,calc(100vw - 40px));max-width:1000px;
+  --bd-sidebar:240px;--bd-ink:#202e40;--bd-paper:#eee8dc;
+  width:min(780px,calc(100vw - 40px));max-width:780px;
   height:min(800px,calc(100dvh - 32px));max-height:calc(100dvh - 32px);
   margin:auto;border-radius:14px;overflow:hidden;box-sizing:border-box;color:var(--bd-ink);
  }
@@ -76,7 +82,7 @@
  .booking-times-view .bk-slot-toolbar{height:44px;padding:3px 12px;flex:none}
  .booking-times-view .bk-sides button{padding:7px 2px}
  .booking-times-view .bk-slot{min-height:56px;padding:6px 12px;gap:16px;justify-content:flex-start}
- .booking-times-view .bk-slot time{flex:1;min-width:80px;font-size:25px;text-align:center}
+ .booking-times-view .bk-slot time{flex:0 0 100px;min-width:100px;font-size:25px;text-align:center}
  .booking-times-view .bk-slot-main{flex:0 0 auto;grid-template-columns:repeat(4,42px) 32px;column-gap:10px}
  .booking-times-view .bk-slot-main :is(.bk-people,.bk-seat,.bk-avatar,.bk-guest){width:42px;height:42px;min-width:42px;max-width:42px;min-height:42px}
  .booking-times-view .bk-owned-main{grid-template-columns:1fr;gap:8px}
@@ -103,6 +109,35 @@
  .companion-picker-view .cp-reservation-heading{padding:14px 20px}
  .companion-picker-view .cp-reservation-heading>b{font-size:16px;color:var(--bd-ink)}
 }
+/* Compact laptop layout: use stable row columns and keep the month square. */
+@media(min-width:1000px){
+ .sheet.booking-times-view #panelBody{flex:1;min-height:0;height:0}
+ .sheet.booking-view #panelBody.bd-calendar,.proxy-flow-content.bd-calendar{grid-template-rows:60px minmax(0,1fr)}
+ .bd-calendar>.bk-controls{display:flex;flex-direction:column;gap:0}
+ .bd-calendar>.bk-controls .bk-courses{flex:none}
+ .bd-calendar>.bk-controls .bk-courses button{flex:1}
+ .bd-calendar>.bk-controls .bk-filters{flex:none;gap:18px}
+ .bd-calendar>.bk-controls>.bk-own-calendar-legend{margin:24px 0 8px;justify-content:flex-start;flex-wrap:wrap;font-size:12px}
+ .bd-calendar>.bk-controls>.wl-legend{margin:0 0 14px;font-size:12px;text-align:left}
+ .bd-calendar>.bk-controls>.wl-entry{margin:0 0 12px;width:100%;min-height:46px;padding:10px;font-size:13px;flex:none}
+ .bd-calendar>.bk-controls>.bk-note{font-size:11px;text-align:left;line-height:1.7;margin:5px 0;color:#6d675b}
+ .booking-view .bd-calendar>.bk-month-navigation{width:100%;max-width:480px;justify-self:center}
+ .bd-calendar>.bk-calendar-pair{width:100%;max-width:480px;justify-self:center;padding:0 20px 18px}
+ .bd-calendar .bk-calendar{min-height:0;grid-auto-rows:minmax(62px,1fr);gap:7px}
+ .booking-view .bd-calendar .bk-calendar-pair .bk-day{min-height:62px;padding:6px 0;gap:3px;font-size:22px}
+ .booking-view .bd-calendar .bk-own-day .bk-own-day-badge{margin-top:0;flex:none}
+ .booking-times-view .bk-slot{min-height:48px;padding:4px 12px;gap:12px;justify-content:center}
+ .booking-times-view .bk-slot time{flex:0 0 100px;min-width:100px;font-size:24px}
+ .booking-times-view .bk-slot-main{grid-template-columns:repeat(4,38px) 44px;column-gap:12px;row-gap:0}
+ .booking-times-view .bk-slot-main :is(.bk-people,.bk-seat,.bk-avatar,.bk-guest){width:38px;height:38px;min-width:38px;max-width:38px;min-height:38px;font-size:20px}
+ .booking-times-view .bk-slot.unavailable time{color:#798080}
+ .booking-times-view .bk-hours button{min-height:52px}
+ .booking-times-view .bk-slot .bk-intro{font-size:10px;grid-column:5!important;grid-row:1;align-self:end;line-height:1.1}
+ .booking-times-view .bk-slot-main:has(.bk-intro) .bk-full{align-self:start;padding-top:4px}
+ .booking-times-view .bk-slot:has(.bk-owned-main),.booking-times-view .bk-slot:has(.bk-current-main){justify-content:flex-start}
+ .booking-times-view .bk-slot-main.bk-owned-main{grid-template-columns:1fr;flex:1}
+ .booking-times-view .bk-slot-main.bk-current-main{grid-template-columns:auto 1fr;flex:1}
+}
 @media(min-width:1000px) and (max-height:740px){
  .bd-calendar .bk-calendar{min-height:310px;grid-auto-rows:minmax(43px,1fr)}
  .bd-calendar .bk-calendar-pair .bk-day{min-height:43px;font-size:21px;gap:1px;padding:2px 0}
@@ -114,4 +149,53 @@
 }
 @media(min-width:1000px){
  .booking-view .bd-calendar .bk-calendar-pair .bk-day{height:100%;min-height:0;box-sizing:border-box;align-self:stretch}
+}
+@media(min-width:1000px){
+ .bd-calendar>.bk-controls{padding:18px!important}
+ .bd-calendar>.bk-controls:before{font-size:18px;margin-bottom:16px;padding-bottom:12px}
+ .bd-calendar>.bk-controls .bk-courses{margin-bottom:18px}
+ .bd-calendar>.bk-controls .bk-courses button{font-size:16px!important;height:42px!important}
+ .bd-calendar>.bk-controls .bk-filters{gap:14px}
+ .bd-calendar>.bk-controls .bk-filters label{font-size:13px}
+ .bd-calendar>.bk-controls select{font-size:14px}
+ .bd-calendar>.bk-controls>.bk-own-calendar-legend{margin-top:20px;font-size:11px;display:block;line-height:1.8}
+ .bd-calendar>.bk-controls>.wl-legend{font-size:11px;line-height:1.6}
+ .bd-calendar>.bk-controls>.wl-entry{font-size:12px;line-height:1.6;padding:8px}
+ .bd-calendar>.bk-controls>.bk-note{display:none}
+ .bd-calendar .bk-calendar{gap:5px;grid-auto-rows:minmax(62px,1fr)}
+ .booking-view .bd-calendar .bk-calendar-pair .bk-day{min-height:62px;padding:3px 0;gap:1px;line-height:1}
+ .bd-calendar .bk-calendar-pair .wl-day-bell{height:14px;flex:none}
+ .bd-calendar .bk-calendar-pair .wl-day-bell svg{height:14px;width:14px}
+ .bd-calendar .bk-calendar-pair .bk-own-day-badge{font-size:9px;line-height:1.2;padding:1px 3px}
+ .booking-times-view .bk-slot{gap:8px;padding:4px 8px}
+ .booking-times-view .bk-slot time{flex:0 0 76px;min-width:76px;font-size:23px}
+ .booking-times-view .bk-slot-main{grid-template-columns:repeat(4,34px) 36px;column-gap:8px}
+ .booking-times-view .bk-slot-main :is(.bk-people,.bk-seat,.bk-avatar,.bk-guest){width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;font-size:19px}
+ .booking-times-view .bk-hours,.booking-times-view .bk-calendar-back{flex-basis:60px}
+ .booking-times-view .bk-hours button{font-size:17px}
+ .booking-times-view .bk-dates{gap:5px;padding:4px 6px}
+ .booking-times-view .bk-dates button{width:48px}
+ .booking-times-view .bd-time-sidebar{padding:16px;gap:10px}
+ .booking-times-view .bd-selection-heading{font-size:17px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary>header>strong{font-size:17px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary>header>strong>span{font-size:16px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-row>strong{font-size:25px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-row>strong>.bk-chosen-people{font-size:21px}
+ .booking-times-view .bd-time-sidebar .bk-selection-actions>.bk-primary{font-size:16px;min-height:48px}
+ .booking-times-view .bd-time-sidebar>.wl-time-entry{font-size:12px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-row:only-child .bk-chosen-number{display:none}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary>header{margin-bottom:8px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-row{padding:8px 0;gap:5px}
+ .booking-times-view .bd-time-sidebar .bk-remove-selection{min-height:30px;padding:4px 8px}
+ .booking-times-view .bd-time-sidebar>.bk-note{font-size:11px;line-height:1.6}
+ .bd-calendar>.bk-controls>.bk-own-calendar-legend{order:10}
+ .bd-calendar>.bk-controls>.wl-legend{order:11}
+ .bd-calendar>.bk-controls>.wl-entry{order:12}
+ .companion-picker-view .cp-bottom.cp-player-selection{padding-left:12px;padding-right:12px}
+ .companion-picker-view .cp-bottom .bk-selected-guests{padding:10px 0;max-height:none}
+ .companion-picker-view .bk-selected-guests .cp-selected-person{padding:6px;gap:6px;min-height:50px}
+ .companion-picker-view .cp-order{width:22px;height:28px;font-size:14px}
+ .companion-picker-view .bk-selected-guests .cp-remove{min-width:26px;width:26px;min-height:32px;height:32px}
+ .companion-picker-view .cp-bottom-head>strong{font-size:18px}
+ .companion-picker-view .cp-bottom .cp-next{font-size:14px}
 }
