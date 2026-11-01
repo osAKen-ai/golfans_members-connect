@@ -12,8 +12,8 @@
     "既存workflowの本番hash照合成功後だけ成功表示"
   ],
   "server_bindings": {
-    "ITO_PUBLISH_KEY_SHA256": "伊藤さん用のランダムな更新キーのSHA-256。値は未作成・未設定。原キーはInfisicalで管理し共有リンクのfragmentにだけ含める。",
-    "GITHUB_ITO_SYNC_TOKEN": "対象repoのActions read/writeが可能なサーバー用認証情報。ブラウザへ渡さない。未設定。"
+    "ITO_PUBLISH_KEY_SHA256": "Pages productionに設定済み。原値はInfisical GOLFANS_ITO_PUBLISH_ACCESS_KEY。",
+    "GITHUB_ITO_SYNC_TOKEN": "Worker/Pages productionに設定済み。Infisical GOLFANS_ITO_GITHUB_ACTIONS_TOKEN。対象repoのみActions read/write。"
   },
   "security": [
     "同一originからのPOSTだけ受け付ける",
@@ -34,16 +34,22 @@
       "node --test tests/publish.test.mjs tests/publish-client.test.mjs",
       "cd connector && npm run build && npm test",
       "cd connector && npm audit"
-    ]
+    ],
+    "production": {
+      "oauth_mcp": "real HTTPS OAuth+PKCE+MCP verified",
+      "request_id": "f006388a-2531-48ec-aca6-f3ecf85eeaf4",
+      "run_id": 41300310633,
+      "attempt": 2,
+      "conclusion": "success",
+      "first_attempt": "source demo fetch timeout; no partial apply",
+      "browser": "実アクセスリンクからsession開始、fragment除去、最新反映確認成功の表示"
+    }
   },
   "not_performed": [
-    "remote push",
-    "production deploy",
-    "production secrets update",
-    "live workflow dispatch",
-    "伊藤さんへのリンク送信",
-    "production OAuth grant",
-    "伊藤さんのChatGPTでの接続確認"
+    "伊藤さんへの送信",
+    "伊藤さんのChatGPTでの接続確認",
+    "Googleカレンダー連携",
+    "キャンセル料発生日2日前のメール配信"
   ],
   "other_requests": [
     "Googleカレンダー連携",
@@ -66,7 +72,7 @@
       "publish_latest_portal",
       "get_publish_status"
     ],
-    "endpoint": "未発行。本番未公開。",
+    "endpoint": "https://golfans-ito-publish.osaken.workers.dev/mcp",
     "handoff": "docs/ito-connector-handoff.txt",
     "operations": "connector/OPERATIONS.txt",
     "local_preview": "http://127.0.0.1:18817/",
@@ -74,15 +80,10 @@
       "portal:status",
       "portal:publish",
       "offline_access"
-    ],
-    "planned_endpoint": "https://golfans-ito-publish.osaken.workers.dev/mcp（未作成・未公開）"
+    ]
   },
   "blocker": {
-    "observed": "Existing Cloudflare credentials rejected by actual project account (403/401, code 10000).",
-    "account": "07b0a61b46604ded81f4e1aad272ed27",
-    "cause": "Account scope, permissions, or credential validity not determined.",
-    "required": "Working Workers Scripts/KV credential on this account; Pages Edit if configuring button bindings; separate Actions read/write server credential.",
-    "browser_recovery": "Chromeの既存Googleログインで対象accountのWorkers & Pagesを閲覧確認。ブラウザ設定経路があるためAPI credential更新は必須と断定しない。",
-    "remaining": "未承認の本番公開・新規OAuth/Worker設定、未設定のGitHub Actions read/write server credential。"
-  }
+    "resolved": "Existing Cloudflare browser login and existing GitHub build integration used. Dedicated scoped GitHub credential created and stored in Infisical. No additional Cloudflare API token required."
+  },
+  "publication_status": "deployed; server-side end-to-end verified; Ito account connection not yet verified"
 }

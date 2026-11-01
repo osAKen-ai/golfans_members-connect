@@ -109,6 +109,7 @@ test('authorization-code flow with PKCE can list and call only the two publish t
   assert.equal(init.result.serverInfo.name, 'golfans-ito-publish');
   const listed = await rpc(h, token.access_token, 'tools/list');
   assert.deepEqual(listed.result.tools.map(tool => tool.name).sort(), ['get_publish_status', 'publish_latest_portal']);
+  assert.deepEqual(listed.result.tools.find(tool => tool.name === 'publish_latest_portal').securitySchemes, [{ type: 'oauth2', scopes: ['portal:status', 'portal:publish'] }]);
   const published = await rpc(h, token.access_token, 'tools/call', { name: 'publish_latest_portal', arguments: { request_id: id } });
   assert.equal(published.result.structuredContent.accepted, true, JSON.stringify({ result: published.result, upstream: h.upstream }));
   assert.equal(published.result.structuredContent.run_id, 101);
@@ -142,5 +143,7 @@ test('refresh preserves access while a narrower token cannot start updates', asy
   const write = await rpc(h, refreshed.access_token, 'tools/call', { name: 'publish_latest_portal', arguments: { request_id: id } });
   assert.equal(write.result.isError, true);
   assert.equal(write.result.structuredContent.error, 'insufficient_scope');
+  assert.match(write.result._meta['mcp/www_authenticate'][0], /error="insufficient_scope"/);
+  assert.match(write.result._meta['mcp/www_authenticate'][0], /error_description=/);
   assert.equal(h.upstream.filter(call => call.method === 'POST').length, 0);
 });

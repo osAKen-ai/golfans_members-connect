@@ -99,7 +99,10 @@ function mcpHandler(origin: string) {
         annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
         _meta: { securitySchemes: [{ type: 'oauth2', scopes: ['portal:status', 'portal:publish'] }] },
       }, async ({ request_id }) => {
-        if (!context.auth.scope.includes('portal:publish')) return toolResult({ ok: false, error: 'insufficient_scope' }, true);
+        if (!context.auth.scope.includes('portal:publish')) return {
+          ...toolResult({ ok: false, error: 'insufficient_scope' }, true),
+          _meta: { 'mcp/www_authenticate': [`Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp", error="insufficient_scope", error_description="Authorize portal publishing to continue", scope="portal:status portal:publish"`] },
+        };
         const operationId = request_id || crypto.randomUUID();
         const response = await publishOperation(new Request(`${origin}/api/publish`, { method: 'POST', body: JSON.stringify({ request_id: operationId }) }), env);
         const data = await response.json();
@@ -123,6 +126,16 @@ function mcpHandler(origin: string) {
       try {
         const response = await transport.handleRequest(request);
         const bytes = await response.arrayBuffer();
+        if (bytes.byteLength && response.headers.get('Content-Type')?.startsWith('application/json')) {
+          const payload = JSON.parse(new TextDecoder().decode(bytes));
+          // SDK vendor metadata is mirrored at top level for ChatGPT's auth policy.
+          if (Array.isArray(payload.result?.tools)) {
+            payload.result.tools = payload.result.tools.map((tool: any) => ({ ...tool, securitySchemes: tool._meta.securitySchemes }));
+            const headers = new Headers(response.headers);
+            headers.delete('Content-Length');
+            return new Response(JSON.stringify(payload), { status: response.status, headers });
+          }
+        }
         return new Response(bytes.byteLength ? bytes : null, { status: response.status, headers: response.headers });
       } finally { await server.close(); }
     },

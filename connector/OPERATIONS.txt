@@ -1,59 +1,56 @@
-宝塚サイト更新コネクタ：公開作業の引継ぎ
+宝塚サイト更新コネクタ：運用引継ぎ
 2026-11-01 / Codex
 
-状態：ローカル実装済み。本番未公開、認証情報未設定。
-既存の更新ボタンと同じpublishOperationをOAuth認証後に利用する。
-公開には、本体側workflowのpublish_request_id入力追加も同時に必要。
+公開済み。サーバー側のOAuth/PKCE認証、MCP初期化・ツール列挙、GitHub更新依頼と本番照合を検証。
+伊藤さんご自身のChatGPTからの初回接続は未確認。伊藤さんへの送信はしていない。
+本人はこの会話で本番公開・接続用の認証設定・動作確認を明示承認した。再確認は不要。
 
 対象
 GitHub：osAKen-ai/golfans_members-connect
 Workflow：auto-sync-ito.yml、ID 399056234、main固定
+MCP endpoint：https://golfans-ito-publish.osaken.workers.dev/mcp
+接続案内ページ：https://golfans-ito-publish.osaken.workers.dev/
+更新ボタン：https://takarazuka.golfans.com/publish（初回は専用アクセスリンクが必要）
 Cloudflare account：07b0a61b46604ded81f4e1aad272ed27
-Pages project：golfans-members-connect
-Worker予定名：golfans-ito-publish
-公開後の予定URL：https://golfans-ito-publish.osaken.workers.dev/mcp（未作成・未公開）
+Worker：golfans-ito-publish
+Pages：golfans-members-connect
+専用OAuth KV：golfans-ito-oauth / e226ca433a7243a9ba8ee10ecdead4c0
 
-接続障害（2026-11-01に読取で確認）
-Infisical既存のCLOUDFLARE_API_TOKEN_BROWSERおよびCLOUDFLARE_API_TOKEN_TCCの両方で：
-  accounts/<account>/workers/subdomain → 403、Cloudflare code 10000
-  accounts/<account>/pages/projects/golfans-members-connect → 403、code 10000
-  accounts/<account>/storage/kv/namespaces → 401、code 10000
-この認証では対象アカウントの設定も公開先URLも確定できない。
-アカウント対象範囲・権限・認証の有効性のいずれが原因かは未確定。
-その後、Chromeの既存Googleログインから同アカウントのWorkers & Pagesを閲覧できた。
-ダッシュボードのsubdomainはosaken.workers.dev。ブラウザでの公開設定経路は利用できる。
-APIトークン作成は必須と断定しない。トークン作成や権限変更、設定書込み、課金、公開はしていない。
+公開経路
+Worker：既存Cloudflare GitHub接続を利用。root=/connector、build=npm ci && npm run build、deploy=npx wrangler deploy。
+Cloudflare上のビルドで実行する。Macでwrangler CLIを直接実行しない。
+connector/wrangler.jsonでPUBLIC_BASE_URLとOAUTH_KVを定義。keep_vars=true。プレビュー無効。
+Pages：既存GitHub main連携。環境変数を変更した場合は次のデプロイが必要。
+既存の別Worker golfans-members-connect のビルド失敗は今回の専用Worker/Pagesとは別で、変更していない。
 
-再開に必要な設定
-ブラウザの既存ログイン経路、または対象アカウントでWorkers Scripts Edit / Workers KV Storage Editが使えるAPI認証。
-ボタンのPages bindingsも設定する場合はCloudflare Pages Editも必要。
-アカウント対象を上記IDに指定する。秘密値はInfisicalで管理し、文書・ログ・argvへ出さない。
-GitHubサーバー用認証は対象repoのActions read/write。既存GH CLIの広い個人認証を自動転用しない。
+秘密の管理（値を文書・ログ・argvへ出さない）
+Infisical AI-Secrets / dev / /：
+GOLFANS_ITO_CONNECTOR_CODE → 接続画面へ入力する専用コード。
+GOLFANS_ITO_PUBLISH_ACCESS_KEY → 更新ボタンの専用アクセスリンク用。
+GOLFANS_ITO_GITHUB_ACTIONS_TOKEN → 新規fine-grained PAT。対象repoだけ、Actions read/write + 必須Metadata read。
+PAT名：Golfans Ito portal publisher。組織の既存ポリシーの最大期間を使用。有効期限2027-11-02。
+既存の広いGH CLI認証をサーバーへ転用していない。
+Worker秘密：GITHUB_ITO_SYNC_TOKEN / ITO_CONNECTOR_CODE_SHA256。
+Pages production秘密：GITHUB_ITO_SYNC_TOKEN / ITO_PUBLISH_KEY_SHA256。
+コード原値はInfisicalだけで保管。Hashを照合する。ALLOW_LOCAL_OAUTHは本番に設定しない。
 
-公開順序（本人の公開指示を受けてから）
-1. 既存mainの更新を取り込み、workflow入力追加とボタンをGitHub経由で反映。
-   元の作業ツリーには他者の未commit変更があるため、この分離worktreeを使う。
-2. このWorker専用のOAUTH_KV namespaceを作成。既存アプリの認証KVを流用しない。
-3. Infisicalにランダム接続コードの原値を保存し、SHA-256だけをWorker bindingに設定。
-4. deployment.template.jsonのbindingsを実値で構成し、実際のHTTPS originをPUBLIC_BASE_URLへ設定。
-   ALLOW_LOCAL_OAUTHは本番に設定しない。GITHUB_ITO_SYNC_TOKENはserver側のみ。
-5. HTTPS上で未認証401、OAuth discovery、PKCE/同意画面/トークン更新、tools/listを確認。
-6. 本人の実更新指示で1回だけworkflow_dispatchし、操作固有IDで本番hash照合の成功を確認。
-7. docs/ito-connector-handoff.txtに実URLを記入し再読。接続コードは本文に記載しない。
-8. 伊藤さんご自身のChatGPTから接続できたことを別途確認。
-   ローカル試験合格を、本人アカウントでの接続成功と同一視しない。
+実機・公開検証
+ローカル：API/client 15件 + workerd OAuth/MCP 5件 = 20件。npm audit 0。
+本番：OAuth discovery、未認証401、同意とCSRF、実コード照合、PKCE token交換、MCP initialize/tools/list/get_publish_status。
+MCP経由の実dispatch：request_id f006388a-2531-48ec-aca6-f3ecf85eeaf4、run 41300310633。
+初回は元デモの /proxy?agent=agent-yamada 取得で時間切れ。部分反映はせず失敗。
+同じrunの失敗ジョブを1回rerunし、attempt 2で同期・本番全対象ファイルのhash確認がSUCCESS。
+https://github.com/osAKen-ai/golfans_members-connect/actions/runs/41300310633
+公開ボタン：専用リンク→HttpOnlyセッション→URL fragment除去→本番結果表示、までChromeで確認。
+途中でChromeが終了。コード・秘密・サーバー設定は保存済みで失われず、再起動後のブラウザで公開面を確認。
+Chrome終了の原因は未診断。Macのスリープやサーバー障害とは同一視しない。
 
-ローカル検証
-Node 24推奨。connector/でnpm ci、npm run build、npm test。
-ルートでnode --test tests/publish.test.mjs tests/publish-client.test.mjs。
-npm run previewはlocalhost:18817。ダミー認証とmock GitHubのみを使う。
-テストは実際のworkerd、公式OAuthProviderおよびMCP SDKを使用。
-本番OAuth KV・GitHubへの送信は行わない。
-
-公開後の失効
-接続コードのハッシュを変更しても、発行済みOAuth grantは直ちには失効しない。
-既存接続を止める場合はChatGPT側の切断に加え、公式OAuthProviderのgrant失効機能を使う。
-作成専用OAUTH_KVの既存キーを不用意に削除しない。
+運用上の区別
+受付は完了ではない。操作固有のrequest_id/run_idで追跡し、completed/successだけを本番反映成功とする。
+通信エラーで受付不明なら、同じrequest_idの状況を確認し、POSTを自動再送しない。
+コードhashの変更だけでは発行済みOAuth grantは失効しない。必要時は公式OAuthProviderのgrant失効機能を使う。
+専用KVのキーを不用意に削除しない。
+Googleカレンダー連携とキャンセル料発生日2日前の自動メールは今回の実装に含まない。
 
 参照
 https://github.com/cloudflare/workers-oauth-provider
