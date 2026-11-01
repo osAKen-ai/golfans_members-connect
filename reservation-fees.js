@@ -85,7 +85,7 @@ if(typeof document!=='undefined')(() => {
   const primary=root.querySelector(':scope > button.bk-primary');if(!primary)return html;
   const secondary=primary.nextElementSibling;
   const footer=document.createElement('footer');footer.className='rf-footer';
-  footer.innerHTML='<label class="rf-consent"><input type="checkbox" class="rf-agree" aria-describedby="rf-read-status" disabled><span>料金・キャンセル規定を確認し、同意します</span></label><p id="rf-read-status" class="rf-read-status" aria-live="polite">注意事項を最後までスクロールしてご確認ください。</p>';
+  footer.innerHTML='<label class="rf-consent"><input type="checkbox" class="rf-agree" aria-describedby="rf-read-status"><span>料金・キャンセル規定を確認し、同意します</span></label><p id="rf-read-status" class="rf-read-status" aria-live="polite">チェックを入れると予約を確定できます。</p>';
   primary.disabled=true;footer.append(primary);
   if(secondary?.matches('button'))footer.append(secondary);
   const note=root.querySelector(':scope > .bk-note');if(note)footer.append(note);
@@ -95,7 +95,7 @@ if(typeof document!=='undefined')(() => {
   root.classList.add('rf-confirm');root.dataset.feeFingerprint=fingerprint(activeRows());
   root.append(summary);
   const terms=document.createElement('section');terms.className='rf-terms';
-  terms.innerHTML='<h3 class="rf-heading">ご予約時の注意事項</h3><div class="rf-scroll" tabindex="0" role="region" aria-label="料金とキャンセル規定（スクロールして確認）">'+policy(activeRows())+'<p class="rf-end">以上の内容をご確認のうえ、ご予約ください。</p></div>';
+  terms.innerHTML='<h3 class="rf-heading">ご予約時の注意事項</h3><div class="rf-policy-content" role="region" aria-label="料金とキャンセル規定">'+policy(activeRows())+'<p class="rf-end">以上の内容をご確認のうえ、ご予約ください。</p></div>';
   root.append(terms,footer);return template.innerHTML;
  }
  if(typeof bookingConfirm==='function'){const original=bookingConfirm;bookingConfirm=function(...args){return confirmation(original.apply(this,args));};}
@@ -112,9 +112,7 @@ if(typeof document!=='undefined')(() => {
  if(typeof proxyCommit==='function'){const original=proxyCommit;proxyCommit=function(...args){if(draft?.guestOnly||consent())return original.apply(this,args);};}
  function mount(){
   const root=document.querySelector('.rf-confirm');if(!root||root.dataset.feeMounted)return;
-  root.dataset.feeMounted='true';const scroll=root.querySelector('.rf-scroll'),box=root.querySelector('.rf-agree'),button=root.querySelector('.rf-footer .bk-primary'),status=root.querySelector('.rf-read-status');
-  const read=()=>{if(scroll.scrollHeight-scroll.clientHeight-scroll.scrollTop<=4){box.disabled=false;status.textContent='チェックを入れると予約を確定できます。';scroll.removeEventListener('scroll',read);}};
-  scroll.addEventListener('scroll',read,{passive:true});requestAnimationFrame(read);
+  root.dataset.feeMounted='true';const box=root.querySelector('.rf-agree'),button=root.querySelector('.rf-footer .bk-primary'),status=root.querySelector('.rf-read-status');
   box.addEventListener('change',()=>{button.disabled=!box.checked;status.textContent=box.checked?'ご予約内容をご確認のうえ、確定してください。':'チェックを入れると予約を確定できます。';});
  }
  function savedRows(){
@@ -135,7 +133,7 @@ if(typeof document!=='undefined')(() => {
   const details=document.createElement('details');details.className='rf-details';
   const showPolicy=['detail','groupDetail','reservationGroup','archiveDetail'].includes(current.k);
   details.open=showPolicy;
-  details.innerHTML='<summary>'+(showPolicy?'キャンセル料金・ゲスト料金':'料金・キャンセル規定を確認する')+'</summary><div class="rf-saved-scroll" tabindex="0" role="region" aria-label="この予約の料金・キャンセル規定">'+policy(rows)+'</div>';
+  details.innerHTML='<summary>'+(showPolicy?'キャンセル料金・ゲスト料金':'料金・キャンセル規定を確認する')+'</summary><div class="rf-saved-policy" role="region" aria-label="この予約の料金・キャンセル規定">'+policy(rows)+'</div>';
   const anchor=host.querySelector('.bk-completion-reservation,.rs-detail-line,.rs-batch-slots,.bk-confirm-facts');
   if(anchor)anchor.after(details);else host.append(details);
  }
