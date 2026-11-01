@@ -129,7 +129,21 @@ function wlCard(r,w,t){const active=['waiting','queued','offered'].includes(r.st
 function wlListMarkup(){const w=state.waitlistDemo,t=wlEngine.clock(w),allRows=w.requests.filter(r=>r.owner===wlOwner()),rows=allRows.filter(r=>r.submissionVersion===2),legacy=allRows.filter(r=>r.submissionVersion!==2);return `<p class="wl-intro">変更待ちを優先し、各区分内では受付順にご案内します。待ち順は希望コース・時間帯ごとに表示します。</p>${rows.length?rows.slice().reverse().map(r=>wlCard(r,w,t)).join(''):'<div class="wl-empty">まだリクエストのお申し込みはありません。<br>予約カレンダーのベルからお申し込みいただけます。</div>'}${legacy.length?`<details class="wl-settings"><summary>以前の体験で保存されたリクエスト（${legacy.length}件）</summary><p class="wl-note">この端末に残っている体験履歴です。今回、新しく申し込んだ内容ではありません。</p>${legacy.slice().reverse().map(r=>wlCard(r,w,t)).join('')}</details>`:''}<p id="wlError" role="alert"></p><details class="wl-simulator"><summary>通知・確保時間の体験パネル</summary><p>デモ日時：<strong>${wlDate(t)}</strong><br>仮設定：配信10:00〜17:00／回答は18:00まで。<br>表示する他の待機者もサンプルです。</p><div class="wl-options"><button onclick="wlAdvance(61)">61分進める</button><button onclick="wlSetDemoMorning()">次の10:00へ</button></div><h4>仮確保・同時配信の状況</h4>${w.requests.filter(r=>['queued','offered'].includes(r.status)).map(r=>`<p>${r.owner===wlOwner()?'ご本人':'サンプル会員'} · ${r.mode==='change'?'変更待ち':'キャンセル待ち'}<br>${esc(r.slot.course)} ${esc(r.slot.side)} ${esc(r.slot.time)} · ${r.status==='offered'?wlDate(r.expires)+'まで':'配信待ち'}</p>`).join('')||'<p>仮確保中の枠はありません。</p>'}<h4>動作履歴</h4>${w.log.slice(0,12).map(l=>`<p>${wlDate(l.at)} ${l.owner===wlOwner()?'ご本人':'サンプル会員'}<br>${esc(l.text)}</p>`).join('')||'<p>まだご案内はありません。</p>'}</details><button class="wl-primary" onclick="wlGoList()">予約一覧へ</button>`;}
 function wlDraw(){const el=wlDialog();const keep=el.dataset.view===wlView,scroll=keep?el.scrollTop:0,expanded=keep?[...el.querySelectorAll('details[open]')].map(x=>x.querySelector('summary')?.textContent):[];const title=wlView==='request'?'リクエストの詳細':wlView==='review'?'リクエスト内容の確認':wlView==='receipt'?'リクエスト受付完了':wlView==='form'?(wlForm.mode==='change'?'希望時間への変更待ち':'キャンセル待ち'):wlView==='choose'?'変更する組を選択':'キャンセル待ち・変更待ち';el.innerHTML=`<header class="wl-header"><h2 id="wlTitle">${title}</h2><button aria-label="キャンセル待ち画面を閉じる" onclick="wlClose()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button></header><div class="wl-body">${wlView==='request'?wlRequestDetailMarkup():wlView==='form'?wlFormMarkup():wlView==='review'?wlReviewMarkup():wlView==='receipt'?wlReceiptMarkup():wlView==='choose'?wlRead().reservations.filter(r=>r.date===wlForm.date&&r.status!=='cancelled').map(r=>`<button class="wl-secondary" onclick="wlOpen('${r.date}','${esc(r.id)}')">${esc(r.course)} ${esc(r.side||'OUT')} ${esc(r.time)} · ${r.people}名 ›</button>`).join(''):wlListMarkup()}<p class="wl-demo-note">操作体験版 · 実際の予約・LINE・メール配信は行いません。</p></div>`;el.dataset.view=wlView;el.querySelectorAll('details').forEach(x=>x.open=expanded.includes(x.querySelector('summary')?.textContent)||(!keep&&x.hasAttribute('data-auto-open')));el.scrollTop=scroll;}
 function wlRequestDetailMarkup(){const r=state.waitlistDemo.requests.find(r=>r.id===wlFocusedId&&r.owner===wlOwner());return (r?wlCard(r,state.waitlistDemo,wlClock()):'<p>このリクエストは見つかりません。</p>')+'<p id="wlError" role="alert"></p><button class="wl-secondary" onclick="wlGoList()">予約一覧へ</button>';}
-function wlGoList(){wlClose();if(isDelegateBooking)proxyGo('list');else{reservationUI.status='reserved';reservationUI.from='';reservationUI.to='';openPanel('reservations');}}
+function wlReturnDate(){
+ const id=wlView==='request'?wlFocusedId:wlView==='receipt'?wlSubmittedId:null;
+ const request=id?(state.waitlistDemo?.requests||[]).find(r=>r.id===id&&r.owner===wlOwner()):null;
+ return request&&/^\d{4}-\d{2}-\d{2}$/.test(request.date)?request.date:'';
+}
+function wlGoList(){
+ const date=wlReturnDate();
+ wlClose();
+ if(isDelegateBooking){proxyListStatus='reserved';proxyGo('list',date?{date}:null);}
+ else{
+  reservationUI.status='reserved';reservationUI.from=date;reservationUI.to=date;
+  reservationUI.allMonths=!date;if(date)reservationUI.month=date.slice(0,7);
+  openPanel('reservations');
+ }
+}
 function wlRefreshUnderlying(){if(isDelegateBooking){if(current)proxyRender();}else if(current)render(current.k,current.arg);}
 function wlEntry(){return `<button class="wl-entry" onclick="wlOpenList()">${wlBell}<span>キャンセル待ち・変更待ちを確認</span><b>›</b></button>`;}
 const wlOriginalSlots=bookingSlots;
