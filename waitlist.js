@@ -137,13 +137,9 @@ function wlReturnDate(){
 function wlGoList(){
  const date=wlReturnDate();
  wlClose();
- if(isDelegateBooking){proxyListStatus='reserved';proxyGo('list',date?{date}:null);}
- else{
-  reservationUI.status='reserved';reservationUI.from=date;reservationUI.to=date;
-  reservationUI.allMonths=!date;if(date)reservationUI.month=date.slice(0,7);
-  openPanel('reservations');
- }
+ showReservationListAtDate(date);
 }
+
 function wlRefreshUnderlying(){if(isDelegateBooking){if(current)proxyRender();}else if(current)render(current.k,current.arg);}
 function wlEntry(){return `<button class="wl-entry" onclick="wlOpenList()">${wlBell}<span>キャンセル待ち・変更待ちを確認</span><b>›</b></button>`;}
 const wlOriginalSlots=bookingSlots;

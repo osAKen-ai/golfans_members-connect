@@ -30,7 +30,37 @@ function cancellationMarkup(arg){
  if(!rows.length)return `<div class="rs-cancellation"><p>この予約はすでに取り消されているか、見つかりません。</p>${cancellationListButton()}</div>`;
  return `<div class="rs-cancellation"><h2>予約をキャンセルしますか？</h2><p>${rows.length>1?'取り消す組にチェックを入れてください。チェックを外した組は予約を残します。':'取り消す日付・スタート時間をご確認ください。'}</p>${cancellationFacts(rows,true)}<p id="cancellationScope" class="rs-cancel-warning" role="status">${cancellationSelectionText(rows,rows)}</p><button id="confirmCancellation" class="bk-primary reservation-cancel-confirm" onclick="confirmReservationCancellation()">${rows.length}組のキャンセルを確定する</button><button class="bk-secondary" onclick="cancellationBack()">キャンセルせずに戻る</button><p id="cancellationError" role="alert"></p><p class="bk-note">操作体験版です。実際のゴルフ場の予約は取り消されません。</p></div>`;
 }
-function cancellationListButton(){return `<button class="bk-primary" onclick="cancellationGo('${isDelegateBooking?'list':'reservations'}')">予約一覧へ進む ›</button>`;}
+function reservationReturnToList(id){
+ const ids=Array.isArray(id)?id:[typeof id==='string'?id:id?.id];
+ const records=[...state.reservations,...(state.reservationHistory||[])];
+ const record=records.find(r=>ids.includes(r.id));
+ const rows=record?reservationBatchRows(record):[];
+ const active=rows.some(r=>state.reservations.some(x=>x.id===r.id));
+ const status=active?'reserved':record?.status==='visited'?'visited':'cancelled';
+ const date=record?.date||'';
+ showReservationListAtDate(date,date?status:'reserved',record?.id);
+}
+function showReservationListAtDate(date,status='reserved',id){
+ if(isDelegateBooking){proxyListStatus=status;proxyGo('list');}
+ else{
+  reservationUI.status=status;reservationUI.from='';reservationUI.to='';reservationUI.allMonths=true;
+  if(date)reservationUI.month=date.slice(0,7);
+  openPanel('reservations');
+ }
+ if(!date)return;
+ // Wait until the modal close refresh and layout have both finished.
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  if(current?.k!==(isDelegateBooking?'list':'reservations'))return;
+  const root=document.querySelector(isDelegateBooking?'#proxyMain':'#panelBody');
+  const cards=Array.from(root?.querySelectorAll('[data-reservation-date]')||[]);
+  const target=cards.find(el=>id&&el.dataset.reservationId===id)||cards.find(el=>el.dataset.reservationDate===date);
+  if(!target)return;
+  if(isDelegateBooking)window.scrollTo({top:window.scrollY+target.getBoundingClientRect().top-16,behavior:'instant'});
+  else root.scrollTo({top:root.scrollTop+target.getBoundingClientRect().top-root.getBoundingClientRect().top-12,behavior:'instant'});
+ }));
+}
+
+function cancellationListButton(){return `<button class="bk-primary" onclick="reservationReturnToList(current.arg)">予約一覧へ進む ›</button>`;}
 function updateCancellationCount(){const selected=Array.from(document.querySelectorAll('input[name="cancelSlot"]:checked'));const n=selected.length;const b=$('#confirmCancellation');b.disabled=!n;b.textContent=n?`${n}組のキャンセルを確定する`:'キャンセルする組を選択してください';$('#cancellationScope').textContent=cancellationSelectionText(cancellationRows(current.arg),selected);}
 function applyReservationCancellation(data,ids,operator,review){
  if(!ids.length)throw Error('キャンセルする組を選択してください。');

@@ -34,7 +34,7 @@ function reservationYearCardsMarkup(records,renderCard){
   const year=String(r.date).slice(0,4);
   const heading=year!==previousYear?'<h3 class="rs-year-heading">'+esc(year)+'年</h3>':'';
   previousYear=year;
-  return heading+card;
+  return heading+card.replace('<article ', '<article data-reservation-date="'+esc(r.date)+'" data-reservation-id="'+esc(r.id)+'" ');
  }).join('');
 }
 

@@ -57,7 +57,7 @@ function visibleCalendarReservationId(){
 function calendarReservationAction(action,id,people){
  const r=calendarOwnReservations(calendarReservationDate).find(item=>item.id===id);
  if(!['list','slots'].includes(action)&&!r)return;
- const anchorId=action==='slots'?visibleCalendarReservationId():null;
+ const anchorId=['slots','list'].includes(action)?visibleCalendarReservationId():null;
  closeCalendarReservation();
  if(action==='people')changeOwnReservationPeople(id,people);
  else if(action==='time')openPanel('booking',id);
@@ -68,8 +68,7 @@ function calendarReservationAction(action,id,people){
   calendarPickDateBeforePreview(calendarReservationDate);
  }
  else if(action==='list'){
-  Object.assign(reservationUI,{status:'reserved',from:'',to:'',allMonths:true,month:calendarReservationDate.slice(0,7)});
-  openPanel('reservations');
+  showReservationListAtDate(calendarReservationDate,'reserved',anchorId);
  }
 }
 const calendarPickDateBeforePreview=pickBookingDate;
