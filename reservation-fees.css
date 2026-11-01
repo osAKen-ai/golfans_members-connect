@@ -1,0 +1,51 @@
+/* Fixed confirmation actions; only the quiet policy panel scrolls. */
+.booking-view:has(.rf-confirm) #panelBody,.proxy-flow-content:has(.rf-confirm){display:flex;overflow:hidden;padding:0;min-height:0}
+.booking-view .bk-confirm.rf-confirm{--rf-charcoal:#2d3538;--rf-red:var(--red,#7b2033);width:100%;max-width:650px;height:100%;min-height:0;margin:0 auto;padding:0 20px;display:flex;flex-direction:column;color:var(--rf-charcoal);overflow:hidden}
+.rf-summary{flex:0 1 auto;min-height:90px;max-height:40%;overflow:auto;padding:8px 0 0;scrollbar-width:thin}
+.rf-confirm .bk-batch-date{margin:8px 0 12px;gap:5px}
+.rf-confirm .bk-batch-date strong{font-size:clamp(24px,6.2vw,32px);color:#2d3538}
+.rf-confirm .bk-batch-course{font-size:20px;color:#2d3538}
+.rf-confirm .bk-register-later{font-size:12px;margin:0 0 10px;padding:8px;color:#65645e}
+.rf-confirm .bk-batch-group{margin:0 0 10px;padding:12px 14px;border-color:#c9c2b1}
+.rf-confirm .bk-batch-group h4{margin:0}
+.rf-confirm .bk-batch-group h4 strong{font-size:clamp(25px,6.8vw,32px);color:#2d3538;line-height:1.25}
+.rf-confirm .bk-batch-group p{font-size:12px;margin:5px 0 0}
+.rf-summary>.bk-confirm-facts{font-size:15px;margin:8px 0}
+.rf-summary>h3,.rf-summary>h4{font-size:17px;margin:4px 0}
+.rf-summary>p{font-size:12px;margin:5px 0}
+.rf-terms{display:flex;flex-direction:column;flex:1 1 300px;min-height:90px;max-height:360px;margin:2px 0 0}
+.rf-confirm .rf-heading{flex:none;font-size:13px;font-weight:600;margin:0;padding:4px 0 8px;color:#625e55}
+.rf-scroll,.rf-saved-scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a99d86 #f3f1ea;border:1px solid #dfdacd;border-radius:6px;background:#faf9f6;padding:12px;min-height:0;line-height:1.6;color:#2d3538}
+.rf-scroll{flex:1}.rf-scroll:focus-visible,.rf-saved-scroll:focus-visible{outline:2px solid #99865b;outline-offset:2px}
+.rf-policy+.rf-policy{border-top:1px solid #d5cebf;margin-top:18px;padding-top:12px}
+.rf-policy .rf-day{font-size:12px;margin:0 0 10px;color:#2d3538;font-weight:600}
+.rf-day span{display:block;font-size:11px;font-weight:400;color:#68645b}
+.rf-policy h4{font-size:14px;font-weight:700;margin:12px 0 6px;color:#2d3538}
+.rf-policy .rf-copy,.rf-end{font-size:11px;margin:6px 0 12px;line-height:1.7;color:#68645b}
+.rf-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;color:#2d3538;background:transparent}
+.rf-table caption{text-align:left;font-size:12px;font-weight:600;padding:4px 0;color:#2d3538}
+.rf-table th,.rf-table td{border-bottom:1px solid #dfdacd;padding:9px 5px;vertical-align:middle;text-align:left;color:#2d3538}
+.rf-table thead th{background:#efede6;font-size:10px;font-weight:500;padding:6px 5px}
+.rf-table th:first-child,.rf-table td:first-child{width:66%}
+.rf-table td:last-child,.rf-table th:last-child{text-align:right}
+.rf-table td strong{font-size:13px;font-weight:650;white-space:nowrap}
+.rf-table td .rf-date{color:var(--red,#7b2033);font-size:12px;font-weight:700;white-space:normal}
+.rf-table small{display:block;font-size:10px;font-weight:400;color:#68645b;line-height:1.6}
+.rf-footer{flex:none;margin-top:auto;padding:10px 0 max(8px,env(safe-area-inset-bottom));background:#fff;color:#2d3538}
+.rf-consent{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;min-height:32px;cursor:pointer}
+.rf-agree{width:20px;height:20px;margin:0;flex:none;accent-color:var(--red,#7b2033);cursor:pointer}
+.rf-agree:disabled{cursor:default}.rf-consent:has(input:disabled){color:#77746e}
+.rf-footer .rf-read-status{font-size:10px;line-height:1.4;color:#68645b;margin:2px 0 8px;min-height:14px}
+.rf-footer .bk-primary,.rf-footer .bk-secondary{display:block;width:100%;margin:0 0 8px;min-height:46px;padding:10px;font-size:18px;font-weight:750;border-radius:6px}
+.rf-footer .bk-primary{background:var(--red,#7b2033);color:#fff;border:1px solid var(--red,#7b2033)}
+.rf-footer .bk-primary:disabled{background:#dedbd4;border-color:#dedbd4;color:#85827b;cursor:default;box-shadow:none}
+.rf-footer .bk-secondary{background:#fff;border:1px solid #2d3538;color:#2d3538;font-size:16px;min-height:42px;margin-bottom:0}
+.rf-footer .bk-note{font-size:10px;margin:7px 0 0;color:#777268;line-height:1.4}
+.rf-details{margin:18px 0;border:1px solid #dfdacd;border-radius:6px;color:#2d3538;background:#faf9f6}
+.rf-details>summary{padding:13px;font-size:13px;font-weight:600;cursor:pointer}
+.rf-saved-scroll{max-height:340px;border:0;border-top:1px solid #dfdacd;border-radius:0}
+@media(max-width:360px){.booking-view .bk-confirm.rf-confirm{padding:0 12px}.rf-scroll{padding:9px}.rf-consent{font-size:11px}.rf-table td .rf-date{font-size:11px}}
+@media(max-height:650px){.rf-summary{max-height:34%;min-height:70px}.rf-confirm .bk-register-later{display:none}.rf-confirm .bk-batch-date{margin:2px 0 6px}.rf-confirm .bk-batch-date strong{font-size:23px}.rf-confirm .bk-batch-course{font-size:16px}.rf-confirm .bk-batch-group{padding:8px 12px}.rf-footer{padding-top:5px}.rf-footer .bk-primary,.rf-footer .bk-secondary{min-height:38px;padding:7px;font-size:15px}.rf-footer .bk-note{display:none}}
+.rf-policy h4,.rf-confirm .rf-heading{text-align:left}
+.rf-confirm .bk-batch-date .sat,.rf-confirm .bk-batch-date .sun{color:#2d3538}
+.rf-summary .rf-start-value{font-size:24px;font-weight:800;color:#2d3538}
