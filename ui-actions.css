@@ -9,7 +9,7 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 .event-card-compact header{padding:11px 14px 3px;align-items:center;gap:6px}
 .event-category{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;line-height:1.4;color:#756440}
 .event-category svg{width:23px;height:23px;flex:none}
-.event-category.ladies{color:#935777}.event-category.social{color:#387568}
+.event-category.social{color:#387568}
 .event-card-compact .event-status-text{margin:0;font-size:11px}
 .event-card-compact .event-compact-title{padding:0 14px;margin:0;font-size:21px;font-weight:800;line-height:1.4;color:#2d3538}
 .event-compact-date{padding:4px 14px 9px;font-size:23px;font-weight:800;color:#2d3538;line-height:1.4}
@@ -23,10 +23,10 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:360px){.event-card-compact header{padding-left:11px;padding-right:11px}.event-card-compact .event-compact-title{padding:0 11px;font-size:19px}.event-compact-date{padding-left:11px;font-size:21px}.event-compact-facts{margin:0 11px}.event-compact-facts>div{padding:0 6px}.event-compact-facts strong{font-size:17px}.event-compact-count span{font-size:12px}.event-compact-facts small{font-size:10px}.event-card-compact .event-card-actions{padding-left:11px;padding-right:11px}}
 
 /* Category cues and status badges remain distinct from action buttons. */
-.event-card-compact.category-ladies{border-color:#b65d68;background:#f7eeee}
+
 .event-card-compact.category-ladies header{background:transparent}
-.event-category.ladies,.category-ladies .event-compact-title,.club-event-detail.category-ladies>h3{color:#a43669}
-.event-category.ladies svg{fill:#f7eeee;stroke:#a43669}
+
+.event-category.ladies svg{fill:none;stroke:currentColor}
 .event-card-compact .event-status-text{padding:4px 8px;border-radius:4px;background:#eeefed;color:#535950;font-size:12px;line-height:1.4;font-weight:750;white-space:nowrap}
 .event-card-compact .event-status-text.open{background:#f7eeee;color:#7b2033}
 .event-card-compact .event-status-text.joined{background:#e5f2e9;color:#24613a}
@@ -266,3 +266,5 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 .bk-batch-confirm .bk-batch-group h4>strong{margin-top:0}
 .bk-batch-confirm .bk-batch-group h4>span+strong{margin-top:4px}
 .bk-batch-confirm .bk-batch-group p{margin-top:6px}
+
+.event-list-heading{flex-wrap:wrap;gap:8px}.event-list-filters{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:flex-end}.event-list-filters label{min-height:36px;white-space:nowrap}
