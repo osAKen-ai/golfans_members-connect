@@ -49,3 +49,7 @@
 .rf-policy h4,.rf-confirm .rf-heading{text-align:left}
 .rf-confirm .bk-batch-date .sat,.rf-confirm .bk-batch-date .sun{color:#2d3538}
 .rf-summary .rf-start-value{font-size:24px;font-weight:800;color:#2d3538}
+
+/* Keep the competition note inside the member cancellation table. */
+.rf-table .rf-cancel-note td{width:auto;text-align:left;font-size:14px;line-height:1.8;background:#efede6;padding:10px;border-bottom:1px solid #dfdacd}
+.rf-policy h4.rf-guest-heading{margin-top:24px;padding-top:16px;border-top:1px solid #d4cebf}
