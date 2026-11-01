@@ -10,7 +10,7 @@
 .companion-picker-view .bk-guest-tabs button{padding:10px 2px;font-size:15px}
 .companion-picker-view .bk-new-member{grid-column:1;grid-row:3;margin:8px 20px;padding:8px;max-height:170px}
 .companion-picker-view #bookingGuestChoices{grid-column:1;grid-row:4;padding:8px 20px 16px;overflow:auto;min-height:0}
-.companion-picker-view .cp-bottom.cp-player-selection{grid-column:2;grid-row:1 / 5;display:flex;flex-direction:column;position:static;min-height:0;align-self:stretch;border-left:1px solid #ddd;box-shadow:none;background:#102e50;color:white;padding:16px 12px;margin:0}
+.companion-picker-view .cp-bottom.cp-player-selection{grid-column:2;grid-row:1 / 5;display:flex;flex-direction:column;position:static;min-height:0;align-self:stretch;border-left:1px solid #ddd;box-shadow:none;background:#2d3538;color:white;padding:16px 12px;margin:0}
 .companion-picker-view .cp-bottom-head{padding:8px 0 12px;flex:none}
 .companion-picker-view .cp-bottom-head>strong{font-size:17px;display:block}
 .companion-picker-view .cp-bottom-head small{font-size:14px;margin-top:8px;display:block}

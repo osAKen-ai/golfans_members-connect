@@ -17,17 +17,17 @@
  .booking-times-view .bk-time-main{display:flex;flex-direction:column;min-height:0;min-width:0}
  .booking-times-view .bk-slot-list{flex:1;height:auto;max-height:none;min-height:0}
  .booking-times-view .bk-slot-toolbar{flex:none}
- .booking-times-view .bk-selection,.booking-times-view .bk-selection[hidden]{display:flex;flex-direction:column;align-items:stretch;position:static;min-height:0;overflow:auto;background:#102e50;color:white;padding:24px 20px;border:0;border-left:1px solid #d9d1bf;box-shadow:none}
+ .booking-times-view .bk-selection,.booking-times-view .bk-selection[hidden]{display:flex;flex-direction:column;align-items:stretch;position:static;min-height:0;overflow:auto;background:#2d3538;color:white;padding:24px 20px;border:0;border-left:1px solid #c8bfa6;box-shadow:none}
  .booking-times-view .bk-selection-title,.booking-times-view .bk-selection-empty h3{display:block;color:white;font-size:19px;line-height:1.5;margin:0 0 24px}
  .booking-times-view .bk-selection-facts{display:block;margin:0 0 24px}
- .booking-times-view .bk-selection-facts dt{font-size:14px;color:#c5d1e0;margin:16px 0 4px}
+ .booking-times-view .bk-selection-facts dt{font-size:14px;color:#d8d4ca;margin:16px 0 4px}
  .booking-times-view .bk-selection-facts dd{font-size:19px;font-weight:700;margin:0;line-height:1.5}
  .booking-times-view .bk-selection-facts dd b{font-size:27px;color:white}
  .booking-times-view .bk-selection-summary{display:none}
  .booking-times-view .bk-selection>div{flex:none;display:block;margin:0 0 18px}
  .booking-times-view .bk-selection>div>button{font-size:15px;padding:8px 16px;min-height:40px}
  .booking-times-view .bk-selection>.bk-primary{width:100%;margin-top:auto;min-height:56px;font-size:21px;flex-shrink:0}
- .booking-times-view .bk-selection-empty p{color:#d5deea;font-size:16px;line-height:1.9;margin:0}
+ .booking-times-view .bk-selection-empty p{color:#d8d4ca;font-size:16px;line-height:1.9;margin:0}
 }
 @media(min-width:1000px) and (max-height:760px){
  .booking-times-view .bk-selection{padding:16px}
@@ -72,7 +72,7 @@
 /* Month navigation is shared by desktop and phone. */
 .bk-month-navigation{display:flex;align-items:stretch;gap:6px;padding:0 12px 8px}
 .bk-month-navigation .bk-months{flex:1;min-width:0;margin:0;padding:0;gap:6px}
-.bk-month-arrow{flex:0 0 32px;min-height:40px;border:1px solid #d1c7b0;border-radius:6px;background:#fff;color:#796336;font-size:28px;font-weight:700}
+.bk-month-arrow{flex:0 0 32px;min-height:40px;border:1px solid #c8bfa6;border-radius:6px;background:#fff;color:#756440;font-size:28px;font-weight:700}
 .bk-month-arrow:disabled{opacity:.3}
 @media(min-width:1000px){
  .sheet.booking-times-view #panelBody,.proxy-original-booking.booking-times-view{grid-template-columns:minmax(0,1fr) 320px}
@@ -83,8 +83,8 @@
  .booking-times-view .bk-slot-main{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,52px) 34px;column-gap:16px;row-gap:0}
  .booking-times-view .bk-people,.booking-times-view .bk-seat,.booking-times-view .bk-avatar,.booking-times-view .bk-guest{width:52px;height:52px;max-width:52px;min-height:52px;aspect-ratio:1;box-sizing:border-box;justify-self:center}
  .booking-times-view .bk-full{grid-column:5;grid-row:1;align-self:center;margin:0;font-size:12px}
- .booking-times-view .bk-selection,.booking-times-view .bk-selection[hidden]{background:#f4f0e6;color:#102e50;border-left:1px solid #ded5c1}
- .booking-times-view .bk-selection-title,.booking-times-view .bk-selection-empty h3,.booking-times-view .bk-selection-facts dd b{color:#102e50}
+ .booking-times-view .bk-selection,.booking-times-view .bk-selection[hidden]{background:#e5dfd0;color:#2d3538;border-left:1px solid #c8bfa6}
+ .booking-times-view .bk-selection-title,.booking-times-view .bk-selection-empty h3,.booking-times-view .bk-selection-facts dd b{color:#2d3538}
  .booking-times-view .bk-selection-facts dt{color:#73684e}
  .booking-times-view .bk-selection-empty p{color:#645e52}
  .booking-view:has(.bk-calendar-pair) .bk-month-navigation{padding:0 24px 8px}

@@ -1,33 +1,33 @@
 /* A single close/remove treatment throughout the portal. */
-.sheet .sheethead .close{color:#b50927;font-weight:900;font-size:34px;background:#fff;border:1px solid #e4cbd0;display:grid;place-items:center;width:44px;height:44px;line-height:1;padding:0}
-.bk-selected-guests .cp-remove{color:#b50927;font-weight:900;background:#fff;border-radius:4px}
-.menu .menu-profile-status,.reference-nav .menu-profile-status{display:block;width:100%;margin:10px 0 0;padding:12px 16px;background:#f6f2e8;border:1px solid #d7caab;border-radius:8px;text-align:left;color:var(--navy);line-height:1.6}
+.sheet .sheethead .close{color:#7b2033;font-weight:900;font-size:34px;background:#fff;border:1px solid #e4cfd3;display:grid;place-items:center;width:44px;height:44px;line-height:1;padding:0}
+.bk-selected-guests .cp-remove{color:#7b2033;font-weight:900;background:#fff;border-radius:4px}
+.menu .menu-profile-status,.reference-nav .menu-profile-status{display:block;width:100%;margin:10px 0 0;padding:12px 16px;background:#f7f5ef;border:1px solid #c8bfa6;border-radius:8px;text-align:left;color:var(--navy);line-height:1.6}
 .menu-profile-heading{display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:800}
-.menu-profile-heading>b{font-size:24px;color:#8a7039}
+.menu-profile-heading>b{font-size:24px;color:#756440}
 .menu-profile-current{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:4px 0 0}
-.menu-profile-current>strong{font-size:12px;background:#75633c;color:#fff;border-radius:20px;padding:2px 10px}
-.directory-add{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 16px;margin:14px 0 18px;border:1px solid #ae9860;background:#fff;color:#70592c;border-radius:6px;min-height:46px;font-size:16px;font-weight:800}
+.menu-profile-current>strong{font-size:12px;background:#756440;color:#fff;border-radius:20px;padding:2px 10px}
+.directory-add{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 16px;margin:14px 0 18px;border:1px solid #99865b;background:#fff;color:#756440;border-radius:6px;min-height:46px;font-size:16px;font-weight:800}
 .directory-add>span{font-size:22px}
 .companion-registration,.photo-editor{padding:20px 18px 28px;max-width:560px;margin:auto}
-.companion-registration label{margin:12px 0 2px;font-size:15px}.companion-registration label small{font-size:11px;margin-left:6px;color:#876e39}.companion-registration .field{margin-bottom:8px;font-size:16px;min-height:46px}.companion-registration .bk-note,.photo-editor .bk-note{font-size:12px;line-height:1.8}
+.companion-registration label{margin:12px 0 2px;font-size:15px}.companion-registration label small{font-size:11px;margin-left:6px;color:#756440}.companion-registration .field{margin-bottom:8px;font-size:16px;min-height:46px}.companion-registration .bk-note,.photo-editor .bk-note{font-size:12px;line-height:1.8}
 .reference-body .reference-photo-overlay{position:absolute;display:block;left:32%;top:3.4%;width:36%;aspect-ratio:1;border-radius:50%;background:var(--paper);border:0;padding:0;overflow:visible;z-index:1}
 .reference-body .reference-photo-overlay .own-photo{display:block;position:static;width:100%;height:100%;object-fit:cover;border-radius:50%;transform:none;mix-blend-mode:normal}
 .reference-photo-overlay .own-public-photo{border-radius:50%}.own-photo{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
 .reference-body.reference-checkin .reference-photo-overlay{top:29.5%}
-.photo-edit-badge{display:grid;place-items:center;position:absolute;right:0;bottom:0;background:#fff;color:#80682d;border:1px solid #cbbd98;border-radius:50%;width:34px;height:34px;font-size:25px;box-shadow:0 2px 6px #0002}
-.photo-file-label{position:relative;display:block;text-align:center;padding:13px 12px;border:1px solid #ab945b;border-radius:6px;background:#fff;color:#715b30;font-weight:800;font-size:16px;cursor:pointer;overflow:hidden}
-.photo-file-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.photo-file-label:focus-within{outline:3px solid #1769a0;outline-offset:3px}
-.photo-crop-stage{width:min(260px,100%);aspect-ratio:1;margin:24px auto 10px;background:#e9e5dc;border-radius:50%;overflow:hidden;outline:3px solid #c5b58c;outline-offset:4px}
+.photo-edit-badge{display:grid;place-items:center;position:absolute;right:0;bottom:0;background:#fff;color:#756440;border:1px solid #c8bfa6;border-radius:50%;width:34px;height:34px;font-size:25px;box-shadow:0 2px 6px #0002}
+.photo-file-label{position:relative;display:block;text-align:center;padding:13px 12px;border:1px solid #99865b;border-radius:6px;background:#fff;color:#756440;font-weight:800;font-size:16px;cursor:pointer;overflow:hidden}
+.photo-file-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.photo-file-label:focus-within{outline:3px solid #2d3538;outline-offset:3px}
+.photo-crop-stage{width:min(260px,100%);aspect-ratio:1;margin:24px auto 10px;background:#e9e5dc;border-radius:50%;overflow:hidden;outline:3px solid #c8bfa6;outline-offset:4px}
 #photoCropCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 .photo-drag-hint{text-align:center;font-size:12px;color:#71664e;margin:12px 0 20px}
-.photo-controls label{display:flex;justify-content:space-between;font-size:14px;color:#4c5965}.photo-controls input[type=range]{width:100%;min-height:34px;margin:3px 0 10px;accent-color:#816c3b}
-.photo-reset{display:block;margin:0 auto 16px;padding:8px 12px;min-height:40px;background:#fff;border:1px solid #d6cdb6;border-radius:5px;color:#6d5c36;font-size:13px}
-.photo-privacy-note{background:#eee9dc;color:#5c533f;padding:12px;border-radius:6px;font-size:12px;line-height:1.8}.photo-editor .bk-primary:disabled{opacity:.45;cursor:default}
+.photo-controls label{display:flex;justify-content:space-between;font-size:14px;color:#2d3538}.photo-controls input[type=range]{width:100%;min-height:34px;margin:3px 0 10px;accent-color:#756440}
+.photo-reset{display:block;margin:0 auto 16px;padding:8px 12px;min-height:40px;background:#fff;border:1px solid #c8bfa6;border-radius:5px;color:#756440;font-size:13px}
+.photo-privacy-note{background:#e5dfd0;color:#5c533f;padding:12px;border-radius:6px;font-size:12px;line-height:1.8}.photo-editor .bk-primary:disabled{opacity:.45;cursor:default}
 
 /* Keep the underlying page visible at the left of the menu. */
 .menu{padding:8px 16px 16px;border-radius:12px 0 0 12px}
 .menu .menu-heading,.reference-nav .menu-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 0 6px 12px;border-bottom:1px solid #eee;color:var(--navy);font-size:15px;background:#fff}
-.menu .menu-close,.reference-nav .menu-close{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0;border:1px solid #e4cbd0;border-radius:50%;background:#fff;color:#b50927;font-size:34px;font-weight:900;line-height:1;text-align:center;box-shadow:0 2px 5px #45232a12}
+.menu .menu-close,.reference-nav .menu-close{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0;border:1px solid #e4cfd3;border-radius:50%;background:#fff;color:#7b2033;font-size:34px;font-weight:900;line-height:1;text-align:center;box-shadow:0 2px 5px #45232a12}
 .menu .menu-close:focus-visible,.reference-nav .menu-close:focus-visible{outline:3px solid var(--navy);outline-offset:3px}
 .reference-nav{margin-left:48px;padding:8px 16px 16px;border-radius:12px 0 0 12px;box-shadow:-5px 5px 18px #09285212}
 .member-view .reference-nav .menu-heading{background:var(--paper)}
@@ -35,13 +35,13 @@
 
 /* High-contrast reservation filters and explicit selected state. */
 .booking-view .rs-tabs{grid-template-columns:1fr 1.2fr 1.65fr 1.4fr;gap:4px;border:0}
-.booking-view .rs-tabs button{display:flex;align-items:center;justify-content:center;gap:0;min-height:44px;padding:8px 2px;border:1px solid #64758a;border-radius:7px;background:#fff;color:#062852;font-size:13px;font-weight:800;line-height:1.4;white-space:nowrap}
-.booking-view .rs-tabs button.active{background:#062852;color:#fff;border:2px solid #062852;font-weight:800}
+.booking-view .rs-tabs button{display:flex;align-items:center;justify-content:center;gap:0;min-height:44px;padding:8px 2px;border:1px solid #607992;border-radius:7px;background:#fff;color:#2d3538;font-size:13px;font-weight:800;line-height:1.4;white-space:nowrap}
+.booking-view .rs-tabs button.active{background:#2d3538;color:#fff;border:2px solid #2d3538;font-weight:800}
 .booking-view .rs-tabs button.active:before{content:none}
-.booking-view .rs-tabs button:focus-visible{outline:3px solid #b50927;outline-offset:3px}
-.booking-view .rs-status{background:#062852;color:#fff;font-weight:800;font-size:13px;padding:5px 9px}
+.booking-view .rs-tabs button:focus-visible{outline:3px solid #7b2033;outline-offset:3px}
+.booking-view .rs-status{background:#2d3538;color:#fff;font-weight:800;font-size:13px;padding:5px 9px}
 .booking-view .rs-status.visited{background:#e7eeea;color:#24513c}
-.booking-view .rs-status.cancelled{background:#f5e7e8;color:#9a1230}
+.booking-view .rs-status.cancelled{background:#f7eeee;color:#7b2033}
 @media(min-width:700px){.booking-view .rs-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.booking-view .rs-tabs button{font-size:14px}}
 
 /* Compact monthly overview keeps reservations within easy reach. */
@@ -83,7 +83,7 @@
 .booking-times-view .bk-courses button{height:44px;font-size:17px}
 }
 .bk-condition-panel{border-bottom:1px solid #e9e8e5;background:#fff}
-.bk-condition-panel>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:6px 12px;cursor:pointer;list-style:none;color:#062852;font-size:12px;font-weight:700}
+.bk-condition-panel>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:6px 12px;cursor:pointer;list-style:none;color:#2d3538;font-size:12px;font-weight:700}
 .bk-condition-panel>summary::-webkit-details-marker{display:none}
 .bk-condition-panel>summary b{flex-shrink:0;text-decoration:underline}
 .bk-condition-panel>summary b:after{content:' ▾'}
@@ -141,43 +141,43 @@
 }
 
 /* My Page identity: real text, matching the approved compact reference. */
-.profile-identity{container-type:inline-size;text-align:center;color:#062852;padding:0 0 3%;background:var(--paper)}
+.profile-identity{container-type:inline-size;text-align:center;color:#2d3538;padding:0 0 3%;background:var(--paper)}
 .profile-portrait{position:relative;width:36%;aspect-ratio:1;margin:5% auto 0}
 .profile-portrait .reference-photo-overlay{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:50%;background:transparent;overflow:visible}
 .profile-portrait .own-public-photo,.profile-portrait .own-photo{border-radius:50%;width:100%;height:100%;object-fit:cover}
-.profile-identity .profile-member-name{margin:3.8% 0 0;font-size:7cqw;line-height:1.3;font-weight:800;letter-spacing:.02em;color:#062852}
+.profile-identity .profile-member-name{margin:3.8% 0 0;font-size:7cqw;line-height:1.3;font-weight:800;letter-spacing:.02em;color:#2d3538}
 .profile-member-name small{font-size:4.5cqw;font-weight:700}
 .profile-identity .profile-english-name{margin:1% 0 0;font-size:4.1cqw;line-height:1.4}
 .profile-identity .profile-tenure{margin:3.5% 0 0;font-size:4.7cqw;line-height:1.4;font-weight:750}
 .profile-identity .profile-joined{margin:.5% 0 0;font-size:3.5cqw;line-height:1.5}
 .profile-identity .profile-birthday{margin:2.5% 0 0;font-size:4.1cqw;line-height:1.5;font-weight:700;white-space:nowrap}
-.profile-handicap{width:80%;margin:2.5% auto 0;display:grid;grid-template-columns:1fr 1fr;border:1px solid #dfb574;border-radius:6px;background:#fff;overflow:hidden}
-.profile-handicap-cell{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6cqw;padding:2.3cqw 0;color:#062852;background:none;border:0;font:inherit}
+.profile-handicap{width:80%;margin:2.5% auto 0;display:grid;grid-template-columns:1fr 1fr;border:1px solid #c8bfa6;border-radius:6px;background:#fff;overflow:hidden}
+.profile-handicap-cell{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6cqw;padding:2.3cqw 0;color:#2d3538;background:none;border:0;font:inherit}
 .profile-handicap-cell>span{font-size:3.5cqw;line-height:1.3;white-space:nowrap}
 .profile-handicap-cell>strong{font-size:7cqw;line-height:1.05;font-weight:750;font-variant-numeric:tabular-nums}
-.profile-course-handicap:before{content:'';position:absolute;left:0;top:27%;bottom:27%;border-left:1px solid #dfb574}
-.profile-course-handicap .profile-handicap-details{position:static;display:flex;align-items:center;justify-content:center;width:100%;height:7.35cqw;font-size:4.5cqw;line-height:1.3;color:#062852;font-weight:600}
-.profile-course-handicap:focus-visible{outline:3px solid #062852;outline-offset:-4px}
-.profile-course-handicap:hover{background:#faf7f1}
+.profile-course-handicap:before{content:'';position:absolute;left:0;top:27%;bottom:27%;border-left:1px solid #c8bfa6}
+.profile-course-handicap .profile-handicap-details{position:static;display:flex;align-items:center;justify-content:center;width:100%;height:7.35cqw;font-size:4.5cqw;line-height:1.3;color:#2d3538;font-weight:600}
+.profile-course-handicap:focus-visible{outline:3px solid #2d3538;outline-offset:-4px}
+.profile-course-handicap:hover{background:#f7f5ef}
 .profile-membership{display:flex;align-items:center;justify-content:center;gap:2.4cqw;margin:3% 0 0}
-.profile-membership>span{background:#b4965f;color:white;border-radius:4px;padding:.5cqw 1.8cqw;font-size:3.7cqw;font-weight:700;line-height:1.4}
+.profile-membership>span{background:#99865b;color:white;border-radius:4px;padding:.5cqw 1.8cqw;font-size:3.7cqw;font-weight:700;line-height:1.4}
 .profile-membership>strong{font-size:6cqw;line-height:1.3;font-weight:750}
 .profile-barcode{width:44%;height:11cqw;margin:3.5% auto 0;background-image:url('assets/member-profile.png');background-repeat:no-repeat;background-size:226.5% 132.6cqw;background-position:50% 69.75%;mix-blend-mode:multiply}
 .profile-identity .profile-barcode-number{margin:1.8% 0 0;font-size:3.5cqw;line-height:1.3;letter-spacing:.28em;padding-left:.28em}
-.profile-handicap-modal{text-align:center;color:#062852;padding:20px 8px}
+.profile-handicap-modal{text-align:center;color:#2d3538;padding:20px 8px}
 .profile-handicap-modal-label{font-size:18px;margin:0}
 .profile-handicap-modal-value{font-size:48px;font-weight:750;margin:12px 0}
 
-.profile-handicap-dialog{width:min(360px,calc(100% - 40px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #dfc79e;border-radius:12px;background:var(--paper);color:#062852;box-shadow:0 14px 60px #0003}
+.profile-handicap-dialog{width:min(360px,calc(100% - 40px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #c8bfa6;border-radius:12px;background:var(--paper);color:#2d3538;box-shadow:0 14px 60px #0003}
 .profile-handicap-dialog::backdrop{background:rgb(13 25 39 / 45%)}
-.profile-handicap-dialog-content>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #e7dcc9}
+.profile-handicap-dialog-content>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #e5dfd0}
 .profile-handicap-dialog-content>header h3{margin:0;font-size:18px;font-weight:750}
-.handicap-dialog-close{width:40px;height:40px;border:1px solid #e4cbd0;border-radius:50%;background:#fff;color:#b50927;font-size:28px;font-weight:800;line-height:1}
+.handicap-dialog-close{width:40px;height:40px;border:1px solid #e4cfd3;border-radius:50%;background:#fff;color:#7b2033;font-size:28px;font-weight:800;line-height:1}
 .profile-handicap-dialog .profile-handicap-modal{padding:24px}
 .profile-handicap-dialog .secondary{margin-top:22px}
 
 /* Match My Page's navy text and name hierarchy, retaining the check-in order. */
-.member-view.checkin-view .checkin-reservation{color:#062852}
+.member-view.checkin-view .checkin-reservation{color:#2d3538}
 .checkin-identity{padding-bottom:8%}
 .checkin-identity .checkin-barcode{height:13.5cqw;margin-top:3%;background-image:url('assets/member-checkin.png');background-size:226.5% 216.7cqw;background-position:50% 36.88%}
 .checkin-identity .profile-barcode-number{margin-top:4%;font-size:3.5cqw}
@@ -192,11 +192,11 @@
 .profile-handicap-dialog-content>header{gap:6px;padding:12px 14px}
 .profile-handicap-dialog-content>header>div{flex:1;min-width:0;text-align:center}
 .profile-handicap-dialog-content>header h3{font-size:16px;line-height:1.4;white-space:nowrap}
-.handicap-updated{margin:4px 0 0;font-size:12px;line-height:1.4;font-weight:600;color:#062852}
+.handicap-updated{margin:4px 0 0;font-size:12px;line-height:1.4;font-weight:600;color:#2d3538}
 .profile-handicap-dialog .handicap-dialog-close{flex:none;width:32px;height:32px;font-size:24px}
 .profile-handicap-dialog .profile-handicap-modal{padding:12px 16px 16px}
-.course-handicap-table{width:100%;border-collapse:collapse;table-layout:fixed;color:#062852}
-.course-handicap-table th,.course-handicap-table td{border-bottom:1px solid #e7dcc9;padding:6px 2px;line-height:1.2;white-space:nowrap}
+.course-handicap-table{width:100%;border-collapse:collapse;table-layout:fixed;color:#2d3538}
+.course-handicap-table th,.course-handicap-table td{border-bottom:1px solid #e5dfd0;padding:6px 2px;line-height:1.2;white-space:nowrap}
 .course-handicap-table thead th{font-size:14px;font-weight:700;text-align:center;height:30px}
 .course-handicap-table tbody th{font-size:15px;font-weight:700;text-align:left}
 .course-handicap-table td{font-size:20px;font-weight:750;text-align:center;font-variant-numeric:tabular-nums}

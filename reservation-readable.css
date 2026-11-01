@@ -10,19 +10,19 @@
 .rs-card .rs-created {
   font-size: 14px;
   font-weight: 600;
-  color: #4b5563;
+  color: #2d3538;
 }
 .rs-card .rs-detail {
   font-size: 16px;
   font-weight: 750;
-  color: #062852;
+  color: #2d3538;
   min-height: 48px;
   align-items: center;
   gap: 12px;
   text-align: left;
 }
 .rs-card .rs-detail > span { font-size: 23px; }
-.rs-card .rs-detail:focus-visible { outline: 3px solid #062852; outline-offset: 3px; }
+.rs-card .rs-detail:focus-visible { outline: 3px solid #2d3538; outline-offset: 3px; }
 .rs-card .rs-card-top { align-items: flex-start; }
 .rs-booking-origin {
   margin-left: auto;
@@ -37,20 +37,20 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  color: #34475f;
+  color: #2d3538;
 }
 .rs-card .rs-proxy {
   font-size: 14px;
   font-weight: 750;
   line-height: 1.5;
   padding: 3px 7px;
-  color: #665020;
-  background: #f6f1e5;
-  border: 1px solid #9a8148;
+  color: #756440;
+  background: #f7f5ef;
+  border: 1px solid #99865b;
   white-space: nowrap;
 }
 .rs-card .rs-status { font-size: 14px; font-weight: 750; }
-.rs-card .rs-status.reserved { color: #fff; background: #062852; }
+.rs-card .rs-status.reserved { color: #fff; background: #2d3538; }
 .proxy-main > .rs-card { margin-top: 12px; }
 @media (max-width: 350px) {
   .rs-booking-origin { gap: 5px; }
@@ -63,7 +63,7 @@
   font-size: 22px;
   font-weight: 850;
   line-height: 1.5;
-  color: #062852;
+  color: #2d3538;
   white-space: nowrap;
 }
 .rs-card .rs-card-facts { gap: 8px; flex-wrap: wrap; }
@@ -79,43 +79,43 @@
   font-size: 18px;
   font-weight: 700;
   line-height: 1.5;
-  color: #062852;
+  color: #2d3538;
   white-space: nowrap;
 }
 
 /* Pending names and the member's own participation are explicit text labels. */
 .rs-pending-name,
-.rs-detail-guests b.rs-pending-name { color: #ab2236; }
+.rs-detail-guests b.rs-pending-name { color: #7b2033; }
 .rs-self-player { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; font-size: 14px; font-weight: 600; color: #404950; margin-bottom: 4px; }
-.rs-self-player .rs-self-label { color: #ab2236; font-weight: 750; }
+.rs-self-player .rs-self-label { color: #7b2033; font-weight: 750; }
 .rs-detail-page > .rs-self-player { margin: 20px 0; font-size: 16px; }
 .rs-card .rs-register { font-size: 16px; font-weight: 750; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; text-align: center; }
 .rs-card .rs-register > span { font-size: 14px; font-weight: 600; margin: 0; flex: 0 0 auto; }
 
 /* Status and slot type stay together; booking channel remains at the right. */
 .rs-status-group { display: inline-flex; align-items: center; gap: 7px; flex-wrap: nowrap; }
-.rs-intro-badge { display: inline-block; padding: 3px 7px; border: 1px solid #9a8148; border-radius: 3px; background: #f6f1e5; color: #665020; font-size: 14px; line-height: 1.5; font-weight: 750; white-space: nowrap; }
+.rs-intro-badge { display: inline-block; padding: 3px 7px; border: 1px solid #99865b; border-radius: 3px; background: #f7f5ef; color: #756440; font-size: 14px; line-height: 1.5; font-weight: 750; white-space: nowrap; }
 .rs-card .rs-card-top { align-items: center; }
 .rs-introducer { gap: 0; }
-.rs-introducer-label { color: #665020; font-weight: 750; }
+.rs-introducer-label { color: #756440; font-weight: 750; }
 .rs-batch-slot > .rs-group-caption { margin-bottom: 5px; }
-.rs-batch-slot > .rs-group-caption > .rs-intro-badge { color: #665020; font-size: 14px; }
+.rs-batch-slot > .rs-group-caption > .rs-intro-badge { color: #756440; font-size: 14px; }
 .rs-batch-slot > .rs-batch-start { gap: 12px; }
 .rs-batch-start > strong { flex: 1; }
 
 /* The play date leads each list card; the year appears once above its cards. */
-.rs-year-heading { grid-column: 1 / -1; margin: 22px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #d5cbb4; color: #062852; font-size: 20px; font-weight: 750; line-height: 1.4; }
-.rs-card > h3.rs-play-date { font-size: clamp(28px, 8vw, 34px); font-weight: 850; line-height: 1.35; margin: 16px 0 18px; color: #062852; }
+.rs-year-heading { grid-column: 1 / -1; margin: 22px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #c8bfa6; color: #2d3538; font-size: 20px; font-weight: 750; line-height: 1.4; }
+.rs-card > h3.rs-play-date { font-size: clamp(28px, 8vw, 34px); font-weight: 850; line-height: 1.35; margin: 16px 0 18px; color: #2d3538; }
 .rs-play-date time { white-space: nowrap; }
 .rs-play-date time > span { font-size: .78em; margin-left: .15em; }
 @media (max-width: 350px) { .rs-card > h3.rs-play-date { font-size: 26px; } }
 
 /* Match the TOP card: start, course, and people in three labelled columns. */
-.rs-card .rs-start-facts { display: grid; grid-template-columns: minmax(0,1.42fr) minmax(0,1.08fr) minmax(0,.5fr); gap: 0; margin: 14px 0 18px; color: #062852; }
+.rs-card .rs-start-facts { display: grid; grid-template-columns: minmax(0,1.42fr) minmax(0,1.08fr) minmax(0,.5fr); gap: 0; margin: 14px 0 18px; color: #2d3538; }
 .rs-card .rs-start-facts > div { min-width: 0; padding: 0 12px; border-left: 1px solid #e5e5e5; }
 .rs-card .rs-start-facts > div:first-child { padding-left: 0; border-left: 0; }
 .rs-card .rs-start-facts > div:last-child { padding-right: 0; }
-.rs-card .rs-start-facts dt { color: #586675; font-size: 12px; font-weight: 650; line-height: 1.5; margin: 0 0 4px; }
+.rs-card .rs-start-facts dt { color: #607992; font-size: 12px; font-weight: 650; line-height: 1.5; margin: 0 0 4px; }
 .rs-card .rs-start-facts dd { margin: 0; font-size: 22px; font-weight: 850; line-height: 1.4; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .rs-card .rs-batch-total { justify-content: flex-end; }
 @media (max-width: 360px) {
@@ -136,7 +136,7 @@
 
 /* Compact, readable cancellation history below the current reservation actions. */
 .rs-card .rs-cancel-history { margin: 16px 0; padding: 12px 14px; background: #f5f4f0; border-radius: 6px; color: #404950; }
-.rs-card .rs-cancel-history h4 { margin: 0 0 5px; padding: 0; border: 0; color: #a32636; font-size: 14px; font-weight: 750; line-height: 1.5; }
+.rs-card .rs-cancel-history h4 { margin: 0 0 5px; padding: 0; border: 0; color: #7b2033; font-size: 14px; font-weight: 750; line-height: 1.5; }
 .rs-card .rs-cancel-history-entry p { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.65; overflow-wrap: anywhere; }
 .rs-card .rs-cancel-history-entry + .rs-cancel-history-entry { margin-top: 8px; padding-top: 8px; border-top: 1px solid #dedbd3; }
 .rs-card .rs-cancel-history-entry .rs-operation-date { color: #545b62; font-size: 13px; font-weight: 500; }
