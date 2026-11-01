@@ -56,7 +56,8 @@ async function github(env, path, options = {}) {
       'User-Agent': 'Golfans-Ito-Publish',
       'Content-Type': 'application/json',
     },
-    redirect: 'error',
+    // Workers supports manual, not error. Reject every non-2xx response below.
+    redirect: 'manual',
     signal: AbortSignal.timeout(15000),
   });
   if (!response.ok) throw new Error('upstream');
@@ -86,7 +87,12 @@ export async function onRequest({ request, env }) {
     response.headers.set('Set-Cookie', `${COOKIE}=${readToken(request)}; Path=/api/publish; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`);
     return response;
   }
+  return publishOperation(request, env);
+}
 
+// Called by the web handler above, or by the separately OAuth-authenticated MCP worker.
+export async function publishOperation(request, env) {
+  const url = new URL(request.url);
   try {
     if (request.method === 'GET') {
       const runId = url.searchParams.get('run_id');

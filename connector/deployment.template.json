@@ -1,0 +1,14 @@
+{
+  "name": "golfans-ito-publish",
+  "main_module": "worker.mjs",
+  "compatibility_date": "2026-07-30",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "required_bindings": {
+    "OAUTH_KV": "KV namespace",
+    "PUBLIC_BASE_URL": "Actual HTTPS origin assigned on publication",
+    "ITO_CONNECTOR_CODE_SHA256": "SHA-256 of the separate Ito connection code; manage original in Infisical",
+    "GITHUB_ITO_SYNC_TOKEN": "Server credential for Actions read/write on osAKen-ai/golfans_members-connect"
+  },
+  "local_only_binding": "ALLOW_LOCAL_OAUTH must be absent in production",
+  "publication_status": "not deployed"
+}

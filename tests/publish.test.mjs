@@ -72,7 +72,7 @@ test('dispatch is restricted to the existing workflow and carries its own reques
   assert.equal(calls.length, 2);
   assert.equal(calls[1].url, 'https://api.github.com/repos/osAKen-ai/golfans_members-connect/actions/workflows/auto-sync-ito.yml/dispatches');
   assert.deepEqual(JSON.parse(calls[1].body), { ref: 'main', inputs: { selftest_failure: false, publish_request_id: id } });
-  assert.equal(calls[1].redirect, 'error');
+  assert.equal(calls[1].redirect, 'manual');
   assert.equal(response.headers.get('Cache-Control'), 'no-store');
   assert.equal(JSON.stringify(data).includes(env.GITHUB_ITO_SYNC_TOKEN), false);
 });

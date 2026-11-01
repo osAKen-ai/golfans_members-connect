@@ -7,3 +7,4 @@ patrol.py
 .patrol_checkpoint.json
 tests/
 docs/
+connector/

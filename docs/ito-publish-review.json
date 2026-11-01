@@ -1,10 +1,10 @@
 {
-  "feature": "伊藤さん用・最新の内容を反映するボタン",
+  "feature": "伊藤さん用・宝塚サイト更新ボタンとChatGPT接続コネクタ",
   "route": "/publish",
   "repository": "osAKen-ai/golfans_members-connect",
   "workflow": ".github/workflows/auto-sync-ito.yml",
   "branch": "codex/ito-publish-button-20261101",
-  "base_commit": "0e86b56",
+  "base_commit": "edfb4e609c5032f1cf2c1586a117a0d29ca66a91",
   "behavior": [
     "専用の更新リンクでセッション開始",
     "既存workflowを固定のmain向けに手動実行",
@@ -23,17 +23,27 @@
     "GitHubのエラー本文や認証情報を利用者へ転送しない"
   ],
   "validation": {
-    "tests_passed": 15,
+    "tests_passed": 20,
     "command": "node --test tests/publish.test.mjs tests/publish-client.test.mjs",
     "workflow_yaml": "parsed",
-    "browser": "mock APIでready/accepted/success/failure。320px/390px。console error/warnなし。"
+    "browser": "mock APIでready/accepted/success/failure。320px/390px。console error/warnなし。",
+    "connector_tests": "workerd integration: OAuth discovery, consent/CSRF/redirect/code, PKCE exchange, real MCP initialize/list/call, replay rejection, missing setup, refresh and narrower scopes. GitHub is mocked.",
+    "dependency_audit": "npm audit: 0 vulnerabilities at validation time",
+    "connector_browser": "Chromeでローカル同意画面の接続アプリ・chatgpt.com宛・2操作・コード入力と許可/取消を確認。docs/ito-connector-consent.png。認証許可は押していない。",
+    "commands": [
+      "node --test tests/publish.test.mjs tests/publish-client.test.mjs",
+      "cd connector && npm run build && npm test",
+      "cd connector && npm audit"
+    ]
   },
   "not_performed": [
     "remote push",
     "production deploy",
     "production secrets update",
     "live workflow dispatch",
-    "伊藤さんへのリンク送信"
+    "伊藤さんへのリンク送信",
+    "production OAuth grant",
+    "伊藤さんのChatGPTでの接続確認"
   ],
   "other_requests": [
     "Googleカレンダー連携",
@@ -42,6 +52,37 @@
   "documentation": [
     "https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event",
     "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#run-name",
-    "https://developers.cloudflare.com/pages/configuration/headers/"
-  ]
+    "https://developers.cloudflare.com/pages/configuration/headers/",
+    "https://developers.openai.com/plugins/build/auth",
+    "https://developers.openai.com/plugins/deploy/connect-chatgpt",
+    "https://github.com/cloudflare/workers-oauth-provider",
+    "https://developers.cloudflare.com/fundamentals/api/reference/permissions/"
+  ],
+  "connector": {
+    "implementation": "connector/src/index.ts",
+    "transport": "MCP Streamable HTTP",
+    "auth": "OAuth 2.1 / PKCE S256 / Cloudflare official OAuthProvider",
+    "tools": [
+      "publish_latest_portal",
+      "get_publish_status"
+    ],
+    "endpoint": "未発行。本番未公開。",
+    "handoff": "docs/ito-connector-handoff.txt",
+    "operations": "connector/OPERATIONS.txt",
+    "local_preview": "http://127.0.0.1:18817/",
+    "separate_scopes": [
+      "portal:status",
+      "portal:publish",
+      "offline_access"
+    ],
+    "planned_endpoint": "https://golfans-ito-publish.osaken.workers.dev/mcp（未作成・未公開）"
+  },
+  "blocker": {
+    "observed": "Existing Cloudflare credentials rejected by actual project account (403/401, code 10000).",
+    "account": "07b0a61b46604ded81f4e1aad272ed27",
+    "cause": "Account scope, permissions, or credential validity not determined.",
+    "required": "Working Workers Scripts/KV credential on this account; Pages Edit if configuring button bindings; separate Actions read/write server credential.",
+    "browser_recovery": "Chromeの既存Googleログインで対象accountのWorkers & Pagesを閲覧確認。ブラウザ設定経路があるためAPI credential更新は必須と断定しない。",
+    "remaining": "未承認の本番公開・新規OAuth/Worker設定、未設定のGitHub Actions read/write server credential。"
+  }
 }

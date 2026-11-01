@@ -5,4 +5,7 @@ patrol.py
 .venv/
 /scripts/
 logs/
+connector/node_modules/
+connector/dist/
+connector/.mf/
 
