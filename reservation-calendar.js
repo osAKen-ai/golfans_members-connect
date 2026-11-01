@@ -40,17 +40,32 @@ const ReservationCalendar = (() => {
   }
   return {round,reminder,rows};
  }
- const button=(href,label)=>`<a class="rc-add" href="${escape(href)}" target="_blank" rel="noopener noreferrer">${icon}<span>${label}</span><span class="rc-external" aria-hidden="true">↗</span></a>`;
+ const button=(href,label)=>`<a class="rc-add" href="${escape(href)}" target="_self" rel="noreferrer">${icon}<span>${label}</span><span class="rc-external" aria-hidden="true">↗</span></a><div class="rc-link-fallback"><button type="button" class="rc-copy-link" aria-label="${label}用のリンクをコピー">開かない場合：リンクをコピー</button><p class="rc-copy-status" role="status" hidden></p><textarea class="rc-manual-link" aria-label="カレンダー追加用リンク" readonly hidden></textarea></div>`;
  function markup(model,expanded){
   if(!model)return '';
   const {round,reminder,rows}=model;
-  const cards=`<p class="rc-help">追加する予定を選び、Googleカレンダーで「保存」してください。</p><div class="rc-grid"><article class="rc-card"><h4><span class="rc-number">1</span>ラウンド予定</h4><strong class="rc-date">${short(round.date)} <span>${escape(round.time)}〜</span></strong><p class="rc-description">${escape(rows[0].course)}・${escape(rows[0].side||'OUT')}・${rows.length>1?rows.length+'組／計':''}${rows.reduce((n,r)=>n+Number(r.people),0)}名</p>${rows.length>1?'<p class="rc-small">全組のスタート時間を予定の説明欄に記載します。</p>':''}${button(round.href,'ラウンド予定を追加')}<p class="rc-small">終了時刻は約6時間後の目安です。</p></article><article class="rc-card"><h4><span class="rc-number">2</span>キャンセル料の確認</h4>${reminder?`<strong class="rc-date">${short(reminder.date)} <span class="rc-all-day">終日</span></strong><p class="rc-emphasis">${reminder.label}</p><p class="rc-description">${escape(reminder.description).replace(/\n/g,'<br>')}</p>${button(reminder.href,'確認日を追加')}`:'<p class="rc-description rc-unavailable">これから登録できる「2日前の確認日」はありません。下のキャンセル規定をご確認ください。</p>'}</article></div><p class="rc-note">予約変更・取消は自動反映されません。追加済みの予定もご自身で変更・削除してください。</p><p class="rc-small rc-demo">※体験版の予定がGoogleカレンダーに追加されます。</p>`;
+  const cards=`<p class="rc-help">追加する予定を選び、Googleカレンダーで「保存」してください。</p><div class="rc-grid"><article class="rc-card"><h4><span class="rc-number">1</span>ラウンド予定</h4><strong class="rc-date">${short(round.date)} <span>${escape(round.time)}〜</span></strong><p class="rc-description">${escape(rows[0].course)}・${escape(rows[0].side||'OUT')}・${rows.length>1?rows.length+'組／計':''}${rows.reduce((n,r)=>n+Number(r.people),0)}名</p>${rows.length>1?'<p class="rc-small">全組のスタート時間を予定の説明欄に記載します。</p>':''}${button(round.href,'ラウンド予定を追加')}<p class="rc-small">終了時刻は約6時間後の目安です。</p></article><article class="rc-card"><h4><span class="rc-number">2</span>キャンセル料の確認</h4>${reminder?`<strong class="rc-date">${short(reminder.date)} <span class="rc-all-day">終日</span></strong><p class="rc-emphasis">${reminder.label}</p><p class="rc-description">${escape(reminder.description).replace(/\n/g,'<br>')}</p>${button(reminder.href,'確認日を追加')}`:'<p class="rc-description rc-unavailable">これから登録できる「2日前の確認日」はありません。下のキャンセル規定をご確認ください。</p>'}</article></div><p class="rc-note">予約変更・取消は自動反映されません。追加済みの予定もご自身で変更・削除してください。</p><p class="rc-small rc-demo">※Googleカレンダーで「保存」を押すと、体験版の予定が実際に登録されます。</p>`;
   return expanded?`<section class="rc-calendar" aria-label="Googleカレンダーに追加"><h3 class="rc-heading">${icon}Googleカレンダーに追加</h3>${cards}</section>`:`<details class="rc-calendar rc-fold"><summary>${icon}<span>Googleカレンダーに追加</span><span class="rc-chevron" aria-hidden="true">⌄</span></summary>${cards}</details>`;
  }
  return {build,markup,link};
 })();
 if(typeof module!=='undefined'&&module.exports)module.exports=ReservationCalendar;
 if(typeof document!=='undefined')(() => {
+ document.addEventListener('click',async event=>{
+  const button=event.target.closest('.rc-copy-link');if(!button)return;
+  const fallback=button.closest('.rc-link-fallback');
+  const href=fallback.previousElementSibling.href;
+  const status=fallback.querySelector('.rc-copy-status');
+  const field=fallback.querySelector('.rc-manual-link');
+  try{
+   await navigator.clipboard.writeText(href);
+   field.hidden=true;status.textContent='コピーしました。SafariまたはChromeのアドレス欄に貼り付けて開いてください。';
+  }catch{
+   field.value=href;field.hidden=false;field.focus();field.select();
+   status.textContent='下のリンクを長押しでコピーし、SafariまたはChromeで開いてください。';
+  }
+  status.hidden=false;
+ });
  function mount(){
   if(typeof current==='undefined'||!['complete','registered','detail','groupDetail','reservationGroup'].includes(current?.k))return;
   const host=document.querySelector('#panelBody')||document.querySelector('.proxy-flow-content')||document.querySelector('#proxyMain');
