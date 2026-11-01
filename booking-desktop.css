@@ -172,8 +172,8 @@
  .booking-times-view .bk-slot-main{grid-template-columns:repeat(4,42px) 44px;column-gap:12px}
  .booking-times-view .bk-slot-main :is(.bk-people,.bk-seat,.bk-avatar,.bk-guest){width:42px;height:42px;min-width:42px;max-width:42px;min-height:42px;font-size:22px}
  .booking-times-view .bk-slot:has(.bk-people.selected,.bk-seat.selected){background:#f5f0e5;box-shadow:inset 3px 0 0 #99865b}
- .booking-times-view .bk-hours,.booking-times-view .bk-calendar-back{flex-basis:60px}
- .booking-times-view .bk-hours button{font-size:17px}
+ .booking-times-view .bk-hours,.booking-times-view .bk-calendar-back{flex-basis:80px}
+ .booking-times-view .bk-hours button{font-size:17px;padding-left:10px;padding-right:10px}
  .booking-times-view .bk-dates{gap:5px;padding:4px 6px}
  .booking-times-view .bk-dates button{width:48px}
  .booking-times-view .bd-time-sidebar{padding:16px;gap:10px}
@@ -199,4 +199,24 @@
  .companion-picker-view .bk-selected-guests .cp-remove{min-width:26px;width:26px;min-height:32px;height:32px}
  .companion-picker-view .cp-bottom-head>strong{font-size:18px}
  .companion-picker-view .cp-bottom .cp-next{font-size:14px}
+}
+@media(min-width:1000px){
+ .booking-times-view .bd-time-sidebar:has(.bk-chosen-row:nth-child(2)){padding-top:12px;padding-bottom:12px;gap:8px}
+ .booking-times-view .bd-time-sidebar:has(.bk-chosen-row:nth-child(2)) .bd-selection-heading{padding-bottom:8px;font-size:17px;line-height:1.4}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary:has(.bk-chosen-row:nth-child(2)){display:flex;flex-direction:column;overflow:visible;min-height:0}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary:has(.bk-chosen-row:nth-child(2))>header{flex:none;margin:0 0 8px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary:has(.bk-chosen-row:nth-child(2))>header>strong{font-size:17px;line-height:1.5}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary:has(.bk-chosen-row:nth-child(2))>header>strong>span{display:inline;font-size:14px;margin-left:8px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-summary:has(.bk-chosen-row:nth-child(2))>header>span{font-size:15px;margin-top:3px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-list:has(.bk-chosen-row:nth-child(2)){max-height:168px;overflow-y:auto;overflow-x:hidden;flex:none;scrollbar-width:thin}
+ .booking-times-view .bd-time-sidebar .bk-chosen-list:has(.bk-chosen-row:nth-child(2)) .bk-chosen-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:24px 24px;height:56px;min-height:56px;padding:3px 0;gap:1px 6px;box-sizing:border-box}
+ .booking-times-view .bd-time-sidebar .bk-chosen-list:has(.bk-chosen-row:nth-child(2)) .bk-chosen-row>strong{grid-column:1 / -1;grid-row:1;font-size:22px;line-height:24px;white-space:nowrap}
+ .booking-times-view .bd-time-sidebar .bk-chosen-list:has(.bk-chosen-row:nth-child(2)) .bk-chosen-row>strong>span{font-size:14px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-list:has(.bk-chosen-row:nth-child(2)) .bk-chosen-row>strong>.bk-chosen-people{font-size:18px;margin-left:6px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-list:has(.bk-chosen-row:nth-child(2)) .bk-chosen-number{grid-column:1;grid-row:2;font-size:11px;line-height:24px}
+ .booking-times-view .bd-time-sidebar .bk-chosen-list:has(.bk-chosen-row:nth-child(2)) .bk-remove-selection{grid-column:2;grid-row:2;min-width:54px;min-height:24px;height:24px;padding:0 6px;font-size:11px;line-height:22px;margin:0}
+ .booking-times-view .bd-time-sidebar:has(.bk-chosen-row:nth-child(2))>.bk-note{font-size:10px;line-height:1.5}
+ .booking-times-view .bd-time-sidebar:has(.bk-chosen-row:nth-child(2))>.wl-time-entry{min-height:42px;padding:5px;font-size:12px}
+ .booking-times-view .bd-time-sidebar:has(.bk-chosen-row:nth-child(2)) .bk-selection-actions{gap:6px}
+ .booking-times-view .bd-time-sidebar .bk-selection .bk-selection-actions>.bk-clear-all{min-height:28px;height:28px;padding:2px;font-size:12px;line-height:24px}
 }
