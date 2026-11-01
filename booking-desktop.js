@@ -3,6 +3,35 @@
  const desktop=matchMedia('(min-width:1000px)');
  const homes=new Map();
  const roots=[document.querySelector('#panelBody'),document.querySelector('#proxyMain')].filter(Boolean);
+ const trays=new WeakMap();
+ function followSelection(view,selection){
+  const root=roots.find(node=>node.contains(view)||node===view.querySelector('#panelBody'));
+  if(!root)return;
+  const list=selection.querySelector('.bk-chosen-list');
+  if(!list){trays.delete(root);return;}
+  const previous=trays.get(root);
+  if(previous?.list===list)return;
+  const context=selection.querySelector('.bk-chosen-summary header>strong')?.textContent;
+  const rows=[...list.querySelectorAll('.bk-chosen-row')];
+  const keys=rows.map(row=>row.querySelector('strong').textContent.trim());
+  const sameContext=previous?.context===context;
+  const added=sameContext?keys.findIndex(key=>!previous.keys.includes(key)):-1;
+  const state={list,context,keys,top:sameContext?previous.top:0};
+  trays.set(root,state);
+  list.addEventListener('scroll',()=>{state.top=list.scrollTop;},{passive:true});
+  // Scroll only the selection list, keeping the time table and page in place.
+  requestAnimationFrame(()=>{
+   if(!desktop.matches||!list.isConnected||trays.get(root)!==state)return;
+   list.scrollTop=state.top;
+   if(rows.length>3&&added>=0){
+    const target=rows[added].getBoundingClientRect();
+    const bounds=list.getBoundingClientRect();
+    if(target.bottom>bounds.bottom)list.scrollTop+=target.bottom-bounds.bottom;
+    else if(target.top<bounds.top)list.scrollTop+=target.top-bounds.top;
+   }
+   state.top=list.scrollTop;
+  });
+ }
  function move(node,target){
   if(node.parentElement===target)return;
   if(!homes.has(node)){const marker=document.createComment('desktop layout home');node.before(marker);homes.set(node,marker);}
@@ -39,6 +68,7 @@
     view.closest('#proxyMain')?.querySelectorAll(':scope > .wl-time-entry').forEach(node=>move(node,side));
     if(!selection.children.length){const empty=document.createElement('div');empty.className='bk-selection-empty';const text=document.createElement('p');text.textContent='時間と人数を選んでください。複数のスタート枠を選べます。';empty.append(text);selection.append(empty);}
     if(!side.querySelector('.bd-selection-heading')){const h=document.createElement('h3');h.className='bd-selection-heading';h.textContent='選択した予約内容';side.prepend(h);}
+    followSelection(view,selection);
    });
   }
   roots.forEach(root=>observer.observe(root,{childList:true,subtree:true}));
