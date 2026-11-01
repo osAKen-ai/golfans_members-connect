@@ -167,10 +167,11 @@
  .bd-calendar .bk-calendar-pair .wl-day-bell{height:14px;flex:none}
  .bd-calendar .bk-calendar-pair .wl-day-bell svg{height:14px;width:14px}
  .bd-calendar .bk-calendar-pair .bk-own-day-badge{font-size:9px;line-height:1.2;padding:1px 3px}
- .booking-times-view .bk-slot{gap:8px;padding:4px 8px}
- .booking-times-view .bk-slot time{flex:0 0 76px;min-width:76px;font-size:23px}
- .booking-times-view .bk-slot-main{grid-template-columns:repeat(4,34px) 36px;column-gap:8px}
- .booking-times-view .bk-slot-main :is(.bk-people,.bk-seat,.bk-avatar,.bk-guest){width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;font-size:19px}
+ .booking-times-view .bk-slot{gap:12px;padding:4px 16px;min-height:52px;justify-content:flex-start}
+ .booking-times-view .bk-slot time{flex:0 0 100px;min-width:100px;font-size:25px;text-align:left;padding-left:8px}
+ .booking-times-view .bk-slot-main{grid-template-columns:repeat(4,42px) 44px;column-gap:12px}
+ .booking-times-view .bk-slot-main :is(.bk-people,.bk-seat,.bk-avatar,.bk-guest){width:42px;height:42px;min-width:42px;max-width:42px;min-height:42px;font-size:22px}
+ .booking-times-view .bk-slot:has(.bk-people.selected,.bk-seat.selected){background:#f5f0e5;box-shadow:inset 3px 0 0 #99865b}
  .booking-times-view .bk-hours,.booking-times-view .bk-calendar-back{flex-basis:60px}
  .booking-times-view .bk-hours button{font-size:17px}
  .booking-times-view .bk-dates{gap:5px;padding:4px 6px}
