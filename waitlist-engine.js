@@ -52,7 +52,7 @@ function accept(data,id,t,owner,operator){
  if(r.mode==='change'){
   record=data.reservations.find(x=>x.id===r.original.id);
   if(!record||fingerprint(record)!==r.fingerprint)throw Error('元の予約が変更されています。');
-  const old={date:record.date,course:record.course,side:record.side||'OUT',time:record.time,kind:record.kind==='member'?'member':'normal',capacity:record.kind==='member'?1:4};
+  const old={date:record.date,course:record.course,side:record.side||'OUT',time:record.time,kind:record.kind==='member'?'member':record.kind==='intro'?'intro':'normal',capacity:record.kind==='member'?1:4};
   Object.assign(record,{course:s.course,side:s.side,time:s.time});
   release(w,[old]);
  }else{
