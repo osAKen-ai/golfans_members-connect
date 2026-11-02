@@ -32,8 +32,8 @@
 .rf-table td .rf-date{color:var(--red,#7b2033);font-size:clamp(18px,4.6vw,20px);font-weight:800;line-height:1.5;white-space:normal}
 .rf-table small{display:block;font-size:13px;font-weight:400;color:#2d3538;line-height:1.7;margin-top:3px}
 .rf-footer{margin-top:12px;padding:10px 0 max(16px,env(safe-area-inset-bottom));background:#fff;color:#2d3538}
-.rf-consent{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.6;font-weight:600;min-height:32px;cursor:pointer}
-.rf-agree{width:20px;height:20px;margin:0;flex:none;accent-color:var(--red,#7b2033);cursor:pointer}
+.rf-consent{display:flex;align-items:center;gap:12px;padding:8px 12px 8px 16px;font-size:14px;line-height:1.6;font-weight:600;min-height:56px;cursor:pointer}
+.rf-agree{width:28px;height:28px;margin:0;flex:none;accent-color:var(--red,#7b2033);cursor:pointer}
 .rf-agree:disabled{cursor:default}.rf-consent:has(input:disabled){color:#77746e}
 .rf-footer .rf-read-status{font-size:13px;line-height:1.6;color:#2d3538;margin:2px 0 8px;min-height:14px}
 .rf-footer .bk-primary,.rf-footer .bk-secondary{display:block;width:100%;margin:0 0 8px;min-height:46px;padding:10px;font-size:18px;font-weight:750;border-radius:6px}
