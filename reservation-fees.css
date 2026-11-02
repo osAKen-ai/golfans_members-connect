@@ -28,7 +28,8 @@
 .rf-table th:first-child,.rf-table td:first-child{width:66%}
 .rf-table td:last-child,.rf-table th:last-child{text-align:right}
 .rf-table td strong{font-size:16px;font-weight:650;white-space:nowrap}
-.rf-table td .rf-date{color:var(--red,#7b2033);font-size:14px;font-weight:700;white-space:normal}
+.rf-table:has(.rf-date) th:first-child,.rf-table:has(.rf-date) td:first-child{width:72%}
+.rf-table td .rf-date{color:var(--red,#7b2033);font-size:clamp(18px,4.6vw,20px);font-weight:800;line-height:1.5;white-space:normal}
 .rf-table small{display:block;font-size:13px;font-weight:400;color:#2d3538;line-height:1.7;margin-top:3px}
 .rf-footer{margin-top:12px;padding:10px 0 max(16px,env(safe-area-inset-bottom));background:#fff;color:#2d3538}
 .rf-consent{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.6;font-weight:600;min-height:32px;cursor:pointer}
