@@ -33,11 +33,11 @@
 .rf-table small{display:block;font-size:13px;font-weight:400;color:#2d3538;line-height:1.7;margin-top:3px}
 .rf-footer{margin-top:12px;padding:10px 0 max(16px,env(safe-area-inset-bottom));background:#fff;color:#2d3538}
 .rf-consent{display:flex;align-items:center;gap:12px;padding:8px 12px 8px 16px;font-size:14px;line-height:1.6;font-weight:600;min-height:56px;cursor:pointer}
-.rf-agree{-webkit-appearance:none;appearance:none;box-sizing:border-box;width:28px;height:28px;margin:0;padding:0;flex:none;border:4px solid var(--red,#7b2033);border-radius:6px;background-color:#fff;background-position:center;background-repeat:no-repeat;background-size:20px 20px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 6.5' fill='none' stroke='%23d5d5d5' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");cursor:pointer}
+.rf-agree{-webkit-appearance:none;appearance:none;box-sizing:border-box;width:28px;height:28px;margin:0;padding:0;flex:none;border:4px solid var(--red,#7b2033);border-radius:6px;background-color:#fff;background-position:center;background-repeat:no-repeat;background-size:20px 20px;background-image:none;cursor:pointer}
 .rf-agree:checked{background-color:var(--red,#7b2033);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 6.5' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 .rf-agree:focus-visible{outline:2px solid var(--red,#7b2033);outline-offset:3px}
 .rf-agree:disabled{cursor:default}.rf-consent:has(input:disabled){color:#77746e}
-.rf-footer .rf-read-status{font-size:13px;line-height:1.6;color:#2d3538;margin:2px 0 8px;min-height:14px}
+.rf-footer .rf-read-status{text-align:center;font-size:13px;line-height:1.6;color:#2d3538;margin:2px 0 8px;min-height:14px}
 .rf-footer .bk-primary,.rf-footer .bk-secondary{display:block;width:100%;margin:0 0 8px;min-height:46px;padding:10px;font-size:18px;font-weight:750;border-radius:6px}
 .rf-footer .bk-primary{background:var(--red,#7b2033);color:#fff;border:1px solid var(--red,#7b2033)}
 .rf-footer .bk-primary:disabled{background:#dedbd4;border-color:#dedbd4;color:#85827b;cursor:default;box-shadow:none}
