@@ -2,14 +2,14 @@
 title: 伊藤さん共有原資料_本文控え
 date: 2026-11-02
 type: source-transcription
-source_pdf: "宝塚GC_GitHub実装引継ぎ資料_Yep松林様_20261102.pdf"
+source_pdf: "宝塚GC_GitHub実装引継ぎ資料_Yep松林様_20261102.pdf"
 version: "original"
 tags: [golfans, 宝塚GC, 引継ぎ, 原文控え]
 ---
 
 # 伊藤さん共有原資料_本文控え
 
-PDFから機械抽出した検索用控え。原資料は [宝塚GC_GitHub実装引継ぎ資料_Yep松林様_20261102.pdf](宝塚GC_GitHub実装引継ぎ資料_Yep松林様_20261102.pdf)。図・表の配置や画像はPDFで確認する。本文の要約・加筆はしていない。
+PDFから機械抽出した検索用控え。原資料は [宝塚GC_GitHub実装引継ぎ資料_Yep松林様_20261102.pdf](宝塚GC_GitHub実装引継ぎ資料_Yep松林様_20261102.pdf)。図・表の配置や画像はPDFで確認する。本文の要約・加筆はしていない。
 
 ## PDF 1ページ
 
