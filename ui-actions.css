@@ -268,3 +268,19 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 .bk-batch-confirm .bk-batch-group p{margin-top:6px}
 
 .event-list-heading{flex-wrap:wrap;gap:8px}.event-list-filters{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:flex-end}.event-list-filters label{min-height:36px;white-space:nowrap}
+
+/* Full event results, matching the magazine's score table. */
+.event-results-count{font-size:13px;color:#756c5c;margin:12px 0 18px}.event-results-count strong{font-size:16px;color:#2d3538}
+.event-results-page .event-results-table{background:white;border-radius:8px;margin-top:0;font-weight:500;border-collapse:separate;border-spacing:0;overflow:visible}
+.event-results-page .event-results-table thead{position:sticky;top:0;z-index:2;background:#efede6}
+.event-results-page .event-results-table thead th{background:#efede6;color:#6a6355;border-color:#e2ded4;font-size:11px}
+.event-results-page .event-results-table th[colspan="3"]{border-left:0;border-right:0}
+.event-results-page .event-results-table tbody tr:first-child{background:white}
+.event-results-page .event-results-table tbody th,.event-results-page .event-results-table tbody td{border-color:#e5e1dc;padding-top:14px;padding-bottom:14px}
+.event-results-page .event-results-table .result-rank-col{width:8%}.event-results-page .event-results-table .result-name-col{width:30%}
+.event-results-page .event-results-table tbody td:first-child{color:#8a7d6a;font-size:12px;font-weight:700}
+.event-results-page .event-results-table .event-result-total{background:#f7f6f1;font-weight:800}
+.event-results-page .event-results-table .event-result-net{color:#7b2033;font-weight:800}
+.event-results-end{text-align:center;color:#807665;font-size:11px;margin:16px 0 24px}
+@media(max-width:360px){.event-results-page .event-results-table tbody .result-person-name{font-size:12px}.event-results-page .event-results-table thead th{font-size:10px}}
+.event-results-page .event-results-table .result-rank-col{width:9%}.event-results-page .event-results-table .result-name-col{width:29%}.event-results-page .event-results-table thead th{white-space:nowrap}
