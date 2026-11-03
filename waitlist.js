@@ -167,14 +167,20 @@ bookingCalendarMonthMarkup=function(y,m,handler,secondary=false){
  }
  return `<section class="bk-month-panel ${secondary?'bk-month-secondary':''}" aria-label="${y}年${m+1}月"><div class="bk-calendar-title">${y}年${m+1}月 <small>日付を選んで空き枠を確認</small></div><div class="bk-calendar">${'日月火水木金土'.split('').map((d,i)=>`<span class="bk-weekday ${i===0?'sun':i===6?'sat':''}">${d}</span>`).join('')}${cells}</div></section>`;
 };
+function toggleCalendarFilters(button){
+ bookingUI.calendarFiltersOpen=!bookingUI.calendarFiltersOpen;
+ button.setAttribute('aria-expanded',String(bookingUI.calendarFiltersOpen));
+ button.closest('.bk-controls').querySelector('#calendarFilterFields').hidden=!bookingUI.calendarFiltersOpen;
+}
 function wlCalendarFilters(html){
  const start=html.indexOf('<div class="bk-filters">');
  if(start<0)return html;
  const end=html.indexOf('</div>',start)+6;
- const type={all:'全ての枠',member:'メンバータイム',normal:'通常枠',intro:'紹介枠'}[bookingUI.type]||'全ての枠';
- const people=bookingUI.party?bookingUI.party+'人':'人数指定なし';
- const panel=`<details class="bk-calendar-filters" ${bookingUI.calendarFiltersOpen?'open':''} ontoggle="bookingUI.calendarFiltersOpen=this.open"><summary><span><strong>予約条件</strong><small>${type} · ${people}</small></span><b><span class="bk-filter-open-label">条件を変更</span><span class="bk-filter-close-label">閉じる</span><i aria-hidden="true"></i></b></summary>${html.slice(start,end)}</details>`;
- return html.slice(0,start)+panel+html.slice(end);
+ const active=bookingUI.type!=='all'||!!bookingUI.party;
+ const icon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h4m4 0h10M3 12h10m4 0h4M3 18h4m4 0h10"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg>';
+ const button=`<button type="button" class="bk-calendar-filter-toggle ${active?'is-filtered':''}" aria-label="予約条件を変更" aria-expanded="${!!bookingUI.calendarFiltersOpen}" aria-controls="calendarFilterFields" onclick="toggleCalendarFilters(this)">${icon}<i aria-hidden="true"></i>${active?'<span class="bk-filter-dot" aria-hidden="true"></span>':''}</button>`;
+ const before=html.slice(0,start).replace('<div class="bk-controls">','<div class="bk-controls"><div class="bk-calendar-toolbar">');
+ return before+button+'</div>'+`<div id="calendarFilterFields" ${bookingUI.calendarFiltersOpen?'':'hidden'}>`+html.slice(start,end)+'</div>'+html.slice(end);
 }
 const wlPreviousCalendar=bookingCalendar;
 bookingCalendar=function(){return wlCalendarFilters(wlPreviousCalendar()).replace('<div class="bk-calendar-pair">','<p class="bk-own-calendar-legend"><span class="bk-own-day-badge">予約あり</span> '+(isDelegateBooking?'担当メンバー':'ご自身')+'の予約（旧・新コース共通）</p><div class="bk-calendar-pair">')+`<div class="wl-legend">${wlBell}<span>キャンセル待ちのお申し込み</span></div><p class="bk-note">体験用：旧・新コースで、空き枠数や空きのある日・時間帯を変えて表示しています。</p>`;};

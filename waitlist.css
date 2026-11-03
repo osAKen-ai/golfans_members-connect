@@ -30,18 +30,16 @@
 #panelBody:has(.bk-selection:not([hidden])) .wl-time-entry,
 #proxyMain:has(.bk-selection:not([hidden])) .wl-time-entry{display:none}
 
-/* Compact calendar filters; keep the course switch directly available. */
-.bk-calendar-filters{margin-top:10px;border:1px solid #c7bea5;border-radius:8px;background:#f7f5ef;overflow:hidden}
-.bk-calendar-filters>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:54px;padding:9px 12px;cursor:pointer;list-style:none;color:#2d3538}
-.bk-calendar-filters>summary::-webkit-details-marker{display:none}
-.bk-calendar-filters>summary>span{min-width:0;display:flex;flex-direction:column;gap:2px}
-.bk-calendar-filters strong{font-size:14px}.bk-calendar-filters small{font-size:12px;font-weight:600;color:#68604e}
-.bk-calendar-filters summary b{display:flex;align-items:center;gap:8px;white-space:nowrap;color:#7b2033;font-size:14px;text-decoration:underline;text-underline-offset:3px}
-.bk-calendar-filters summary i{width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-4px}
-.bk-calendar-filters[open] summary i{transform:rotate(225deg);margin-top:4px}
-.bk-calendar-filters .bk-filter-close-label,.bk-calendar-filters[open] .bk-filter-open-label{display:none}
-.bk-calendar-filters[open] .bk-filter-close-label{display:inline}
-.bk-calendar-filters[open]>summary{border-bottom:1px solid #ded8c8}
-.bk-calendar-filters>.bk-filters{padding:12px;margin:0!important;background:#fff}
-.bk-calendar-filters>summary:focus-visible{outline:3px solid #607992;outline-offset:-3px}
-@media(min-width:1000px){.bd-calendar>.bk-controls:has(.bk-calendar-filters):before{display:none}.bd-calendar>.bk-controls .bk-calendar-filters{margin:0 0 12px}.bd-calendar .bk-calendar-filters>summary{flex-wrap:wrap}}
+/* Course selection and filter disclosure share one compact row. */
+.bk-calendar-toolbar{display:flex;align-items:center;gap:10px}
+.bk-controls .bk-calendar-toolbar .bk-courses{display:flex;flex:1;min-width:0;gap:8px;margin:0}
+.bk-controls .bk-calendar-toolbar .bk-courses button{flex:1;min-width:0;height:44px!important;padding:0 10px;font-size:18px!important}
+.bk-calendar-filter-toggle{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;flex:0 0 64px;height:44px;padding:0;border:1px solid #99865b;border-radius:8px;background:white;color:#7b2033;cursor:pointer}
+.bk-calendar-filter-toggle svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.bk-calendar-filter-toggle i{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-4px}
+.bk-calendar-filter-toggle[aria-expanded="true"] i{transform:rotate(225deg);margin-top:4px}
+.bk-calendar-filter-toggle[aria-expanded="true"],.bk-calendar-filter-toggle.is-filtered{background:#f4e9eb;border-color:#7b2033}
+.bk-filter-dot{position:absolute;top:4px;right:5px;width:6px;height:6px;background:#7b2033;border-radius:50%}
+#calendarFilterFields:not([hidden]){padding-top:12px}
+.bk-calendar-filter-toggle:focus-visible{outline:3px solid #607992;outline-offset:2px}
+@media(min-width:1000px){.bd-calendar>.bk-controls:has(.bk-calendar-toolbar):before{display:none}.bd-calendar .bk-calendar-toolbar{gap:6px}.bd-calendar .bk-calendar-filter-toggle{flex-basis:52px;gap:5px}}

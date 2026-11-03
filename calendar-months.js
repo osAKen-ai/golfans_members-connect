@@ -13,9 +13,9 @@ function bookingCalendarPairMarkup(y,m,handler){
 }
 function bookingMonthNavigationMarkup(y,m,handler){
  const current=new Date(y,m,1),base=new Date(now+'T12:00:00');base.setDate(1);
- const elapsed=(y-base.getFullYear())*12+m-base.getMonth(),start=new Date(base.getFullYear(),base.getMonth()+Math.max(0,Math.floor(elapsed/6))*6,1);
+ const elapsed=(y-base.getFullYear())*12+m-base.getMonth(),start=new Date(base.getFullYear(),base.getMonth()+Math.max(0,Math.floor(elapsed/5))*5,1);
  const previous=new Date(y,m-1,1),next=new Date(y,m+1,1);
- return `<div class="bk-month-navigation"><button class="bk-month-arrow" aria-label="前の月" ${current<=base?'disabled':''} onclick="${handler}(${previous.getFullYear()},${previous.getMonth()})">‹</button><div class="bk-months" aria-label="予約月">${Array.from({length:6},(_,i)=>{const d=new Date(start.getFullYear(),start.getMonth()+i,1);return `<button aria-pressed="${d.getMonth()===m&&d.getFullYear()===y}" class="${d.getMonth()===m&&d.getFullYear()===y?'active':''}" onclick="${handler}(${d.getFullYear()},${d.getMonth()})">${d.getMonth()===0?d.getFullYear()+'年 ':''}${d.getMonth()+1}月</button>`;}).join('')}</div><button class="bk-month-arrow" aria-label="次の月" onclick="${handler}(${next.getFullYear()},${next.getMonth()})">›</button></div>`;
+ return `<div class="bk-month-navigation"><button class="bk-month-arrow" aria-label="前の月" ${current<=base?'disabled':''} onclick="${handler}(${previous.getFullYear()},${previous.getMonth()})">‹</button><div class="bk-months" aria-label="予約月">${Array.from({length:5},(_,i)=>{const d=new Date(start.getFullYear(),start.getMonth()+i,1);return `<button aria-pressed="${d.getMonth()===m&&d.getFullYear()===y}" class="${d.getMonth()===m&&d.getFullYear()===y?'active':''}" onclick="${handler}(${d.getFullYear()},${d.getMonth()})">${d.getMonth()===0?d.getFullYear()+'年 ':''}${d.getMonth()+1}月</button>`;}).join('')}</div><button class="bk-month-arrow" aria-label="次の月" onclick="${handler}(${next.getFullYear()},${next.getMonth()})">›</button></div>`;
 }
 
 // Delegate touch gestures so month re-renders do not accumulate listeners.
