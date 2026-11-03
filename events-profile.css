@@ -98,3 +98,11 @@
 .competition-detail .competition-score-table th+th,.competition-detail .competition-score-table td+td{border-left:1px solid #eeeae1}
 @media(min-width:700px){.competition-score-card{padding:20px 12px}.competition-detail .competition-score-table th{font-size:14px}.competition-detail .competition-score-table td{font-size:28px}}
 @media(max-width:350px){.competition-detail .competition-score-table th{font-size:10px}.competition-detail .competition-score-table td{font-size:22px}}
+
+/* Personal result identity and link to the matching full leaderboard. */
+.competition-member-rank{display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;padding:20px 24px}
+.competition-member-rank .competition-member-name{font-size:23px;font-weight:700;color:var(--navy);white-space:nowrap}
+.competition-member-rank>strong{font-size:38px;line-height:1.25;font-weight:600;white-space:nowrap}
+.competition-detail .competition-all-results{display:flex;align-items:center;justify-content:center;gap:12px;background:#2d3538;color:#fff;border-color:#2d3538;margin:0 0 12px;font-size:16px}
+.competition-all-results>span{font-size:23px;line-height:1}
+@media(max-width:350px){.competition-member-rank{padding:18px 20px}.competition-member-rank .competition-member-name{font-size:21px}}

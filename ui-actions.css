@@ -284,3 +284,6 @@ button.reservation-action:disabled{opacity:.45;cursor:not-allowed}
 .event-results-end{text-align:center;color:#807665;font-size:11px;margin:16px 0 24px}
 @media(max-width:360px){.event-results-page .event-results-table tbody .result-person-name{font-size:12px}.event-results-page .event-results-table thead th{font-size:10px}}
 .event-results-page .event-results-table .result-rank-col{width:9%}.event-results-page .event-results-table .result-name-col{width:29%}.event-results-page .event-results-table thead th{white-space:nowrap}
+
+.event-results-page .event-results-table tr.event-result-own>th,.event-results-page .event-results-table tr.event-result-own>td{background:#f0ecdf}
+.event-results-page .event-results-table tr.event-result-own>.result-person-name{color:#7b2033}
