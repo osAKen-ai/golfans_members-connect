@@ -1,5 +1,25 @@
 'use strict';
 // All edits in this prototype remain in the visitor's browser.
+// Count completed membership anniversaries and remaining calendar days in Japan.
+function membershipTenureText(now=new Date()){
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tokyo',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(now);
+ const value=type=>Number(parts.find(part=>part.type===type).value);
+ const year=value('year'),month=value('month'),day=value('day');
+ const today=Date.UTC(year,month-1,day),joined=Date.UTC(2012,10,1);
+ if(today<joined)return '0年0日';
+ const anniversaryYear=month<11?year-1:year;
+ const years=anniversaryYear-2012;
+ const days=Math.round((today-Date.UTC(anniversaryYear,10,1))/86400000);
+ return `${years}年${days}日`;
+}
+function refreshMembershipTenure(){
+ document.querySelectorAll('.profile-tenure').forEach(el=>{el.textContent='在籍：'+membershipTenureText();});
+}
+// Refresh an open card after midnight or after returning to the app.
+setInterval(refreshMembershipTenure,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshMembershipTenure();});
+
+
 titles.companionNew='同伴者の新規登録';
 titles.profilePhoto='顔写真の編集';
 
@@ -73,10 +93,10 @@ function saveProfilePhoto(){
 
 // Course handicaps are shown by course and tee in the details dialog.
 const profileHandicap={jgaIndex:'10.2'};
-function profileIdentityMarkup(){return `<section class="profile-identity" aria-label="会員情報"><div class="profile-portrait">${memberPhotoOverlay(false)}</div><h3 class="profile-member-name">伊藤 剛</h3><p class="profile-english-name">Tsuyoshi Ito</p><p class="profile-tenure">在籍：13年359日</p><p class="profile-joined">（入会：2012年11月1日）</p><p class="profile-birthday">生年月日：1985年6月18日（41歳）</p><div class="profile-handicap" aria-label="ハンディキャップ"><div class="profile-handicap-cell"><span>JGA Index</span><strong>${profileHandicap.jgaIndex}</strong></div><button type="button" class="profile-handicap-cell profile-course-handicap" aria-label="コースHDCPの詳細" onclick="document.getElementById('courseHandicapDialog').showModal()"><span>コースHDCP</span><strong class="profile-handicap-details">詳細</strong></button></div><div class="profile-membership"><span>正会員</span><strong>0889582</strong></div><button type="button" class="profile-barcode profile-barcode-trigger" aria-label="会員バーコードを拡大する" onclick="openBarcodeZoom()"></button><p class="profile-barcode-number">0889582</p></section>${courseHandicapMarkup()}${barcodeZoomMarkup()}`;}
+function profileIdentityMarkup(){return `<section class="profile-identity" aria-label="会員情報"><div class="profile-portrait">${memberPhotoOverlay(false)}</div><h3 class="profile-member-name">伊藤 剛</h3><p class="profile-english-name">Tsuyoshi Ito</p><p class="profile-tenure">在籍：${membershipTenureText()}</p><p class="profile-joined">（入会：2012年11月1日）</p><p class="profile-birthday">生年月日：1985年6月18日（41歳）</p><div class="profile-handicap" aria-label="ハンディキャップ"><div class="profile-handicap-cell"><span>JGA Index</span><strong>${profileHandicap.jgaIndex}</strong></div><button type="button" class="profile-handicap-cell profile-course-handicap" aria-label="コースHDCPの詳細" onclick="document.getElementById('courseHandicapDialog').showModal()"><span>コースHDCP</span><strong class="profile-handicap-details">詳細</strong></button></div><div class="profile-membership"><span>正会員</span><strong>0889582</strong></div><button type="button" class="profile-barcode profile-barcode-trigger" aria-label="会員バーコードを拡大する" onclick="openBarcodeZoom()"></button><p class="profile-barcode-number">0889582</p></section>${courseHandicapMarkup()}${barcodeZoomMarkup()}`;}
 function courseHandicapMarkup(){const rows=[['バック',14,14],['レギュラー',13,12],['フロント',11,10],['レディース',8,'-'],['ゴールド',7,6]];return `<dialog id="courseHandicapDialog" class="profile-handicap-dialog" aria-labelledby="handicapDialogTitle" onclick="if(event.target===this)this.close()"><div class="profile-handicap-dialog-content"><header><div><h3 id="handicapDialogTitle">伊藤 剛様のコースHDCP</h3><p class="handicap-updated">（2027年4月10日更新）</p></div><button type="button" class="handicap-dialog-close" aria-label="詳細を閉じる" onclick="document.getElementById('courseHandicapDialog').close()">✖︎</button></header><section class="profile-handicap-modal"><table class="course-handicap-table" aria-label="ティー別のコースHDCP"><colgroup><col style="width:44%"><col style="width:28%"><col style="width:28%"></colgroup><thead><tr><th scope="col"><span class="handicap-sr-only">ティー</span></th><th scope="col">旧コース</th><th scope="col">新コース</th></tr></thead><tbody>${rows.map(([tee,oldCourse,newCourse])=>`<tr><th scope="row">${tee}</th><td>${oldCourse}</td><td>${newCourse}</td></tr>`).join('')}</tbody></table><p class="handicap-sample">サンプル画面</p><button type="button" class="secondary" onclick="document.getElementById('courseHandicapDialog').close()">閉じる</button></section></div></dialog>`;}
 
-function checkinIdentityMarkup(){return `<section class="profile-identity checkin-identity" aria-label="チェックイン会員情報"><button type="button" class="checkin-barcode-hit" aria-label="会員バーコードを拡大する" onclick="openBarcodeZoom()"></button><div class="profile-barcode checkin-barcode" role="img" aria-label="会員番号0889582のサンプルバーコード"></div><p class="profile-barcode-number">0889582</p><p class="barcode-tap-hint" aria-hidden="true">＋ タップして拡大</p><div class="profile-portrait">${ownPhotoMarkup()}</div><h3 class="profile-member-name">伊藤 剛</h3><p class="profile-english-name">Tsuyoshi Ito</p><div class="checkin-tenure-row"><p class="profile-tenure">在籍：13年359日</p><p class="profile-joined">（入会：2012-11-1）</p></div><div class="profile-membership"><span>正会員</span><strong>0889582</strong></div></section>${barcodeZoomMarkup()}`;}
+function checkinIdentityMarkup(){return `<section class="profile-identity checkin-identity" aria-label="チェックイン会員情報"><button type="button" class="checkin-barcode-hit" aria-label="会員バーコードを拡大する" onclick="openBarcodeZoom()"></button><div class="profile-barcode checkin-barcode" role="img" aria-label="会員番号0889582のサンプルバーコード"></div><p class="profile-barcode-number">0889582</p><p class="barcode-tap-hint" aria-hidden="true">＋ タップして拡大</p><div class="profile-portrait">${ownPhotoMarkup()}</div><h3 class="profile-member-name">伊藤 剛</h3><p class="profile-english-name">Tsuyoshi Ito</p><div class="checkin-tenure-row"><p class="profile-tenure">在籍：${membershipTenureText()}</p><p class="profile-joined">（入会：2012-11-1）</p></div><div class="profile-membership"><span>正会員</span><strong>0889582</strong></div></section>${barcodeZoomMarkup()}`;}
 
 // Native modal keeps focus inside the enlarged barcode and returns it on close.
 function openBarcodeZoom(){document.getElementById('barcodeZoomDialog').showModal();}
