@@ -107,3 +107,7 @@ body .bk-calendar .bk-day small{background:transparent;color:var(--calendar-text
 body .bk-calendar .sun{color:var(--calendar-sunday)}
 body .bk-calendar .sat{color:var(--calendar-saturday)}
 body .bk-calendar .bk-day:disabled{color:#d1d1d1}
+
+/* Keep confirmation times and party sizes aligned across every group. */
+.bk-batch-confirm .bk-batch-group h4>strong.bk-confirm-slot{display:grid;grid-template-columns:2.4em minmax(3.1em,1fr) 2em;column-gap:.35em;align-items:baseline;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bk-confirm-slot .bk-confirm-people{text-align:right}
