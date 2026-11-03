@@ -4,9 +4,7 @@
  const homes=new Map();
  const roots=[document.querySelector('#panelBody'),document.querySelector('#proxyMain')].filter(Boolean);
  const trays=new WeakMap();
- function followSelection(view,selection){
-  const root=roots.find(node=>node.contains(view)||node===view.querySelector('#panelBody'));
-  if(!root)return;
+ function followSelection(root,selection){
   const list=selection.querySelector('.bk-chosen-list');
   if(!list){trays.delete(root);return;}
   const previous=trays.get(root);
@@ -21,7 +19,7 @@
   list.addEventListener('scroll',()=>{state.top=list.scrollTop;},{passive:true});
   // Scroll only the selection list, keeping the time table and page in place.
   requestAnimationFrame(()=>{
-   if(!desktop.matches||!list.isConnected||trays.get(root)!==state)return;
+   if(!list.isConnected||trays.get(root)!==state)return;
    list.scrollTop=state.top;
    if(rows.length>3&&added>=0){
     const target=rows[added].getBoundingClientRect();
@@ -68,10 +66,15 @@
     view.closest('#proxyMain')?.querySelectorAll(':scope > .wl-time-entry').forEach(node=>move(node,side));
     if(!selection.children.length){const empty=document.createElement('div');empty.className='bk-selection-empty';const text=document.createElement('p');text.textContent='時間と人数を選んでください。複数のスタート枠を選べます。';empty.append(text);selection.append(empty);}
     if(!side.querySelector('.bd-selection-heading')){const h=document.createElement('h3');h.className='bd-selection-heading';h.textContent='選択した予約内容';side.prepend(h);}
-    followSelection(view,selection);
    });
   }
-  roots.forEach(root=>observer.observe(root,{childList:true,subtree:true}));
+  // Follow newly added groups on both mobile and desktop, for members and delegates.
+  roots.forEach(root=>{
+   const selection=root.querySelector('.bk-selection');
+   if(selection)followSelection(root,selection);
+   else trays.delete(root);
+   observer.observe(root,{childList:true,subtree:true});
+  });
  }
  const observer=new MutationObserver(decorate);
  desktop.addEventListener('change',decorate);

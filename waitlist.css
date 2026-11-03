@@ -25,3 +25,7 @@
 .wl-entry.wl-request-link{justify-content:flex-start;flex-wrap:wrap;gap:6px;background:none;border:0;border-radius:0;padding:6px 0;min-height:44px;margin:0 0 8px;color:#7b2033;font-size:15px;font-weight:800;text-align:left;text-decoration:underline;text-underline-offset:3px}
 .wl-booking-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.wl-booking-fields label{display:flex;flex-direction:column;gap:8px;font-size:15px;font-weight:700}.wl-booking-fields select{width:100%;min-height:44px;padding:10px 12px;border:1px solid #c9c3af;border-radius:7px;background:#fff;color:#2d3538}.wl-booking-fields select:disabled{opacity:1;color:#65665f;background:#e5dfd0}
 .wl-receipt{text-align:center;padding:12px 0 20px}.wl-receipt-check{display:flex;justify-content:center;align-items:center;width:54px;height:54px;margin:0 auto 16px;border-radius:50%;background:#e5dfd0;color:#756440;font-size:34px;font-weight:800}.wl-receipt h3{font-size:24px;line-height:1.5;margin:0 0 16px}.wl-receipt p{line-height:1.8;font-size:15px}.wl-receipt .wl-note{font-size:12px}
+
+/* A selected start slot takes priority; hide the waitlist CTA with its spacing. */
+#panelBody:has(.bk-selection:not([hidden])) .wl-time-entry,
+#proxyMain:has(.bk-selection:not([hidden])) .wl-time-entry{display:none}
