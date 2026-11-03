@@ -98,3 +98,12 @@ body .sheethead .close,body .proxy-dialog-close,body .proxy-reserved-dialog butt
 /* Keep the original check-in symbol at the smaller scale of the refined icon set. */
 .tile-checkin .original-tile-icon{width:50px;height:31px;overflow:hidden}
 @media(max-width:360px){.tile-checkin .original-tile-icon{width:45px;height:28px}}
+
+/* Lighter calendar typography; booking markers retain the club burgundy. */
+:root{--calendar-text:#555555;--calendar-saturday:#2879cc;--calendar-sunday:#d64550}
+body .bk-calendar .bk-day,body .bk-calendar .bk-weekday,body .bk-calendar-title{color:var(--calendar-text)}
+body .bk-courses button:not(.active),body .bk-months button:not(.active){color:var(--calendar-text)}
+body .bk-calendar .bk-day small{background:transparent;color:var(--calendar-text)}
+body .bk-calendar .sun{color:var(--calendar-sunday)}
+body .bk-calendar .sat{color:var(--calendar-saturday)}
+body .bk-calendar .bk-day:disabled{color:#d1d1d1}
