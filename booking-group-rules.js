@@ -4,6 +4,7 @@
 function bookingGroupIssue(rows){
  if(rows.some(r=>r.status!=='cancelled'&&r.kind==='intro'&&bookingRequiresAccompaniment(r.date)))return '土日祝はメンバー同伴が必要です。紹介枠はご予約いただけません。';
  const introIssue=bookingIntroLimitIssue(rows);if(introIssue)return introIssue;
+ const accompaniedIssue=bookingAccompaniedLimitIssue(rows);if(accompaniedIssue)return accompaniedIssue;
  const parties=new Map();
  for(const row of rows){
   if(row.kind==='member'||row.status==='cancelled')continue;
@@ -29,7 +30,9 @@ function bookingGroupEditRows(candidate,records){
 function bookingGroupNoticeMarkup(rows){
  const issue=bookingGroupIssue(rows);
  if(issue)return `<p class="bk-group-rule bk-group-rule-error" role="alert">${issue}</p>`;
- return rows.some(row=>row.kind!=='member')?'<p class="bk-group-rule">4名までは1組、5〜8名は2組、9〜12名は3組でお選びください。</p>':'';
+ const normal=rows.find(row=>row.kind==='normal');
+ const limitNotice=normal?`<p class="bk-group-rule">体験版の仮設定：${bookingSeasonRule(normal.date).label}の同伴予約は、同じプレー日で合計${bookingSeasonRule(normal.date).limit}組まで。</p>`:'';
+ return limitNotice+(rows.some(row=>row.kind!=='member')?'<p class="bk-group-rule">4名までは1組、5〜8名は2組、9〜12名は3組でお選びください。</p>':'');
 }
 
 // Demonstration timetable per course/tee: four member-time starts per day.
@@ -85,6 +88,27 @@ function bookingIntroLimitIssue(rows,existing=bookingExistingReservations()){
  for(const date of dates){
   const count=combined.filter(r=>r.date===date&&r.kind==='intro'&&(!r.status||r.status==='reserved')).length;
   if(count>2)return '平日の紹介予約は、会員1名につき同じプレー日で合計2組までです。旧・新コース、本人・代理人の予約を合算します。';
+ }
+ return '';
+}
+
+// Demo-only month mapping, deliberately separate from final club policy.
+const bookingDemoBusyMonths=[4,5,6,10,11,12];
+function bookingSeasonRule(date){
+ const month=Number(date.slice(5,7)),day=new Date(date+'T12:00:00Z').getUTCDay();
+ const busy=bookingDemoBusyMonths.includes(month);
+ const holiday=typeof isJapaneseHoliday==='function'&&isJapaneseHoliday(date);
+ if(day===0||holiday)return {busy,label:'日曜・祝日／'+(busy?'繁忙期':'閑散期'),limit:busy?1:3};
+ if(day===6)return {busy,label:'土曜／'+(busy?'繁忙期':'閑散期'),limit:busy?2:5};
+ return {busy,label:'平日',limit:10};
+}
+function bookingAccompaniedLimitIssue(rows,existing=bookingExistingReservations()){
+ const changedIds=new Set(rows.map(r=>r.id).filter(Boolean));
+ const combined=[...existing.filter(r=>!changedIds.has(r.id)),...rows];
+ for(const date of new Set(rows.filter(r=>r.kind==='normal').map(r=>r.date))){
+  const rule=bookingSeasonRule(date);
+  const count=combined.filter(r=>r.date===date&&r.kind==='normal'&&(!r.status||r.status==='reserved')).length;
+  if(count>rule.limit)return `体験版の仮設定：${rule.label}の同伴予約は、会員1名につき同じプレー日で合計${rule.limit}組までです。旧・新コース、本人・代理人の予約を合算します。`;
  }
  return '';
 }

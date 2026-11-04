@@ -88,7 +88,7 @@ function wlSubmit(event){event.preventDefault();try{
   wlEngine.tick(w,t,data.reservations,wlOwner());
  });wlSubmittedId=submittedId;wlView='receipt';wlDraw();
  }catch(e){wlError(e);}}
-function wlConfirm(id){try{wlMutate((data,w,t)=>{const request=w.requests.find(r=>r.id===id&&r.owner===wlOwner());if(request){const issue=bookingIntroLimitIssue([{...request,id:request.mode==='change'?request.original?.id:undefined,status:'reserved'}],data.reservations);if(issue)throw Error(issue);}return wlEngine.accept(data,id,t,wlOwner(),{id:isDelegateBooking?proxyAgent:'ito',name:isDelegateBooking?proxyAgentInfo().name:'伊藤 剛'});});wlDraw();toast('予約一覧に反映しました');}catch(e){wlError(e);}}
+function wlConfirm(id){try{wlMutate((data,w,t)=>{const request=w.requests.find(r=>r.id===id&&r.owner===wlOwner());if(request){const issue=bookingIntroLimitIssue([{...request,id:request.mode==='change'?request.original?.id:undefined,status:'reserved'}],data.reservations);if(issue)throw Error(issue);const accompaniedIssue=bookingAccompaniedLimitIssue([{...request,id:request.mode==='change'?request.original?.id:undefined,status:'reserved'}],data.reservations);if(accompaniedIssue)throw Error(accompaniedIssue);}return wlEngine.accept(data,id,t,wlOwner(),{id:isDelegateBooking?proxyAgent:'ito',name:isDelegateBooking?proxyAgentInfo().name:'伊藤 剛'});});wlDraw();toast('予約一覧に反映しました');}catch(e){wlError(e);}}
 function wlDecline(id){try{wlMutate((data,w,t)=>{wlEngine.decline(w,id,t,wlOwner());wlEngine.tick(w,t,data.reservations,wlOwner());});wlDraw();}catch(e){wlError(e);}}
 function wlRelease(id,count){try{wlMutate((data,w,t)=>{
  const r=w.requests.find(x=>x.id===id&&x.owner===wlOwner());if(!r)return;
