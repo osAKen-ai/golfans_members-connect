@@ -32,12 +32,12 @@ function restoreProfileOriginScroll(saved){
  });
 }
 function openPanel(k,arg=null){rememberProfileOrigin(k);hideMenu();if(['audio','backnumbers'].includes(k))k='magazine';if(!current)opener=document.activeElement;if(k==='booking'){guestEditorId=null;if(arg){const r=state.reservations.find(x=>x.id===arg);if(!r)return;draft={...r,guests:[...r.guests],edit:true};}else{draft={date:'2027-04-29',course:'旧コース',time:'',people:4,guests:[...defaultGuests]};}year=Number(draft.date.slice(0,4));month=Number(draft.date.slice(5,7))-1;resetBooking();if(arg){const original=state.reservations.find(r=>r.id===arg);bookingUI.hour=Number(original.time.split(':')[0]);bookingUI.focusCurrent=true;k='times';}}if(k==='detail'&&!arg)arg=sorted()[0]?.id;const depth=(history.state?.depth||0)+1;history.pushState({portal:true,route:{k,arg},depth},'',location.pathname+location.search+'#'+k);render(k,arg);}
-function returnToProfileCompetition(){
- const arg={section:'competition'};
+function returnToProfileSection(section){
+ const arg={section};
  history.replaceState({...history.state,portal:true,route:{k:'profile',arg}},'',location.pathname+location.search+'#profile');
  render('profile',arg);
 }
-function closePanel(){if(current?.k==='competitionResult'||(current?.k==='eventResults'&&current.arg==='club-championship')){returnToProfileCompetition();return;}if(isPublicProfilePanel(current?.k)&&(history.state?.depth||0)>1){history.back();return;}if(current?.k==='magazine'){history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);render(null);return;}if(history.state?.depth)history.go(-history.state.depth);else render(null);}
+function closePanel(){if(['history','historyYear','visitDetail'].includes(current?.k)){returnToProfileSection('visits');return;}if(current?.k==='competitionResult'||(current?.k==='eventResults'&&current.arg==='club-championship')){returnToProfileSection('competition');return;}if(isPublicProfilePanel(current?.k)&&(history.state?.depth||0)>1){history.back();return;}if(current?.k==='magazine'){history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);render(null);return;}if(history.state?.depth)history.go(-history.state.depth);else render(null);}
 function backPanel(){if(history.state?.depth)history.back();else closePanel();}
 window.addEventListener('popstate',e=>{const r=e.state?.route;render(r?.k||null,r?.arg??null);restoreProfileOriginScroll(e.state?.profileOriginScroll);});
 history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);
@@ -88,10 +88,10 @@ if(k==='competitionResults')b=competitionResultsMarkup();
 if(k==='competitionResult')b=competitionResultMarkup(arg);
 if(k==='event1'||k==='event2')b=clubEventDetail(k);
 if(k==='eventConfirm'||k==='eventCancel')b=clubEventConfirmation(arg,k==='eventCancel');
-$('#panelBody').innerHTML=b;overlay.classList.add('show');document.body.classList.add('modal-open');$('.sheet').scrollTop=0;$('#panelBody').scrollTop=0;$('.sheet').focus({preventScroll:true});if(k==='times')mountBookingTimes();if(k==='reservations')mountReservationSummary();if(k==='events')mountClubEventMonths();if(k==='profilePhoto')mountPhotoEditor();if(k==='profile'&&arg?.section==='competition'){
+$('#panelBody').innerHTML=b;overlay.classList.add('show');document.body.classList.add('modal-open');$('.sheet').scrollTop=0;$('#panelBody').scrollTop=0;$('.sheet').focus({preventScroll:true});if(k==='times')mountBookingTimes();if(k==='reservations')mountReservationSummary();if(k==='events')mountClubEventMonths();if(k==='profilePhoto')mountPhotoEditor();if(k==='profile'&&['competition','visits'].includes(arg?.section)){
  requestAnimationFrame(()=>{
   if(current?.k!=='profile')return;
-  const section=$('#profileCompetition'),sheet=$('.sheet'),header=$('.sheethead');
+  const section=$(arg.section==='visits'?'#profileVisits':'#profileCompetition'),sheet=$('.sheet'),header=$('.sheethead');
   if(section&&sheet)sheet.scrollTop+=section.getBoundingClientRect().top-(header?.getBoundingClientRect().bottom||sheet.getBoundingClientRect().top)-12;
  });
 }}
