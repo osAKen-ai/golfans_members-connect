@@ -27,12 +27,17 @@ function bookingGroupEditRows(candidate,records){
  const siblings=prior?.batchId?records.filter(row=>row.batchId===prior.batchId&&row.id!==candidate.id):[];
  return [...siblings,candidate];
 }
+function bookingLimitIcon(){return '<svg class="bk-limit-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5"/><path d="M12 17h.01"/></svg>';}
 function bookingGroupNoticeMarkup(rows){
  const issue=bookingGroupIssue(rows);
  if(issue)return `<p class="bk-group-rule bk-group-rule-error" role="alert">${issue}</p>`;
  const normal=rows.find(row=>row.kind==='normal');
- const limitNotice=normal?`<p class="bk-group-rule">体験版の仮設定：${bookingSeasonRule(normal.date).label}の同伴予約は、同じプレー日で合計${bookingSeasonRule(normal.date).limit}組まで。</p>`:'';
- return limitNotice+(rows.some(row=>row.kind!=='member')?'<p class="bk-group-rule">4名までは1組、5〜8名は2組、9〜12名は3組でお選びください。</p>':'');
+ if(normal){
+  const rule=bookingSeasonRule(normal.date);
+  const label=rule.label==='平日'?'平日':`${rule.busy?'繁忙期':'閑散期'}の${rule.label.startsWith('土曜')?'土曜':'日祝'}`;
+  return `<p class="bk-group-rule bk-daily-limit">${bookingLimitIcon()}<span>${label}は${rule.limit}組/日です。</span></p>`;
+ }
+ return rows.some(row=>row.kind==='intro')?`<p class="bk-group-rule bk-daily-limit">${bookingLimitIcon()}<span>平日の紹介予約は2組/日です。</span></p>`:'';
 }
 
 // Demonstration timetable per course/tee: four member-time starts per day.

@@ -104,3 +104,8 @@
 .bk-people:disabled{opacity:.3;cursor:not-allowed;background:#eee;color:#65645e;border-color:#aaa;box-shadow:none}
 .bk-group-rule{margin:8px 0;font-size:12px;line-height:1.5;color:var(--gold,#746443);text-align:left}
 .bk-group-rule-error{color:#7b2033;font-weight:700}
+
+/* Daily booking cap: concise and legible on member and delegate screens. */
+.bk-group-rule.bk-daily-limit{font-size:clamp(17px,4.5vw,20px);font-weight:800;color:#7b2033;line-height:1.45;margin:12px 0;text-align:left}
+
+.bk-daily-limit{display:flex;align-items:center;gap:7px}.bk-limit-icon{width:22px;height:22px;flex:0 0 22px}
