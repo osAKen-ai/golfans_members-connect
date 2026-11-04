@@ -4,8 +4,7 @@
 .competition-format>span{padding-top:2px}
 .score-scroll-hint{display:flex;justify-content:space-between;gap:8px;color:#6a6355;font-size:11px;font-weight:600;text-align:left;margin:16px 0 8px}
 .score-scroll-hint span{color:#756440}
-.results-scroll{max-width:100%;overflow:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#99865b #efede6;border:1px solid #e2ded4;border-radius:5px;background:#fff;isolation:isolate}
-.results-scroll{max-height:62dvh}
+.results-scroll{max-width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#99865b #efede6;border:1px solid #e2ded4;border-radius:5px;background:#fff;isolation:isolate}
 .results-scroll:focus-visible{outline:2px solid #99865b;outline-offset:3px}
 .event-results-page .results-scroll .rounds-leaderboard{width:max-content;min-width:100%;margin:0;border-radius:0;table-layout:fixed}
 .event-results-page .results-scroll .result-rank-col{width:36px}
