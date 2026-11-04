@@ -64,16 +64,10 @@ if(typeof proxyMountTimes==='function'){
 // Owner controls exist only on records belonging to the signed-in demo member.
 let ownReservationPeopleId=null;
 function ownReservationRowMarkup(slot){
- const r=slot.ownReservation,solo=isSoloMemberTime(r),expanded=ownReservationPeopleId===r.id;
- const id=esc(JSON.stringify(r.id));
- return `<section class="bk-slot bk-current-reservation bk-owned-reservation" data-reservation-id="${esc(r.id)}" data-hour="${slot.hour}" aria-label="ご自身の予約 ${esc(r.time)} ${r.people}名"><time>${esc(r.time)}</time><div class="bk-owned-main"><header>${r.kind==='intro'||r.memberPlaying===false?`<span class="bk-owned-booker"><span class="bk-owned-booker-photo">${ownPhotoMarkup()}</span><span><span class="bk-current-badge">ご自身の予約</span><small>${r.kind==='intro'?'紹介者':'予約者'}：伊藤 剛</small></span></span>`:'<span class="bk-current-badge">ご自身の予約</span>'}<strong>${r.people}名</strong></header>${ownReservedOccupantsMarkup(r)}<div class="bk-owned-actions">${solo?'<span class="bk-owned-solo">メンバータイム・1名</span>':`<button type="button" aria-expanded="${expanded}" onclick="toggleOwnReservationPeople(${id})">人数変更</button>`}<button type="button" onclick="openPanel('booking',${id})">時間変更</button></div>${expanded&&!solo?`<div class="bk-owned-people" role="group" aria-label="変更後の人数"><div class="bk-owned-edit-heading"><strong>変更後の人数</strong><button type="button" class="bk-change-reset" onclick="toggleOwnReservationPeople(${id})">変更解除</button></div>${[2,3,4].map(n=>`<button type="button" ${n===Number(r.people)?'disabled':''} onclick="changeOwnReservationPeople(${id},${n})">${n}名${n===Number(r.people)?'<small>現在</small>':''}</button>`).join('')}</div>`:''}</div></section>`;
+ const r=slot.ownReservation;
+ return `<section class="bk-slot bk-current-reservation bk-owned-reservation" data-reservation-id="${esc(r.id)}" data-hour="${slot.hour}" aria-label="ご自身の予約 ${esc(r.time)} ${r.people}名"><time>${esc(r.time)}</time><div class="bk-owned-main"><header>${r.kind==='intro'||r.memberPlaying===false?`<span class="bk-owned-booker"><span class="bk-owned-booker-photo">${ownPhotoMarkup()}</span><span><span class="bk-current-badge">ご自身の予約</span><small>${r.kind==='intro'?'紹介者':'予約者'}：伊藤 剛</small></span></span>`:'<span class="bk-current-badge">ご自身の予約</span>'}<strong>${r.people}名</strong></header>${ownReservedOccupantsMarkup(r)}</div></section>`;
 }
-function toggleOwnReservationPeople(id){
- if(!state.reservations.some(r=>r.id===id&&(!r.status||r.status==='reserved')))return;
- ownReservationPeopleId=ownReservationPeopleId===id?null:id;
- const list=document.querySelector('.bk-slot-list'),top=list?.scrollTop||0;
- if(list){list.innerHTML=bookingRows();list.scrollTop=top;}
-}
+
 function changeOwnReservationPeople(id,people){
  const r=state.reservations.find(r=>r.id===id&&(!r.status||r.status==='reserved'));
  if(!r||isSoloMemberTime(r)||![2,3,4].includes(people)||people===Number(r.people))return;
@@ -114,7 +108,7 @@ if(typeof bookingTimes==='function'&&typeof proxyMemberInfo!=='function'){
  const timesBeforeReset=bookingTimes;
  bookingTimes=function(){
   const markup=timesBeforeReset(),r=currentEditingReservation();
-  if(!r)return markup;
+  if(!r)return '<button type="button" class="bk-times-return" onclick="bookingReturnCalendar()"><span aria-hidden="true">‹</span> カレンダーに戻る</button>'+markup;
   const reset=`<div class="bk-edit-notice" role="group" aria-label="予約変更中"><span><strong>予約を変更中</strong><small>元の予約：${esc(r.time)}・${Number(r.people)}名</small></span><button type="button" class="bk-change-reset" onclick="cancelOwnBookingChange()">変更解除</button></div>`;
   return markup.replace('<div class="bk-time-main">','<div class="bk-time-main">'+reset);
  };

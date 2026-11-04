@@ -41,9 +41,20 @@ function toggleCalendarReservationPeople(id){
  if(!modal?.open)return;
  const body=modal.querySelector('.bk-calendar-modal-body'),top=body.scrollTop;
  modal.innerHTML=calendarReservationMarkup(calendarReservationDate);
- modal.querySelector('.bk-calendar-modal-body').scrollTop=top;
- const control=calendarReservationPeopleId?modal.querySelector('.bk-calendar-people button'):modal.querySelector('[aria-expanded]');
+ const nextBody=modal.querySelector('.bk-calendar-modal-body');
+ nextBody.scrollTop=top;
+ const card=[...nextBody.querySelectorAll('[data-reservation-id]')].find(item=>item.dataset.reservationId===String(id));
+ const section=card?.querySelector('.bk-calendar-people');
+ const control=section?section.querySelector('.bk-calendar-people-options button:not(:disabled)'):card?.querySelector('[aria-expanded]');
  control?.focus({preventScroll:true});
+ if(section)requestAnimationFrame(()=>{
+  if(!modal.open||!section.isConnected)return;
+  const bounds=nextBody.getBoundingClientRect(),target=section.getBoundingClientRect();
+  const available=nextBody.clientHeight-16;
+  const distance=target.height>available||target.top<bounds.top+8
+   ?target.top-bounds.top-8:Math.max(0,target.bottom-bounds.top-nextBody.clientHeight+8);
+  if(Math.abs(distance)>1)nextBody.scrollBy({top:distance,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ });
 }
 // For multiple groups, anchor to the card currently being viewed in the modal.
 function visibleCalendarReservationId(){

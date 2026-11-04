@@ -164,3 +164,9 @@
 @media(max-width:370px){.bk-calendar-modal-body{padding:14px}.bk-calendar-reservation-modal .rs-card{padding:12px}.bk-calendar-reservation-modal .rs-start-facts dd{font-size:19px}.bk-calendar-reservation-modal .rs-start-facts>div:nth-child(2) dd{font-size:15px}}
 
 .bk-calendar-guests-label{display:block;font-size:11px;color:#66717b;margin-bottom:3px;font-weight:600}
+
+/* Keep browsing separate from editing, with an explicit route back. */
+.bk-times-return{display:block;flex:none;min-height:36px;padding:6px 16px;border:0;border-bottom:1px solid #e6e2d8;background:#f7f5ef;color:#2d3538;text-align:left;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.bk-times-return span{font-size:20px;vertical-align:-1px;margin-right:3px}
+.bk-times-return:focus-visible{outline:3px solid #99865b;outline-offset:-3px}
+@media(min-width:1000px){.bk-owned-main{grid-template-columns:minmax(0,1fr)}.bk-owned-main>header{justify-content:space-between}}
