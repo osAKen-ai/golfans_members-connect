@@ -1,0 +1,41 @@
+/* Shared score layout: fixed identity, scrollable totals and round breakdown. */
+.competition-format{display:flex;align-items:flex-start;gap:10px;text-align:left;margin:14px 0 20px;color:#756440;font-size:12px;line-height:1.7}
+.competition-format>strong{flex:none;background:#eae5d8;border-radius:4px;padding:2px 8px;white-space:nowrap}
+.competition-format>span{padding-top:2px}
+.score-scroll-hint{display:flex;justify-content:space-between;gap:8px;color:#6a6355;font-size:11px;font-weight:600;text-align:left;margin:16px 0 8px}
+.score-scroll-hint span{color:#756440}
+.results-scroll,.round-detail-scroll{max-width:100%;overflow:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#99865b #efede6;border:1px solid #e2ded4;border-radius:5px;background:#fff;isolation:isolate}
+.results-scroll{max-height:62dvh}
+.results-scroll:focus-visible,.round-detail-scroll:focus-visible{outline:2px solid #99865b;outline-offset:3px}
+.event-results-page .results-scroll .rounds-leaderboard{width:max-content;min-width:100%;margin:0;border-radius:0;table-layout:fixed}
+.event-results-page .results-scroll .result-rank-col{width:36px}
+.event-results-page .results-scroll .result-name-col{width:112px}
+.event-results-page .results-scroll .round-score-col{width:64px}
+.event-results-page .results-scroll .rounds-leaderboard th,.event-results-page .results-scroll .rounds-leaderboard td{min-width:64px;box-sizing:border-box;white-space:nowrap;padding:12px 8px;border-bottom:1px solid #e5e1dc;background:#fff}
+.event-results-page .results-scroll .rounds-leaderboard thead th{background:#efede6;font-size:11px;padding:10px 6px}
+.event-results-page .results-scroll .rounds-leaderboard thead th[colspan]{border-bottom:1px solid #d8d1c1;border-left:1px solid #d8d1c1}
+.event-results-page .results-scroll .rounds-leaderboard tbody td{font-size:15px}
+.event-results-page .results-scroll .rounds-leaderboard .fixed-rank{position:sticky;left:0;z-index:1;min-width:36px;width:36px}
+.event-results-page .results-scroll .rounds-leaderboard .fixed-name{position:sticky;left:36px;z-index:1;min-width:112px;width:112px;border-right:1px solid #d8d1c1;box-shadow:4px 0 5px -5px #544b38;font-size:14px;padding-left:8px}
+.event-results-page .results-scroll .rounds-leaderboard thead{z-index:3}
+.event-results-page .results-scroll .rounds-leaderboard .event-result-total,.event-results-page .results-scroll .rounds-leaderboard .round-subtotal{background:#f7f6f1;font-weight:800}
+.event-results-page .results-scroll .rounds-leaderboard .event-result-net{color:#7b2033;font-weight:800}
+.event-results-page .results-scroll .rounds-leaderboard tr.event-result-own>*{background:#f0ecdf}
+.round-detail-table{border-collapse:separate;border-spacing:0;min-width:100%;width:max-content;text-align:center;font-variant-numeric:tabular-nums}
+.round-detail-table th,.round-detail-table td{min-width:68px;padding:12px 10px;box-sizing:border-box}
+.round-detail-table thead th{font-size:11px;color:#6a6355;background:#efede6;border-bottom:1px solid #e2ded4}
+.round-detail-table th[colspan]{border-left:1px solid #d8d1c1}
+.round-detail-table td{font-size:22px;font-weight:700;color:#2d3538}
+.round-detail-table .round-subtotal{background:#f7f6f1}
+.competition-detail .round-detail-scroll{margin-bottom:24px}
+.competition-results .competition-card>b{flex:none;white-space:nowrap;margin-left:10px}
+.competition-results .competition-card .round-example-label{color:#756440;font-size:11px}
+@media(min-width:700px){.event-results-page .results-scroll .rounds-leaderboard tbody td{font-size:16px}.score-scroll-hint{font-size:12px}}
+@media(max-width:400px){
+.event-results-page .results-scroll .rounds-leaderboard .fixed-rank{width:34px;min-width:34px}
+.event-results-page .results-scroll .rounds-leaderboard .fixed-name{left:34px;width:104px;min-width:104px}
+.event-results-page .results-scroll .result-rank-col{width:34px}
+.event-results-page .results-scroll .result-name-col{width:104px}
+.event-results-page .results-scroll .round-score-col{width:60px}
+.event-results-page .results-scroll .rounds-leaderboard th,.event-results-page .results-scroll .rounds-leaderboard td{min-width:60px}
+}
