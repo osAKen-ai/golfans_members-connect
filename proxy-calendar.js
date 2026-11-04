@@ -18,6 +18,8 @@ function bookingSlots(date,side=draft.side||'OUT'){
  return Array.from({length:34},(_,i)=>{const minutes=7*60+2+i*7,time=Math.floor(minutes/60)+':'+String(minutes%60).padStart(2,'0'),pattern=(seed+i)%10;
   const kind=demoBookingSlotKind(date,time,pattern);
   let occupied=pattern===0?4:pattern===1?3:pattern===2?1:pattern===5?2:pattern===6?3:pattern===7?4:0;
+  // Group reservations start at two players; only member-time samples may have one.
+  if(kind!=='member'&&occupied===1)occupied=2;
   const existing=state.reservations.find(r=>r.id!==draft.id&&r.date===date&&r.course===draft.course&&(r.side||'OUT')===side&&r.time===time);
   if(existing)occupied=4;
   const capacity=4-occupied,choices=(kind==='member'?[1]:[2,3,4]).filter(n=>n<=capacity);

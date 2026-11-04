@@ -3,7 +3,7 @@
 .booking-times-view .bk-owned-main .bk-guest-band {
  display:flex;align-items:center;justify-content:center;align-self:center;
  width:100%;min-width:0;max-width:none;height:24px;min-height:0;aspect-ratio:auto;
- padding:0 2px;margin:0;border:0;border-radius:3px;background:#e9e5da;color:#625a48;
+ padding:0 2px;margin:0;border:0;border-radius:3px;background:transparent;color:#625a48;
  font-size:11px;font-weight:700;white-space:nowrap;line-height:1;
 }
 .booking-times-view .bk-slot-main .bk-pending-band,
