@@ -130,7 +130,7 @@
 .bk-calendar-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid #e6e2d8;flex:none;background:#fff}
 .bk-calendar-modal-head h2{margin:0;min-width:0;font-size:clamp(17px,5vw,24px);font-weight:850;line-height:1.4;color:#2d3538}.bk-calendar-modal-head h2>span{display:inline-block}
 .bk-calendar-modal-head>button{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:1px solid #e4cfd3;border-radius:50%;background:#fff;color:#7b2033;font-size:30px;font-weight:900;line-height:1}
-.bk-calendar-modal-body{overflow:auto;overscroll-behavior:contain;padding:18px;min-height:0}
+.bk-calendar-modal-body{overflow-anchor:none;overflow:auto;overscroll-behavior:contain;padding:18px;min-height:0}
 .bk-calendar-reservation-modal .rs-card{margin:0 0 14px;padding:16px;border:1px solid #dfddd4;border-radius:12px;background:#fff;color:#2d3538;box-shadow:none}
 .bk-calendar-reservation-modal .rs-card:last-child{margin-bottom:0}
 .bk-calendar-reservation-modal .rs-start-facts{margin:16px 0}
@@ -165,8 +165,5 @@
 
 .bk-calendar-guests-label{display:block;font-size:11px;color:#66717b;margin-bottom:3px;font-weight:600}
 
-/* Keep browsing separate from editing, with an explicit route back. */
-.bk-times-return{display:block;flex:none;min-height:36px;padding:6px 16px;border:0;border-bottom:1px solid #e6e2d8;background:#f7f5ef;color:#2d3538;text-align:left;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
-.bk-times-return span{font-size:20px;vertical-align:-1px;margin-right:3px}
-.bk-times-return:focus-visible{outline:3px solid #99865b;outline-offset:-3px}
+/* Keep the read-only reservation summary balanced on desktop. */
 @media(min-width:1000px){.bk-owned-main{grid-template-columns:minmax(0,1fr)}.bk-owned-main>header{justify-content:space-between}}

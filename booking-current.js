@@ -108,7 +108,7 @@ if(typeof bookingTimes==='function'&&typeof proxyMemberInfo!=='function'){
  const timesBeforeReset=bookingTimes;
  bookingTimes=function(){
   const markup=timesBeforeReset(),r=currentEditingReservation();
-  if(!r)return '<button type="button" class="bk-times-return" onclick="bookingReturnCalendar()"><span aria-hidden="true">‹</span> カレンダーに戻る</button>'+markup;
+  if(!r)return markup;
   const reset=`<div class="bk-edit-notice" role="group" aria-label="予約変更中"><span><strong>予約を変更中</strong><small>元の予約：${esc(r.time)}・${Number(r.people)}名</small></span><button type="button" class="bk-change-reset" onclick="cancelOwnBookingChange()">変更解除</button></div>`;
   return markup.replace('<div class="bk-time-main">','<div class="bk-time-main">'+reset);
  };

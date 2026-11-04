@@ -36,24 +36,42 @@ function openCalendarReservation(date){
 }
 function closeCalendarReservation(){document.getElementById('calendarReservationModal')?.close();}
 function toggleCalendarReservationPeople(id){
- calendarReservationPeopleId=calendarReservationPeopleId===id?null:id;
  const modal=document.getElementById('calendarReservationModal');
  if(!modal?.open)return;
- const body=modal.querySelector('.bk-calendar-modal-body'),top=body.scrollTop;
- modal.innerHTML=calendarReservationMarkup(calendarReservationDate);
- const nextBody=modal.querySelector('.bk-calendar-modal-body');
- nextBody.scrollTop=top;
- const card=[...nextBody.querySelectorAll('[data-reservation-id]')].find(item=>item.dataset.reservationId===String(id));
- const section=card?.querySelector('.bk-calendar-people');
- const control=section?section.querySelector('.bk-calendar-people-options button:not(:disabled)'):card?.querySelector('[aria-expanded]');
- control?.focus({preventScroll:true});
+ const body=modal.querySelector('.bk-calendar-modal-body');
+ const card=[...body.querySelectorAll('[data-reservation-id]')].find(item=>item.dataset.reservationId===String(id));
+ const record=calendarOwnReservations(calendarReservationDate).find(item=>item.id===id);
+ const control=card?.querySelector('[aria-expanded]');
+ if(!control||!record||isSoloMemberTime(record))return;
+ const opening=calendarReservationPeopleId!==id;
+ // Keep the scrolling container and the tapped button alive. Replacing the dialog
+ // resets scrolling/focus on mobile browsers, especially beyond the first group.
+ body.scrollTo({top:body.scrollTop,behavior:'instant'});
+ const anchorTop=control.getBoundingClientRect().top;
+ if(body.querySelector('.bk-calendar-people')?.contains(document.activeElement))control.focus({preventScroll:true});
+ body.querySelectorAll('.bk-calendar-people').forEach(section=>section.remove());
+ body.querySelectorAll('[aria-expanded]').forEach(button=>button.setAttribute('aria-expanded','false'));
+ calendarReservationPeopleId=opening?id:null;
+ let section=null;
+ if(opening){
+  const template=document.createElement('template');
+  template.innerHTML=calendarReservationCard(record,0,1);
+  section=template.content.querySelector('.bk-calendar-people');
+  card.append(section);
+  control.setAttribute('aria-expanded','true');
+ }
+ // If another group's open editor was above this one, preserve the tapped
+ // button's visual position while removing that editor.
+ body.scrollBy({top:control.getBoundingClientRect().top-anchorTop,behavior:'instant'});
  if(section)requestAnimationFrame(()=>{
-  if(!modal.open||!section.isConnected)return;
-  const bounds=nextBody.getBoundingClientRect(),target=section.getBoundingClientRect();
-  const available=nextBody.clientHeight-16;
-  const distance=target.height>available||target.top<bounds.top+8
-   ?target.top-bounds.top-8:Math.max(0,target.bottom-bounds.top-nextBody.clientHeight+8);
-  if(Math.abs(distance)>1)nextBody.scrollBy({top:distance,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  if(!modal.open||!section.isConnected||calendarReservationPeopleId!==id)return;
+  const bounds=body.getBoundingClientRect(),target=section.getBoundingClientRect();
+  const available=body.clientHeight-16;
+  const distance=target.height>available
+   ?Math.max(0,target.top-bounds.top-8)
+   :Math.max(0,target.bottom-bounds.top-body.clientHeight+8);
+  // Reveal only what is below the viewport; never jump upward to another group.
+  if(distance>1)body.scrollBy({top:distance,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
  });
 }
 // For multiple groups, anchor to the card currently being viewed in the modal.
