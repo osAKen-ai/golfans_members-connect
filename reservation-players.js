@@ -48,7 +48,7 @@ function reservationListSlotsMarkup(r){
 }
 function reservationCancelledRows(r){
  const rows=[...(r.groups||[]),...(state.reservationHistory||[])];
- return [...new Map(rows.filter(g=>g.status==='cancelled'&&(r.batchId?g.batchId===r.batchId:g.id===r.id)).map(g=>[g.id,g])).values()].sort((a,b)=>a.date.localeCompare(b.date)||a.time.padStart(5,'0').localeCompare(b.time.padStart(5,'0')));
+ return [...new Map(rows.filter(g=>g.status==='cancelled'&&(r.batchId?g.batchId===r.batchId:g.id===r.id)).map(g=>[g.id,g])).values()].sort(bookingGroupDisplayOrder);
 }
 function reservationCancellationAuditTimestamp(r){
  return (r.audit||[]).filter(a=>a.action==='cancel'&&a.at&&!Number.isNaN(Date.parse(a.at))).sort((a,b)=>Date.parse(b.at)-Date.parse(a.at))[0]?.at;

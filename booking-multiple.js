@@ -11,7 +11,7 @@ function memberGroupChoiceIssue(time,people,kind,seat=0){
  return bookingGroupIssue(memberGroupRows(candidate));
 }
 function selectedBookingForSlot(s){if(draft.edit)return bookingUI.selected&&draft.time===s.time?{...draft,seat:bookingUI.seat}:null;return bookingBatch.slots.find(r=>r.side===(draft.side||'OUT')&&r.time===s.time)||null;}
-function normalizeBookingBatch(){if(!bookingBatch.slots.some(r=>bookingSlotKey(r)===bookingBatch.ownerKey&&r.kind!=='intro'))bookingBatch.ownerKey=bookingBatch.slots.find(r=>r.kind!=='intro')?bookingSlotKey(bookingBatch.slots.find(r=>r.kind!=='intro')):null;for(const r of bookingBatch.slots){r.memberPlaying=r.kind!=='intro'&&bookingSlotKey(r)===bookingBatch.ownerKey;r.guests=r.guests.slice(0,memberGuestCount(r));}bookingBatch.slots.sort((a,b)=>a.time.padStart(5,'0').localeCompare(b.time.padStart(5,'0'))||a.side.localeCompare(b.side));bookingUI.selected=bookingBatch.slots.length>0;}
+function normalizeBookingBatch(){if(!bookingBatch.slots.some(r=>bookingSlotKey(r)===bookingBatch.ownerKey&&r.kind!=='intro'))bookingBatch.ownerKey=bookingBatch.slots.find(r=>r.kind!=='intro')?bookingSlotKey(bookingBatch.slots.find(r=>r.kind!=='intro')):null;for(const r of bookingBatch.slots){r.memberPlaying=r.kind!=='intro'&&bookingSlotKey(r)===bookingBatch.ownerKey;r.guests=r.guests.slice(0,memberGuestCount(r));}bookingBatch.slots.sort(bookingGroupDisplayOrder);bookingUI.selected=bookingBatch.slots.length>0;}
 resetBooking=function(){bookingBatch.slots=[];bookingBatch.active=0;bookingBatch.flow=false;bookingBatch.ownerKey=null;singleBooking.reset();bookingBatch.browseSide=draft.side;};
 clearBookingSelection=function(refresh=true){bookingBatch.slots=[];bookingBatch.flow=false;bookingBatch.ownerKey=null;singleBooking.clear(refresh);};
 function refreshBookingSelection(){const list=$('.bk-slot-list');if(list){const y=list.scrollTop;list.innerHTML=bookingRows();list.scrollTop=y;}const box=$('#bookingSelection');if(box){box.hidden=!bookingUI.selected;box.innerHTML=bookingSelectionMarkup();}}
@@ -52,13 +52,13 @@ bookingConfirm=function(){if(!bookingBatch.flow)return singleBooking.confirm();s
 commitBooking=function(){if(!draft.guestOnly){const issue=bookingGroupIssue(draft.edit?memberGroupRows():bookingBatch.slots);if(issue){toast(issue);return;}}if(!bookingBatch.flow||draft.edit){singleBooking.commit();return;}stashBookingGroup();if(current?.k!=='confirm')return;if(!validBookingBatch()){toast('空き状況が変わりました。選択した枠を確認してください');return;}const duplicate=bookingDuplicatePlayer();if(duplicate){toast(duplicate+' 様が複数の組に登録されています');return;}const batchId='demo'+Date.now();const records=bookingBatch.slots.map((r,i)=>({...r,id:batchId+'-'+i,guests:Array.from({length:memberGuestCount(r)},(_,j)=>r.guests[j]||''),createdAt:now,source:'WEB予約',proxy:false,batchId}));state.reservations.push(...records);reservationUI.month=records[0].date.slice(0,7);reservationUI.status='reserved';reservationUI.from='';reservationUI.to='';bookingBatch.flow=false;bookingBatch.slots=[];bookingUI.selected=false;save();draft={...records[0],edit:true};openPanel('complete',{id:records[0].id,ids:records.map(r=>r.id),edit:false});};
 render=function(k,arg=null){if(k==='times'&&bookingBatch.flow){stashBookingGroup();bookingBatch.flow=false;draft={...draft,side:bookingBatch.browseSide};}singleBooking.render(k,arg);};
 
-function completedBookingRows(ids){return ids.map(id=>state.reservations.find(r=>r.id===id)).filter(Boolean);}
+function completedBookingRows(ids){return ids.map(id=>state.reservations.find(r=>r.id===id)).filter(Boolean).sort(bookingGroupDisplayOrder);}
 function openCompletedCompanions(ids){const rows=completedBookingRows(ids);const first=rows.find(r=>registrationMissing(r))||rows[0];if(first)startGuestEditor(first.id);}
 // Resolve the saved reservation batch each time so unrelated bookings are never advanced.
 function savedCompanionRegistration(){
  const record=state.reservations.find(r=>r.id===guestEditorId);
  const rows=record?(record.batchId?state.reservations.filter(r=>r.batchId===record.batchId):[record]):[];
- rows.sort((a,b)=>a.date.localeCompare(b.date)||a.time.padStart(5,'0').localeCompare(b.time.padStart(5,'0'))||(a.side||'OUT').localeCompare(b.side||'OUT'));
+ rows.sort(bookingGroupDisplayOrder);
  return {record,rows,index:rows.findIndex(r=>r.id===guestEditorId)};
 }
 function finishSavedCompanionRegistration(){

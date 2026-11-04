@@ -118,3 +118,6 @@ function bookingAccompaniedLimitIssue(rows,existing=bookingExistingReservations(
  }
  return '';
 }
+
+// Keep every group of a start side together, then order its tee times.
+function bookingGroupDisplayOrder(a,b){return (a.date||'').localeCompare(b.date||'') || ((a.side||'OUT')==='IN'?1:0)-((b.side||'OUT')==='IN'?1:0) || (a.time||'').padStart(5,'0').localeCompare((b.time||'').padStart(5,'0'));}
