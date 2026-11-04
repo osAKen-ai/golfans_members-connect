@@ -37,7 +37,7 @@ function returnToProfileCompetition(){
  history.replaceState({...history.state,portal:true,route:{k:'profile',arg}},'',location.pathname+location.search+'#profile');
  render('profile',arg);
 }
-function closePanel(){if(current?.k==='competitionResult'){returnToProfileCompetition();return;}if(isPublicProfilePanel(current?.k)&&(history.state?.depth||0)>1){history.back();return;}if(current?.k==='magazine'){history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);render(null);return;}if(history.state?.depth)history.go(-history.state.depth);else render(null);}
+function closePanel(){if(current?.k==='competitionResult'||(current?.k==='eventResults'&&current.arg==='club-championship')){returnToProfileCompetition();return;}if(isPublicProfilePanel(current?.k)&&(history.state?.depth||0)>1){history.back();return;}if(current?.k==='magazine'){history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);render(null);return;}if(history.state?.depth)history.go(-history.state.depth);else render(null);}
 function backPanel(){if(history.state?.depth)history.back();else closePanel();}
 window.addEventListener('popstate',e=>{const r=e.state?.route;render(r?.k||null,r?.arg??null);restoreProfileOriginScroll(e.state?.profileOriginScroll);});
 history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);
