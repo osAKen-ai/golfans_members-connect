@@ -5,7 +5,7 @@ let wlForm=null,wlView='list',wlOwnerAtOpen=null,wlRefreshTimer=null,wlSubmitted
 const wlBell='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>';
 function wlOwner(){return isDelegateBooking?proxyMember:'ito';}
 function wlKey(){return isDelegateBooking?proxyStorageKey(proxyMember):'takarazuka-portal-v1';}
-function wlRead(){let data;try{data=JSON.parse(localStorage.getItem(wlKey()));}catch{}return JSON.parse(JSON.stringify(data?.reservations?data:state));}
+function wlRead(){let data;try{data=JSON.parse(localStorage.getItem(wlKey()));}catch{}return removeWeekendIntroDemo(JSON.parse(JSON.stringify(data?.reservations?data:state)));}
 function wlCheck(){if(isDelegateBooking&&!proxyCanAct())throw Error('代理予約の利用が停止されています。');if(wlOwnerAtOpen&&wlOwnerAtOpen!==wlOwner())throw Error('担当メンバーが変更されています。開き直してください。');}
 function wlMutate(action){wlCheck();const data=wlRead(),w=wlEngine.init(data,wlBase),t=wlEngine.clock(w);wlEngine.tick(w,t,data.reservations,wlOwner());const result=action(data,w,t);localStorage.setItem(wlKey(),JSON.stringify(data));state=data;if(!isDelegateBooking)updateHome();return result;}
 function wlError(e){if(/通知先|メール|LINE/.test(e.message||'')){const settings=document.querySelector('.wl-settings');if(settings)settings.open=true;}const el=document.querySelector('#wlError');if(el)el.textContent=e.message||String(e);else toast(e.message||String(e));}
@@ -64,7 +64,7 @@ function wlSet(field,value){
  if(['kind','course'].includes(field))wlForm.hours=wlForm.hours.filter(h=>wlAllowedHours().includes(h));
  wlDraw();
 }
-function wlValidateForm(){wlCheck();
+function wlValidateForm(){wlCheck();if(wlForm.kind==='intro'&&bookingRequiresAccompaniment(wlForm.date))throw Error('土日祝はメンバー同伴が必要です。紹介枠はお申し込みいただけません。');
  const emails=wlForm.emails.split(/[\s,;、]+/).filter(Boolean);
  if(!wlForm.line&&!wlForm.email)throw Error('通知先を選択してください。');
  if(wlForm.email&&(!emails.length||emails.some(s=>!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))))throw Error('メールアドレスをご確認ください。');
@@ -88,7 +88,7 @@ function wlSubmit(event){event.preventDefault();try{
   wlEngine.tick(w,t,data.reservations,wlOwner());
  });wlSubmittedId=submittedId;wlView='receipt';wlDraw();
  }catch(e){wlError(e);}}
-function wlConfirm(id){try{wlMutate((data,w,t)=>wlEngine.accept(data,id,t,wlOwner(),{id:isDelegateBooking?proxyAgent:'ito',name:isDelegateBooking?proxyAgentInfo().name:'伊藤 剛'}));wlDraw();toast('予約一覧に反映しました');}catch(e){wlError(e);}}
+function wlConfirm(id){try{wlMutate((data,w,t)=>{const request=w.requests.find(r=>r.id===id&&r.owner===wlOwner());if(request){const issue=bookingIntroLimitIssue([{...request,id:request.mode==='change'?request.original?.id:undefined,status:'reserved'}],data.reservations);if(issue)throw Error(issue);}return wlEngine.accept(data,id,t,wlOwner(),{id:isDelegateBooking?proxyAgent:'ito',name:isDelegateBooking?proxyAgentInfo().name:'伊藤 剛'});});wlDraw();toast('予約一覧に反映しました');}catch(e){wlError(e);}}
 function wlDecline(id){try{wlMutate((data,w,t)=>{wlEngine.decline(w,id,t,wlOwner());wlEngine.tick(w,t,data.reservations,wlOwner());});wlDraw();}catch(e){wlError(e);}}
 function wlRelease(id,count){try{wlMutate((data,w,t)=>{
  const r=w.requests.find(x=>x.id===id&&x.owner===wlOwner());if(!r)return;

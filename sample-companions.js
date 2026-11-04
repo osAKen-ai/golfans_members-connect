@@ -44,7 +44,7 @@ function ensureMemberSampleData(data){
  data.reservationHistory.push(...sampleHistory().filter(r=>!ids.has(r.id)));
  }
  data.sampleHistoryReady=true;
- return organizeDemoReservations(rebalanceSampleCompanions(data));
+ return removeWeekendIntroDemo(organizeDemoReservations(rebalanceSampleCompanions(data)));
 }
 
 // One-time cleanup of accumulated demo submissions; a multi-group submission stays intact.
