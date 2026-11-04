@@ -29,3 +29,16 @@ function bookingGroupNoticeMarkup(rows){
  if(issue)return `<p class="bk-group-rule bk-group-rule-error" role="alert">${issue}</p>`;
  return rows.some(row=>row.kind!=='member')?'<p class="bk-group-rule">4名までは1組、5〜8名は2組、9〜12名は3組でお選びください。</p>':'';
 }
+
+// Demonstration timetable per course/tee: four member-time starts per day.
+// Weekdays: one in each hour; weekends/holidays: two each in the 8 and 9 o'clock hours.
+function demoBookingSlotKind(date,time,pattern){
+ const [hour,minute]=time.split(':').map(Number);
+ const day=new Date(date+'T12:00:00Z').getUTCDay();
+ const weekend=day===0||day===6||(typeof isJapaneseHoliday==='function'&&isJapaneseHoliday(date));
+ const slotIndex=Math.round((hour*60+minute-(7*60+2))/7);
+ const firstInHour=Math.max(0,Math.ceil((hour*60-(7*60+2))/7));
+ const position=slotIndex-firstInHour;
+ const member=weekend?(hour===8||hour===9)&&[1,5].includes(position):position===2;
+ return member?'member':pattern===3||pattern===4?'intro':'normal';
+}

@@ -154,18 +154,19 @@ bookingSlots=function(date,side=draft.side||'OUT'){
 function calendarOwnReservations(date){
  return (state.reservations||[]).filter(r=>r.date===date&&(!r.status||r.status==='reserved'));
 }
-// Own days lead to the saved booking; other full days keep their waiting entry.
+// Members can inspect full days; waitlist entry remains available from the start list.
 bookingCalendarMonthMarkup=function(y,m,handler,secondary=false){
  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();let cells='';
  for(let i=0;i<Math.ceil((first+days)/7)*7;i++){
   const date=bookingISO(y,m,i-first+1),outside=i<first||i>=first+days;
   const count=outside?0:bookingCount(date),waiting=!outside&&!count&&wlEligible(date);
+  const browse=!isDelegateBooking&&!outside&&date>now;
   const own=outside?[]:calendarOwnReservations(date);
   const anchorOwn=own.length&&handler==='pickBookingDate'&&!draft.edit;
   const ownLabel=own.length?'・予約あり（'+[...new Set(own.map(r=>r.course))].join('・')+'）':'';
-  cells+=`<button class="bk-day ${bookingDayClass(date)} ${date===draft.date?'chosen':''} ${waiting?'wl-wait-day':''} ${own.length?'bk-own-day':''}" ${!count&&!waiting&&!anchorOwn?'disabled':''} aria-label="${formatDate(date,true)} ${count?'空き'+count+'枠':waiting?'キャンセル待ち':'受付対象外'}${esc(ownLabel)}" onclick="${anchorOwn?handler:waiting?'wlOpen':handler}('${date}')"><span>${Number(date.slice(8))}</span>${count?`<small>${count}枠</small>`:waiting?`<span class="wl-day-bell">${wlBell}</span>`:'<small class="bk-no-slots"></small>'}${own.length?'<span class="bk-own-day-badge">予約あり</span>':''}</button>`;
+  cells+=`<button class="bk-day ${bookingDayClass(date)} ${date===draft.date?'chosen':''} ${waiting||browse&&!count?'wl-wait-day':''} ${own.length?'bk-own-day':''}" ${!count&&!waiting&&!anchorOwn&&!browse?'disabled':''} aria-label="${formatDate(date,true)} ${count?'空き'+count+'枠':browse?'予約状況を見る':waiting?'キャンセル待ち':'受付対象外'}${esc(ownLabel)}" onclick="${anchorOwn||browse?handler:waiting?'wlOpen':handler}('${date}')"><span>${Number(date.slice(8))}</span>${count?`<small>${count}枠</small>`:waiting?`<span class="wl-day-bell">${wlBell}</span>`:browse?'<small>満席</small>':'<small class="bk-no-slots"></small>'}${own.length?'<span class="bk-own-day-badge">予約あり</span>':''}</button>`;
  }
- return `<section class="bk-month-panel ${secondary?'bk-month-secondary':''}" aria-label="${y}年${m+1}月"><div class="bk-calendar-title">${y}年${m+1}月 <small>日付を選んで空き枠を確認</small></div><div class="bk-calendar">${'日月火水木金土'.split('').map((d,i)=>`<span class="bk-weekday ${i===0?'sun':i===6?'sat':''}">${d}</span>`).join('')}${cells}</div></section>`;
+ return `<section class="bk-month-panel ${secondary?'bk-month-secondary':''}" aria-label="${y}年${m+1}月"><div class="bk-calendar-title">${y}年${m+1}月 <small>日付を選んで予約状況を確認</small></div><div class="bk-calendar">${'日月火水木金土'.split('').map((d,i)=>`<span class="bk-weekday ${i===0?'sun':i===6?'sat':''}">${d}</span>`).join('')}${cells}</div></section>`;
 };
 function toggleCalendarFilters(button){
  bookingUI.calendarFiltersOpen=!bookingUI.calendarFiltersOpen;
@@ -183,7 +184,7 @@ function wlCalendarFilters(html){
  return before+button+'</div>'+`<div id="calendarFilterFields" ${bookingUI.calendarFiltersOpen?'':'hidden'}>`+html.slice(start,end)+'</div>'+html.slice(end);
 }
 const wlPreviousCalendar=bookingCalendar;
-bookingCalendar=function(){return wlCalendarFilters(wlPreviousCalendar()).replace('<div class="bk-calendar-pair">','<p class="bk-own-calendar-legend"><span class="bk-own-day-badge">予約あり</span> '+(isDelegateBooking?'担当メンバー':'ご自身')+'の予約（旧・新コース共通）</p><div class="bk-calendar-pair">')+`<div class="wl-legend">${wlBell}<span>キャンセル待ちのお申し込み</span></div><p class="bk-note">体験用：旧・新コースで、空き枠数や空きのある日・時間帯を変えて表示しています。</p>`;};
+bookingCalendar=function(){return wlCalendarFilters(wlPreviousCalendar()).replace('<div class="bk-calendar-pair">','<p class="bk-own-calendar-legend"><span class="bk-own-day-badge">予約あり</span> '+(isDelegateBooking?'担当メンバー':'ご自身')+'の予約（旧・新コース共通）</p><div class="bk-calendar-pair">')+`<div class="wl-legend">${wlBell}<span>${isDelegateBooking?'キャンセル待ちのお申し込み':'満席日もタップで予約状況を確認できます'}</span></div><p class="bk-note">体験用：旧・新コースで、空き枠数や空きのある日・時間帯を変えて表示しています。</p>`;};
 function wlDecorate(container){if(!container||isDelegateBooking&&!proxyCanAct())return;const k=current?.k;if(['reservations','list'].includes(k)&&!container.querySelector('.wl-entry')){if(state.waitlistDemo){try{wlMutate(()=>{});}catch(e){wlError(e);}}const shortcut=container.querySelector('[data-wl-reservation-shortcut]');if(shortcut){const rows=(state.waitlistDemo?.requests||[]).filter(r=>r.owner===wlOwner()&&r.submissionVersion===2&&['waiting','queued','offered'].includes(r.status));shortcut.querySelector('[data-wl-reservation-count]').textContent=rows.length+'件';shortcut.setAttribute('aria-label','キャンセル待ち '+rows.length+'件'+(rows.some(r=>r.mode==='change')?'（変更待ちを含む）':''));}else container.insertAdjacentHTML('afterbegin',wlReservationRequests());}if(['detail','groupDetail','reservationGroup'].includes(k)){const id=typeof current.arg==='string'?current.arg:current.arg?.id,r=state.reservations.find(x=>x.id===id);if(r&&wlEligible(r.date)&&!container.querySelector('.wl-change-entry')){const btn=document.createElement('button');btn.className='bk-secondary wl-change-entry';btn.innerHTML=wlBell+' 希望時間への変更待ち';btn.onclick=()=>wlOpen(r.date,r.id);const target=container.querySelector('.rs-detail-page')||container;target.append(btn);}}if(k==='times'&&draft&&wlEligible(draft.date)&&!container.querySelector('.wl-time-entry')){const el=document.createElement('button');el.className='wl-entry wl-time-entry';el.innerHTML=wlBell+' 希望の時間がない方はこちら ›';el.onclick=()=>wlOpen(draft.date);container.append(el);}}
 if(isDelegateBooking){const prev=proxyRender;proxyRender=function(){prev();wlDecorate(document.querySelector('#proxyMain'));};}else{const prev=render;render=function(k,arg){prev(k,arg);wlDecorate(document.querySelector('#panelBody'));};}
 // A second same-day submission must use change waiting, while one submission may contain multiple groups.
