@@ -14,8 +14,8 @@
 .booking-times-view .bk-slot-main .bk-guest-band {grid-row:1}
 /* Reference layout: checkbox at the left edge, two wide shallow tee buttons. */
 .booking-times-view .bk-slot-toolbar {height:44px;padding:0 10px 0 0;gap:12px;overflow:visible}
-.booking-times-view .bk-slot-toolbar>label {margin-left:-54px;min-width:112px;font-size:12px;gap:5px;min-height:44px}
-.booking-times-view .bk-slot-toolbar input {width:16px;height:16px;flex:none}
+.booking-times-view .bk-slot-toolbar>label {margin-left:-54px;min-width:136px;font-size:15px;gap:7px;min-height:44px;cursor:pointer}
+.booking-times-view .bk-slot-toolbar input {width:22px;height:22px;flex:none}
 .booking-times-view .bk-sides {flex:1;min-width:0;max-width:none;border-radius:4px}
 .booking-times-view .bk-sides button {flex:1;width:auto;min-height:30px;height:30px;padding:2px;font-size:14px;line-height:1.2}
 .booking-times-view .bk-hours {padding-top:44px}
@@ -23,12 +23,12 @@
 .bk-member-guest-option input {width:18px;height:18px;accent-color:#99865b;flex:none}
 .bk-member-guest-option small {display:block;font-size:11px;line-height:1.5;color:#716d62;margin-top:3px}
 @media(min-width:1000px){
- .booking-times-view .bk-slot-toolbar>label {margin-left:0;min-width:160px;font-size:14px}
+ .booking-times-view .bk-slot-toolbar>label {margin-left:0;min-width:172px;font-size:16px}
  .booking-times-view .bk-slot-toolbar {padding:0 12px;gap:20px}
  .booking-times-view .bk-sides {max-width:380px}
  .booking-times-view .bk-slot-main .bk-guest-band {height:22px}
 }
-@media(max-width:350px){.booking-times-view .bk-slot-toolbar>label{margin-left:-54px;min-width:102px;font-size:11px}.booking-times-view .bk-slot-toolbar{gap:5px}.booking-times-view .bk-slot-main .bk-guest-band{font-size:10px}}
+@media(max-width:350px){.booking-times-view .bk-slot-toolbar>label{margin-left:-54px;min-width:128px;font-size:14px}.booking-times-view .bk-slot-toolbar{gap:5px}.booking-times-view .bk-slot-main .bk-guest-band{font-size:10px}}
 
 /* Keep the introducing member separate from the guest count, within the existing row. */
 .booking-times-view .bk-introduced-party {grid-column:1 / span 4;grid-row:1;display:flex;align-items:center;gap:7px;min-width:0;width:100%}
