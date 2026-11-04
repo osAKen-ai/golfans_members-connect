@@ -31,7 +31,22 @@ function restoreProfileOriginScroll(saved){
   const list=$('.bk-slot-list');if(list)list.scrollTop=saved.top;
  });
 }
-function openPanel(k,arg=null){rememberProfileOrigin(k);hideMenu();if(['audio','backnumbers'].includes(k))k='magazine';if(!current)opener=document.activeElement;if(k==='booking'){guestEditorId=null;if(arg){const r=state.reservations.find(x=>x.id===arg);if(!r)return;draft={...r,guests:[...r.guests],edit:true};}else{draft={date:'2027-04-29',course:'旧コース',time:'',people:4,guests:[...defaultGuests]};}year=Number(draft.date.slice(0,4));month=Number(draft.date.slice(5,7))-1;resetBooking();if(arg){const original=state.reservations.find(r=>r.id===arg);bookingUI.hour=Number(original.time.split(':')[0]);bookingUI.focusCurrent=true;k='times';}}if(k==='detail'&&!arg)arg=sorted()[0]?.id;const depth=(history.state?.depth||0)+1;history.pushState({portal:true,route:{k,arg},depth},'',location.pathname+location.search+'#'+k);render(k,arg);}
+function rememberReservationListOrigin(k,arg){
+ if(current?.k!=='reservations'||!['detail','archiveDetail','reservationGroup'].includes(k))return;
+ const id=typeof arg==='string'?arg:arg?.id;
+ const record=allReservationRecords().find(r=>r.id===id);
+ history.replaceState({...history.state,reservationListOrigin:{ui:{...reservationUI},id,date:record?.date,top:$('#panelBody').scrollTop}},'');
+}
+function restoreReservationListOrigin(saved){
+ if(!saved)return;
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  if(current?.k!=='reservations')return;
+  const root=$('#panelBody'),cards=[...root.querySelectorAll('[data-reservation-date]')];
+  const target=cards.find(el=>el.dataset.reservationId===saved.id)||cards.find(el=>el.dataset.reservationDate===saved.date);
+  root.scrollTo({top:target?root.scrollTop+target.getBoundingClientRect().top-root.getBoundingClientRect().top-12:saved.top,behavior:'instant'});
+ }));
+}
+function openPanel(k,arg=null){rememberReservationListOrigin(k,arg);rememberProfileOrigin(k);hideMenu();if(['audio','backnumbers'].includes(k))k='magazine';if(!current)opener=document.activeElement;if(k==='booking'){guestEditorId=null;if(arg){const r=state.reservations.find(x=>x.id===arg);if(!r)return;draft={...r,guests:[...r.guests],edit:true};}else{draft={date:'2027-04-29',course:'旧コース',time:'',people:4,guests:[...defaultGuests]};}year=Number(draft.date.slice(0,4));month=Number(draft.date.slice(5,7))-1;resetBooking();if(arg){const original=state.reservations.find(r=>r.id===arg);bookingUI.hour=Number(original.time.split(':')[0]);bookingUI.focusCurrent=true;k='times';}}if(k==='detail'&&!arg)arg=sorted()[0]?.id;const depth=(history.state?.depth||0)+1;history.pushState({portal:true,route:{k,arg},depth},'',location.pathname+location.search+'#'+k);render(k,arg);}
 function returnToProfileSection(section){
  const arg={section};
  history.replaceState({...history.state,portal:true,route:{k:'profile',arg}},'',location.pathname+location.search+'#profile');
@@ -39,7 +54,7 @@ function returnToProfileSection(section){
 }
 function closePanel(){if(['history','historyYear','visitDetail'].includes(current?.k)){returnToProfileSection('visits');return;}if(current?.k==='competitionResult'||(current?.k==='eventResults'&&current.arg==='club-championship')){returnToProfileSection('competition');return;}if(isPublicProfilePanel(current?.k)&&(history.state?.depth||0)>1){history.back();return;}if(current?.k==='magazine'){history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);render(null);return;}if(history.state?.depth)history.go(-history.state.depth);else render(null);}
 function backPanel(){if(history.state?.depth)history.back();else closePanel();}
-window.addEventListener('popstate',e=>{const r=e.state?.route;render(r?.k||null,r?.arg??null);restoreProfileOriginScroll(e.state?.profileOriginScroll);});
+window.addEventListener('popstate',e=>{const r=e.state?.route,saved=e.state?.reservationListOrigin;if(r?.k==='reservations'&&saved)Object.assign(reservationUI,saved.ui);render(r?.k||null,r?.arg??null);restoreProfileOriginScroll(e.state?.profileOriginScroll);if(r?.k==='reservations')restoreReservationListOrigin(saved);});
 history.replaceState({portal:true,route:null,depth:0},'',location.pathname+location.search);
 function render(k,arg=null){if(typeof cleanupPhotoEditor==='function')cleanupPhotoEditor();current=k?{k,arg}:null;$('.sheet').classList.toggle('booking-flow',['booking','times','guests','confirm','bookingProfile'].includes(k));$('.sheet').classList.toggle('booking-times-view',k==='times');$('.sheet').classList.toggle('member-view',k==='checkin'||k==='profile');$('.sheet').classList.toggle('checkin-view',k==='checkin');$('.sheet').classList.toggle('companion-picker-view',k==='guests');$('.sheet').classList.toggle('magazine-view',k==='magazine');$('.sheet').classList.toggle('booking-view',['booking','times','guests','confirm','bookingProfile','complete','bookingCompanions','companionDetail','registered','cancel','cancelled','reservationGroup','reservations','detail','archiveDetail','companionList','events','eventResults','eventDetail','event1','event2','eventConfirm','eventCancel','profileSettings','profileEdit','profilePhoto','companionNew','profilePreview','competitionResults','competitionResult','subaccounts','subaccountInvite','subaccountMail','subaccountAction'].includes(k));$('.sheet').classList.toggle('records-view',['registered','cancel','cancelled','reservationGroup','reservations','detail','archiveDetail','companionDetail','companionList','events','eventResults','eventDetail','event1','event2','eventConfirm','eventCancel','profileSettings','profilePreview','competitionResults','competitionResult','subaccounts','subaccountInvite','subaccountMail','subaccountAction'].includes(k));const overlay=$('#overlay');if(!k){overlay.classList.remove('show');document.body.classList.remove('modal-open');opener?.focus();return;}$('#panelTitle').textContent=k==='historyYear'?arg+'年 プレー履歴':titles[k]||'ご案内';$('.back').hidden=(history.state?.depth||0)<=1;let b='';
 if(k==='magazine')b=`<iframe class="magazine-frame" src="${MCM}" title="宝塚GC デジタル会報誌" allow="autoplay; fullscreen"></iframe>`;
