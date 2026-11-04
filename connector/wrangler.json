@@ -11,6 +11,11 @@
     { "binding": "OAUTH_KV", "id": "e226ca433a7243a9ba8ee10ecdead4c0" }
   ],
   "vars": {
-    "PUBLIC_BASE_URL": "https://golfans-ito-publish.osaken.workers.dev"
+    "PUBLIC_BASE_URL": "https://golfans-ito-publish.osaken.workers.dev",
+    "AUTOSYNC_ENABLED": "true",
+    "AUTOSYNC_HOURS": "8-22"
+  },
+  "triggers": {
+    "crons": ["*/5 * * * *"]
   }
 }

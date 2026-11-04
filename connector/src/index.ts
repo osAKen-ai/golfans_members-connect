@@ -1,3 +1,4 @@
+import { tick, status as autosyncStatus } from './autosync';
 import { OAuthProvider, AuthorizationError, CimdFetchError } from '@cloudflare/workers-oauth-provider';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
@@ -149,6 +150,7 @@ export default {
     if (!origin || origin !== url.origin || !env.OAUTH_KV || !/^[a-f0-9]{64}$/.test(env.ITO_CONNECTOR_CODE_SHA256 || '') || !env.GITHUB_ITO_SYNC_TOKEN) {
       return new Response('Connector setup is not complete.', { status: 503, headers: { 'Cache-Control': 'no-store' } });
     }
+    if (url.pathname === '/autosync/status') return Response.json(await autosyncStatus(env), { headers: { 'Cache-Control': 'no-store' } });
     if (url.pathname === '/health') return Response.json({ ok: true, service: 'golfans-ito-publish' }, { headers: { 'Cache-Control': 'no-store' } });
     let provider = providers.get(origin);
     if (!provider) {
@@ -163,5 +165,12 @@ export default {
       providers.set(origin, provider);
     }
     return provider.fetch(request, env, context);
+  },
+  // Cron Trigger (wrangler.json triggers.crons): watch Ito-san's site and start the sync workflow.
+  async scheduled(controller: any, env: any, context: any) {
+    context.waitUntil(tick(env, controller.scheduledTime || Date.now()).then(
+      line => console.log('autosync', line),
+      error => console.error('autosync error', error?.message || error),
+    ));
   },
 };
