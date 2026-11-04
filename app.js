@@ -46,7 +46,13 @@ function restoreReservationListOrigin(saved){
   root.scrollTo({top:target?root.scrollTop+target.getBoundingClientRect().top-root.getBoundingClientRect().top-12:saved.top,behavior:'instant'});
  }));
 }
-function openPanel(k,arg=null){rememberReservationListOrigin(k,arg);rememberProfileOrigin(k);hideMenu();if(['audio','backnumbers'].includes(k))k='magazine';if(!current)opener=document.activeElement;if(k==='booking'){guestEditorId=null;if(arg){const r=state.reservations.find(x=>x.id===arg);if(!r)return;draft={...r,guests:[...r.guests],edit:true};}else{draft={date:'2027-04-29',course:'旧コース',time:'',people:4,guests:[...defaultGuests]};}year=Number(draft.date.slice(0,4));month=Number(draft.date.slice(5,7))-1;resetBooking();if(arg){const original=state.reservations.find(r=>r.id===arg);bookingUI.hour=Number(original.time.split(':')[0]);bookingUI.focusCurrent=true;k='times';}}if(k==='detail'&&!arg)arg=sorted()[0]?.id;const depth=(history.state?.depth||0)+1;history.pushState({portal:true,route:{k,arg},depth},'',location.pathname+location.search+'#'+k);render(k,arg);}
+const profileSectionAnchors={visits:'#profileVisits',competition:'#profileCompetition',settings:'.profile-settings-link',companions:'.profile-lower .companion-entry'};
+function rememberMyPageSection(k,arg){
+ if(current?.k!=='profile')return;
+ const section={history:'visits',historyYear:'visits',competitionResults:'competition',competitionResult:'competition',profileSettings:'settings',companionList:'companions'}[k]||(k==='eventResults'&&arg==='club-championship'?'competition':null);
+ if(section)history.replaceState({...history.state,route:{k:'profile',arg:{section}}},'');
+}
+function openPanel(k,arg=null){rememberMyPageSection(k,arg);rememberReservationListOrigin(k,arg);rememberProfileOrigin(k);hideMenu();if(['audio','backnumbers'].includes(k))k='magazine';if(!current)opener=document.activeElement;if(k==='booking'){guestEditorId=null;if(arg){const r=state.reservations.find(x=>x.id===arg);if(!r)return;draft={...r,guests:[...r.guests],edit:true};}else{draft={date:'2027-04-29',course:'旧コース',time:'',people:4,guests:[...defaultGuests]};}year=Number(draft.date.slice(0,4));month=Number(draft.date.slice(5,7))-1;resetBooking();if(arg){const original=state.reservations.find(r=>r.id===arg);bookingUI.hour=Number(original.time.split(':')[0]);bookingUI.focusCurrent=true;k='times';}}if(k==='detail'&&!arg)arg=sorted()[0]?.id;const depth=(history.state?.depth||0)+1;history.pushState({portal:true,route:{k,arg},depth},'',location.pathname+location.search+'#'+k);render(k,arg);}
 function returnToProfileSection(section){
  const arg={section};
  history.replaceState({...history.state,portal:true,route:{k:'profile',arg}},'',location.pathname+location.search+'#profile');
@@ -103,10 +109,10 @@ if(k==='competitionResults')b=competitionResultsMarkup();
 if(k==='competitionResult')b=competitionResultMarkup(arg);
 if(k==='event1'||k==='event2')b=clubEventDetail(k);
 if(k==='eventConfirm'||k==='eventCancel')b=clubEventConfirmation(arg,k==='eventCancel');
-$('#panelBody').innerHTML=b;overlay.classList.add('show');document.body.classList.add('modal-open');$('.sheet').scrollTop=0;$('#panelBody').scrollTop=0;$('.sheet').focus({preventScroll:true});if(k==='times')mountBookingTimes();if(k==='reservations')mountReservationSummary();if(k==='events')mountClubEventMonths();if(k==='profilePhoto')mountPhotoEditor();if(k==='profile'&&['competition','visits'].includes(arg?.section)){
+$('#panelBody').innerHTML=b;overlay.classList.add('show');document.body.classList.add('modal-open');$('.sheet').scrollTop=0;$('#panelBody').scrollTop=0;$('.sheet').focus({preventScroll:true});if(k==='times')mountBookingTimes();if(k==='reservations')mountReservationSummary();if(k==='events')mountClubEventMonths();if(k==='profilePhoto')mountPhotoEditor();if(k==='profile'&&profileSectionAnchors[arg?.section]){
  requestAnimationFrame(()=>{
   if(current?.k!=='profile')return;
-  const section=$(arg.section==='visits'?'#profileVisits':'#profileCompetition'),sheet=$('.sheet'),header=$('.sheethead');
+  const section=$(profileSectionAnchors[arg.section]),sheet=$('.sheet'),header=$('.sheethead');
   if(section&&sheet)sheet.scrollTop+=section.getBoundingClientRect().top-(header?.getBoundingClientRect().bottom||sheet.getBoundingClientRect().top)-12;
  });
 }}
