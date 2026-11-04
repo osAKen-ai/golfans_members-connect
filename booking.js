@@ -104,7 +104,7 @@ function bookingOccupantsMarkup(players){
  let column=members.length+1;
  for(const type of ['guest','pending']){
   const count=players.filter(p=>p.type===type).length;
-  if(count){html+=`<span class="bk-guest-band ${type==='pending'?'bk-pending-band':''}" style="grid-column:${column} / span ${count}" data-seats="${count}">${type==='guest'?'ゲスト':'未登録'}${count}名</span>`;column+=count;}
+  if(count){html+=`<span class="bk-guest-band ${type==='pending'?'bk-pending-band':''}" style="grid-column:${column} / span ${count}" data-seats="${count}" aria-label="${type==='guest'?'ゲスト':'未登録'}${count}名">${type==='guest'?`<span>ゲスト</span><span>${count}名</span>`:`未登録${count}名`}</span>`;column+=count;}
  }
  return `<div class="bk-occupants">${html}</div>`;
 }
@@ -116,7 +116,7 @@ function bookingIntroducedPartyMarkup(slot){
  const person=findCompanionByName(member.name)||{...member,type:'member'};
  const name=publicMemberName(person);
  const action=person.id?`openPanel('companionDetail',${esc(JSON.stringify(person.id))})`:`openPanel('bookingProfile',${memberIndex})`;
- return `<div class="bk-introduced-party"><button type="button" class="bk-introducer" aria-label="紹介者 ${esc(name)}様の公開プロフィール（プレーには未同伴）" onclick="${action}"><span class="bk-introducer-avatar">${publicMemberPortrait(person)}</span><span class="bk-introducer-label"><small>紹介者</small><strong>${esc(name)}</strong></span></button><span class="bk-guest-band" data-seats="${Number(slot.occupied)}">ゲスト${Number(slot.occupied)}名</span></div>`;
+ return `<div class="bk-introduced-party"><button type="button" class="bk-introducer" aria-label="紹介者 ${esc(name)}様の公開プロフィール（プレーには未同伴）" onclick="${action}"><span class="bk-introducer-avatar">${publicMemberPortrait(person)}</span><span class="bk-introducer-label"><small>紹介者</small><strong>${esc(name)}</strong></span></button><span class="bk-guest-band" data-seats="${Number(slot.occupied)}" aria-label="ゲスト${Number(slot.occupied)}名"><span>ゲスト</span><span>${Number(slot.occupied)}名</span></span></div>`;
 }
 
 // A full day's roster remains visible even after an availability filter was used.
