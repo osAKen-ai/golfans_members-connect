@@ -9,11 +9,11 @@ function bookingGroupIssue(rows){
  for(const row of rows){
   if(row.kind==='member'||row.status==='cancelled')continue;
   const key=[row.date,row.course].join('|');
-  const party=parties.get(key)||{groups:0,people:0};
-  party.groups++;party.people+=Number(row.people);parties.set(key,party);
+  const party=parties.get(key)||{groups:0,people:0,occupied:0};
+  party.groups++;party.people+=Number(row.people);party.occupied+=Math.max(0,4-(Number(row.availableCapacity)||4));parties.set(key,party);
  }
  for(const party of parties.values()){
-  const needed=Math.ceil(party.people/4);
+  const needed=Math.ceil((party.people+party.occupied)/4);
   if(party.groups>needed)return `計${party.people}名は${needed}組でご予約ください。各枠の人数または組数を調整してください。`;
  }
  return '';
@@ -34,10 +34,11 @@ function bookingGroupNoticeMarkup(rows){
  const normal=rows.find(row=>row.kind==='normal');
  if(normal){
   const rule=bookingSeasonRule(normal.date);
+  if(rule.label==='平日')return '';
   const label=rule.label==='平日'?'平日':`${rule.busy?'繁忙期':'閑散期'}の${rule.label.startsWith('土曜')?'土曜':'日祝'}`;
   return `<p class="bk-group-rule bk-daily-limit">${bookingLimitIcon()}<span>${label}は${rule.limit}組/日です。</span></p>`;
  }
- return rows.some(row=>row.kind==='intro')?`<p class="bk-group-rule bk-daily-limit">${bookingLimitIcon()}<span>平日の紹介予約は2組/日です。</span></p>`:'';
+ return '';
 }
 
 // Demonstration timetable per course/tee: four member-time starts per day.
@@ -110,10 +111,10 @@ function bookingSeasonRule(date){
 function bookingAccompaniedLimitIssue(rows,existing=bookingExistingReservations()){
  const changedIds=new Set(rows.map(r=>r.id).filter(Boolean));
  const combined=[...existing.filter(r=>!changedIds.has(r.id)),...rows];
- for(const date of new Set(rows.filter(r=>r.kind==='normal').map(r=>r.date))){
+ for(const date of new Set(rows.map(r=>r.date))){
   const rule=bookingSeasonRule(date);
-  const count=combined.filter(r=>r.date===date&&r.kind==='normal'&&(!r.status||r.status==='reserved')).length;
-  if(count>rule.limit)return `体験版の仮設定：${rule.label}の同伴予約は、会員1名につき同じプレー日で合計${rule.limit}組までです。旧・新コース、本人・代理人の予約を合算します。`;
+  const count=combined.filter(r=>r.date===date&&(!r.status||r.status==='reserved')).length;
+  if(count>rule.limit)return `体験版の仮設定：${rule.label}の予約は、紹介枠を含めて会員1名につき同じプレー日で合計${rule.limit}組までです。旧・新コース、OUT・IN、本人・代理人の予約を合算します。`;
  }
  return '';
 }
