@@ -1,5 +1,5 @@
 function isSoloMemberTime(r){return r?.kind==='member'&&Number(r.people)===1&&r.memberPlaying!==false;}
-function memberTimeBadge(r){return isSoloMemberTime(r)?'<span class="member-time-status"><span aria-hidden="true">□</span> メンバータイム</span>':'';}
+function memberTimeBadge(r){return r?.kind==='member'?'<span class="member-time-status"><span aria-hidden="true">□</span> メンバータイム</span>':'';}
 function memberGuestCount(r=draft){return r.kind==='intro'||r.memberPlaying===false?Number(r.people):Math.max(0,Number(r.people)-1);}
 function memberGuestsComplete(){const names=Array.from({length:memberGuestCount()},(_,i)=>normalizePersonQuery(draft.guests[i]||''));return names.every(Boolean)&&new Set(names).size===names.length;}
 'use strict';
@@ -14,15 +14,15 @@ function bookingDay(date){return new Date(date+'T12:00:00Z').getUTCDay();}
 function bookingShort(date){const parts=date.split('-').map(Number);return `${parts[1]}/${parts[2]}（${'日月火水木金土'[bookingDay(date)]}${isJapaneseHoliday(date)?'・祝':''}）`;}
 function bookingDayClass(date){return bookingDay(date)===0||isJapaneseHoliday(date)?'sun':bookingDay(date)===6?'sat':'';}
 function resetBooking(){Object.assign(bookingUI,{type:'all',party:0,only:false,hour:8,tab:'history',query:'',anchor:draft.date,selected:false});draft.side=draft.side||'OUT';draft.kind=draft.kind||'normal';if(!draft.edit)draft.guests=[];draft.time='';}
-function bookingSlots(date,side=draft.side||'OUT'){
+function bookingSlots(date,side=draft.side||'OUT',ignoreSaved=false){
  const seed=Number(date.replaceAll('-',''))+(draft.course==='新コース'?5:0)+(side==='IN'?3:0);
  return Array.from({length:34},(_,i)=>{const minutes=7*60+2+i*7,time=Math.floor(minutes/60)+':'+String(minutes%60).padStart(2,'0'),pattern=(seed+i)%10;
   const kind=pattern<3?'member':pattern<5?'intro':'normal';
-  let occupied=pattern===0?4:pattern===1?3:pattern===2?1:pattern===5?2:pattern===6?3:pattern===7?4:0;
+  let occupied=pattern===0?4:pattern===1?3:pattern===2?1:pattern===5?2:pattern===6?3:pattern===7?4:pattern===3&&i%2===0?4:0;
   const existing=state.reservations.find(r=>r.id!==draft.id&&r.date===date&&r.course===draft.course&&(r.side||'OUT')===side&&r.time===time);
-  if(existing)occupied=4;
+  if(existing&&!ignoreSaved)occupied=4;
   const capacity=4-occupied,choices=(kind==='member'?[1]:[2,3,4]).filter(n=>n<=capacity);
-  return {time,hour:Math.floor(minutes/60),kind,occupied,capacity,choices,member:(seed+i)%bookingMembers.length,available:date>now&&choices.length>0};
+  return {time,hour:Math.floor(minutes/60),kind,occupied,capacity,choices,member:(seed+i)%bookingMembers.length,variant:i,available:date>now&&choices.length>0};
  });
 }
 function bookingMatch(slot){return (bookingUI.type==='all'||slot.kind===bookingUI.type)&&(!bookingUI.party||slot.choices.includes(bookingUI.party));}
@@ -44,11 +44,11 @@ function bookingRows(){return bookingSlots(draft.date).filter(s=>s.currentReserv
  if(s.ownReservation)return ownReservationRowMarkup(s);
  const choices=s.available?s.choices.filter(n=>!bookingUI.party||n===bookingUI.party):[];
  const selectedRow=typeof selectedBookingForSlot==='function'?selectedBookingForSlot(s):(bookingUI.selected&&draft.time===s.time?{...draft,seat:bookingUI.seat}:null);const selected=!!selectedRow;
- const occupants=!bookingUI.only&&s.ownReservation?ownReservedOccupantsMarkup(s.ownReservation):!bookingUI.only&&s.occupied?`<div class="bk-occupants"><button class="bk-avatar" aria-label="公開プロフィール（表示例）" onclick="openPanel('bookingProfile',${s.member})">${publicMemberPortrait(findCompanionByName(bookingMembers[s.member].name)||{})}</button>${Array.from({length:Math.min(s.occupied-1,3)},()=>'<span class="bk-guest">G</span>').join('')}</div>`:'';
- const empty=s.kind==='member'?Array.from({length:s.capacity},(_,i)=>`<button style="grid-column:${5-s.capacity+i}" class="bk-seat ${selected&&selectedRow.seat===i?'selected':''}" aria-label="${draft.side} ${s.time} メンバータイム ${i+1}枠目 1人で予約" onclick="selectBookingSlot('${s.time}',1,'${s.kind}',${i})"></button>`).join(''):choices.map((n,i)=>`<button style="grid-column:${5-choices.length+i}" class="bk-people ${selected&&selectedRow.people===n?'selected':''}" ${memberGroupChoiceIssue(s.time,n,s.kind)?'disabled title="人数に合う組数でご予約ください"':''} aria-pressed="${selected&&selectedRow.people===n}" aria-label="${draft.side} ${s.time} ${n}人で予約" onclick="selectBookingSlot('${s.time}',${n},'${s.kind}')">${n}</button>`).join('');
- return `<div class="bk-slot bk-kind-${s.kind} ${!s.available?'unavailable':''}" data-hour="${s.hour}"><time>${s.time}</time><div class="bk-slot-main">${occupants}${s.kind==='intro'?`<span class="bk-intro" style="grid-column:1 / span ${Math.max(1,4-choices.length)}">紹介枠</span>`:''}<div class="bk-choices">${empty}</div>${!s.available&&bookingUI.only?'':!s.available?'<span class="bk-full">満席</span>':''}</div></div>`;
+ const occupants=!bookingUI.only&&s.occupied?(s.kind==='intro'?bookingIntroducedPartyMarkup(s):bookingOccupantsMarkup(sampleBookingParticipants(s))):'';
+ const empty=s.kind==='member'?Array.from({length:s.capacity},(_,i)=>`<button style="grid-column:${5-s.capacity+i}" class="bk-seat ${selected&&i>=selectedRow.seat&&i<selectedRow.seat+Number(selectedRow.people)?'selected':''}" aria-label="${draft.side} ${s.time} メンバータイム ${i+1}枠目 1人で予約" onclick="selectBookingSlot('${s.time}',1,'${s.kind}',${i})"></button>`).join(''):choices.map((n,i)=>`<button style="grid-column:${5-choices.length+i}" class="bk-people ${selected&&selectedRow.people===n?'selected':''}" ${memberGroupChoiceIssue(s.time,n,s.kind)?'disabled title="人数に合う組数でご予約ください"':''} aria-pressed="${selected&&selectedRow.people===n}" aria-label="${draft.side} ${s.time} ${n}人で予約" onclick="selectBookingSlot('${s.time}',${n},'${s.kind}')">${n}</button>`).join('');
+ return `<div class="bk-slot bk-kind-${s.kind} ${!s.available?'unavailable':''}" data-hour="${s.hour}"><time>${s.time}</time><div class="bk-slot-main">${occupants}${s.kind==='intro'&&!s.occupied?`<span class="bk-intro" style="grid-column:1 / span ${Math.max(1,4-choices.length)}">紹介枠</span>`:''}<div class="bk-choices">${empty}</div>${!s.available&&bookingUI.only?'':!s.available?'<span class="bk-full">満席</span>':''}</div></div>`;
  }).join('')||'<p class="bk-empty">この条件に合う枠はありません。<br>条件または日付を変更してください。</p>';}
-function bookingTimes(){return `<details class="bk-condition-panel"><summary><span>${esc(draft.course)} · ${bookingUI.party?bookingUI.party+'人':'人数指定なし'} · ${{all:'全ての枠',member:'メンバータイム',normal:'通常枠',intro:'紹介枠'}[bookingUI.type]}</span><b>条件変更</b></summary>${bookingControls()}</details><div class="bk-datebar"><button class="bk-calendar-back" onclick="bookingReturnCalendar()" aria-label="予約カレンダーに戻る">${Number(draft.date.slice(5,7))}月<span>⌄</span></button><div class="bk-dates">${bookingDays()}</div></div><div class="bk-times"><nav class="bk-hours" aria-label="時間帯">${[7,8,9,10].map(n=>`<button class="${bookingUI.hour===n?'active':''}" aria-pressed="${bookingUI.hour===n}" onclick="scrollBookingHour(${n})">${n}時台</button>`).join('')}</nav><div class="bk-time-main"><div class="bk-slot-toolbar"><label><input type="checkbox" ${bookingUI.only?'checked':''} onchange="toggleBookingOnly(this.checked)">予約可能のみ</label><div class="bk-sides" role="group" aria-label="スタートホール">${['OUT','IN'].map(side=>`<button class="${draft.side===side?'active':''}" aria-pressed="${draft.side===side}" onclick="changeBookingSide('${side}')">${side}</button>`).join('')}</div></div><div class="bk-slot-list" tabindex="0" aria-label="スタート枠一覧">${bookingRows()}</div></div></div><div id="bookingSelection" class="bk-selection" ${bookingUI.selected?'':'hidden'}>${bookingSelectionMarkup()}</div><p class="bk-note">□ メンバータイム（1人）　○ 通常枠・紹介枠（人数）<br>空き枠・プロフィールは表示例です。</p>`;}
+function bookingTimes(){return `<details class="bk-condition-panel"><summary><span>${esc(draft.course)} · ${bookingUI.party?bookingUI.party+'人':'人数指定なし'} · ${{all:'全ての枠',member:'メンバータイム',normal:'通常枠',intro:'紹介枠'}[bookingUI.type]}</span><b>条件変更</b></summary>${bookingControls()}</details><div class="bk-datebar"><button class="bk-calendar-back" onclick="bookingReturnCalendar()" aria-label="予約カレンダーに戻る">${Number(draft.date.slice(5,7))}月<span>⌄</span></button><div class="bk-dates">${bookingDays()}</div></div><div class="bk-times"><nav class="bk-hours" aria-label="時間帯">${[7,8,9,10].map(n=>`<button class="${bookingUI.hour===n?'active':''}" aria-pressed="${bookingUI.hour===n}" onclick="scrollBookingHour(${n})">${n}時台</button>`).join('')}</nav><div class="bk-time-main"><div class="bk-slot-toolbar"><label><input type="checkbox" ${bookingUI.only?'checked':''} onchange="toggleBookingOnly(this.checked)">予約可能のみ</label><div class="bk-sides" role="group" aria-label="スタートホール">${['OUT','IN'].map(side=>`<button class="${draft.side===side?'active':''}" aria-pressed="${draft.side===side}" onclick="changeBookingSide('${side}')">${side}</button>`).join('')}</div></div><div class="bk-slot-list" tabindex="0" aria-label="スタート枠一覧">${bookingRows()}</div></div></div><div id="bookingSelection" class="bk-selection" ${bookingUI.selected?'':'hidden'}>${bookingSelectionMarkup()}</div><p class="bk-note">□ メンバータイム（1枠1名）　○ 通常枠・紹介枠（人数）<br>空き枠・プロフィールは表示例です。</p>`;}
 function bookingSelectionMarkup(){if(!bookingUI.selected)return `<div class="bk-selection-empty"><h3>選択した予約内容</h3><p>左の空き枠から<br>ご希望の時間・人数を選択してください。</p></div>`;return `<h3 class="bk-selection-title">選択した予約内容</h3>${bookingSelectionFacts(draft)}<div><strong class="bk-selection-summary">${bookingShort(draft.date)} ${esc(draft.course)} ${draft.side} ${esc(draft.time)} ${draft.people}人</strong><button onclick="clearBookingSelection()">選択解除</button></div><button class="bk-primary reservation-action" onclick="proceedBookingGuests()">予約</button>`;}
 function mountBookingTimes(){const strip=$('.bk-dates'),active=strip?.querySelector('.active');if(active)strip.scrollLeft=active.offsetLeft-strip.clientWidth/2+active.clientWidth/2;const list=$('.bk-slot-list');if(!list)return;scrollBookingHour(bookingUI.hour);let touchX=0,touchY=0;list.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].clientX;touchY=e.changedTouches[0].clientY;},{passive:true});list.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)changeBookingSide(dx<0?'IN':'OUT');},{passive:true});list.addEventListener('scroll',()=>{const top=list.getBoundingClientRect().top;const row=[...list.querySelectorAll('.bk-slot')].find(r=>r.getBoundingClientRect().bottom>top+10);if(row)setBookingHour(Number(row.dataset.hour));},{passive:true});}
 function setBookingHour(hour){bookingUI.hour=hour;document.querySelectorAll('.bk-hours button').forEach((b,i)=>{b.classList.toggle('active',i+7===hour);b.setAttribute('aria-pressed',String(i+7===hour));});}
@@ -73,3 +73,46 @@ function removeBookingGuest(index){draft.guests.splice(index,1);refreshBookingGu
 function bookingConfirm(){return `<div class="bk-confirm"><h3>${draft.edit?'ご予約変更内容の確認':'ご予約内容の確認'}</h3><h4>${draft.edit?'変更前・変更後をご確認ください':'ご予約内容をご確認ください'}</h4><p>予約内容に誤りがないかご確認のうえ、<br>「${draft.edit?'変更':'予約'}を確定する」ボタンを押してください</p><dl class="bk-confirm-facts">${bookingConfirmationFacts()}${draft.kind==='intro'?'<dt>紹介者</dt><dd>伊藤 剛 様（未同伴）</dd>':''}</dl>${draft.people>1?`<details class="bk-confirm-guests"><summary>同伴者 ${draft.guests.filter(Boolean).length}人登録済み</summary>${Array.from({length:memberGuestCount()},(_,i)=>`<p>${esc(draft.guests[i]||'未登録')}${draft.guests[i]&&draft.guests[i]!=='未定'?' 様':''}</p>`).join('')}<button class="bk-secondary" onclick="openBookingStep('guests')">同伴者を変更する</button></details>`:''}<button class="bk-primary reservation-action" onclick="commitBooking()">${draft.edit?'変更':'予約'}を確定する</button><button class="bk-secondary" onclick="openBookingStep('times')">選択しなおす</button><p class="bk-note">操作体験版です。実際の予約は行われません。</p></div>`;}
 
 function bookingSelectionFacts(r){return `<dl class="bk-selection-facts"><dt>プレー日</dt><dd>${bookingShort(r.date)}</dd><dt>コース</dt><dd>${esc(r.course)}</dd><dt>スタート</dt><dd>${r.side} <b>${esc(r.time)}</b></dd><dt>人数</dt><dd>${r.people}人</dd><dt>予約枠</dt><dd>${r.kind==='member'?'メンバータイム':r.kind==='intro'?'紹介枠':'通常枠'}</dd></dl>`;}
+
+// Preserve the four seat columns. Only available member seats use an empty square.
+function sampleBookingParticipants(slot){
+ const count=Math.min(4,Number(slot.occupied)||0);
+ const guestCount=slot.kind==='intro'?count:slot.kind==='member'?(count>=3&&slot.variant%2!==0?1:0):Math.max(0,count-(1+(slot.variant||0)%Math.max(1,count)));
+ const members=[0,1,2,4,6];
+ return [...Array.from({length:count-guestCount},(_,i)=>({type:'member',name:bookingMembers[members[((slot.member||0)+i)%members.length]].name})),...Array.from({length:guestCount},()=>({type:'guest'}))];
+}
+function bookingRecordParticipants(r){
+ const players=[];
+ if(r.kind!=='intro'&&r.memberPlaying!==false)players.push({type:'member',own:true});
+ for(let i=0;i<Math.min(4,Number(r.people))-players.filter(p=>p.own).length;i++){
+  const name=(r.guests||[])[i];
+  const person=name&&name!=='未定'&&typeof findCompanionByName==='function'?findCompanionByName(name):null;
+  players.push(person?{...person,type:person.type==='member'?'member':'guest'}:{type:name&&name!=='未定'?'guest':r.kind==='intro'||r.memberGuestReserved?'guest':'pending'});
+ }
+ return players;
+}
+function bookingOccupantsMarkup(players){
+ const members=players.filter(p=>p.type==='member');
+ let html=members.map(p=>{
+  if(p.own){const v=state.profileVisibility||{};return `<button class="bk-avatar bk-own-public-avatar" aria-label="${v.name==='full'?'伊藤 剛':'T.I'}様の公開プロフィール" onclick="openPanel('profilePreview')">${v.portrait==='photo'?ownPhotoMarkup():bookingIcon('person')}</button>`;}
+  const c=typeof findCompanionByName==='function'?findCompanionByName(p.name):null;
+  const index=bookingMembers.findIndex(m=>m.name===p.name);
+  return `<button class="bk-avatar" aria-label="メンバーの公開プロフィール" onclick="${c?`openPanel('companionDetail',${esc(JSON.stringify(c.id))})`:`openPanel('bookingProfile',${Math.max(0,index)})`}">${publicMemberPortrait(c||p)}</button>`;
+ }).join('');
+ let column=members.length+1;
+ for(const type of ['guest','pending']){
+  const count=players.filter(p=>p.type===type).length;
+  if(count){html+=`<span class="bk-guest-band ${type==='pending'?'bk-pending-band':''}" style="grid-column:${column} / span ${count}" data-seats="${count}">${type==='guest'?'ゲスト':'未登録'}${count}名</span>`;column+=count;}
+ }
+ return `<div class="bk-occupants">${html}</div>`;
+}
+
+// The introducer identifies the booking; they do not occupy one of its four player seats.
+function bookingIntroducedPartyMarkup(slot){
+ const memberIndex=[0,1,2,4,6][(Number(slot.member)||0)%5];
+ const member=bookingMembers[memberIndex];
+ const person=findCompanionByName(member.name)||{...member,type:'member'};
+ const name=publicMemberName(person);
+ const action=person.id?`openPanel('companionDetail',${esc(JSON.stringify(person.id))})`:`openPanel('bookingProfile',${memberIndex})`;
+ return `<div class="bk-introduced-party"><button type="button" class="bk-introducer" aria-label="紹介者 ${esc(name)}様の公開プロフィール（プレーには未同伴）" onclick="${action}"><span class="bk-introducer-avatar">${publicMemberPortrait(person)}</span><span class="bk-introducer-label"><small>紹介者</small><strong>${esc(name)}</strong></span></button><span class="bk-guest-band" data-seats="${Number(slot.occupied)}">ゲスト${Number(slot.occupied)}名</span></div>`;
+}

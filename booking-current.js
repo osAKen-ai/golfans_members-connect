@@ -15,12 +15,7 @@ function currentReservationRowMarkup(slot,side){
 }
 // The ordinary calendar uses the same public profile settings as the profile preview.
 function ownReservedOccupantsMarkup(r){
- const participates=r.kind!=='intro'&&r.memberPlaying!==false;
- const visibility=state.profileVisibility||{};
- const portrait=visibility.portrait==='photo'?ownPhotoMarkup():bookingIcon('person');
- const name=visibility.name==='full'?'伊藤 剛':'T.I';
- const owner=participates?`<button class="bk-avatar bk-own-public-avatar" aria-label="${name}様の公開プロフィール" onclick="openPanel('profilePreview')">${portrait}</button>`:'';
- return `<div class="bk-occupants">${owner}${Array.from({length:Math.max(0,Math.min(4,Number(r.people))-(participates?1:0))},()=>'<span class="bk-guest">G</span>').join('')}</div>`;
+ return bookingOccupantsMarkup(bookingRecordParticipants(r));
 }
 const currentBookingInventory=bookingSlots;
 bookingSlots=function(date,side=draft.side||'OUT'){
@@ -37,7 +32,7 @@ bookingSlots=function(date,side=draft.side||'OUT'){
  }
  if(!r||r.date!==date||r.course!==draft.course||(r.side||'OUT')!==side)return rows;
  const kind=r.kind||(Number(r.people)===1?'member':'normal');
- const current={time:r.time,hour:Number(r.time.split(':')[0]),kind,occupied:Number(r.people),capacity:4,choices:kind==='member'?[1]:[2,3,4],available:date>now,currentReservation:r};
+ const current={time:r.time,hour:Number(r.time.split(':')[0]),kind,occupied:Number(r.people),capacity:4,choices:kind==='member'?(r.memberGuestReserved?[1,2]:[1]):[2,3,4],available:date>now,currentReservation:r};
  const sameTime=t=>t.padStart(5,'0')===r.time.padStart(5,'0');
  const found=rows.some(s=>sameTime(s.time));
  return (found?rows.map(s=>sameTime(s.time)?{...s,...current}:s):[...rows,current]).sort((a,b)=>a.time.padStart(5,'0').localeCompare(b.time.padStart(5,'0')));
@@ -70,7 +65,7 @@ function ownReservationRowMarkup(slot){
 
 function changeOwnReservationPeople(id,people){
  const r=state.reservations.find(r=>r.id===id&&(!r.status||r.status==='reserved'));
- if(!r||isSoloMemberTime(r)||![2,3,4].includes(people)||people===Number(r.people))return;
+ if(!r||isSoloMemberTime(r)||!(r.kind==='member'?[1,2]:[2,3,4]).includes(people)||people===Number(r.people))return;
  ownReservationPeopleId=null;
  openPanel('booking',id);
  selectBookingSlot(r.time,people,r.kind||'normal',Number(r.seat)||0);

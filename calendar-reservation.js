@@ -12,7 +12,7 @@ function calendarReservationCard(r,index,total){
   <p class="rs-guest-names">${memberGuestCount(r)>0?`<small class="bk-calendar-guests-label">${reservationPlayerTerm(r)}</small>`:''}${reservationPlayersMarkup(r,true)}</p>
   <p class="rs-created">予約日 ${esc(r.createdAt||'—')}</p>
   <div class="bk-calendar-change-actions">${solo?'<span class="bk-calendar-solo">メンバータイム・1名</span>':`<button type="button" aria-expanded="${expanded}" onclick="toggleCalendarReservationPeople(${id})">人数変更</button>`}<button type="button" onclick="calendarReservationAction('time',${id})">時間変更</button></div>
-  ${expanded&&!solo?`<section class="bk-calendar-people" aria-label="変更後の人数"><div><strong>変更後の人数</strong><button type="button" onclick="toggleCalendarReservationPeople(${id})">変更解除</button></div><div class="bk-calendar-people-options">${[2,3,4].map(n=>`<button type="button" ${n===Number(r.people)?'disabled':''} onclick="calendarReservationAction('people',${id},${n})">${n}名${n===Number(r.people)?'<small>現在</small>':''}</button>`).join('')}</div><p>人数を選ぶと、変更内容の確認へ進みます。</p></section>`:''}
+  ${expanded&&!solo?`<section class="bk-calendar-people" aria-label="変更後の人数"><div><strong>変更後の人数</strong><button type="button" onclick="toggleCalendarReservationPeople(${id})">変更解除</button></div><div class="bk-calendar-people-options">${(r.kind==='member'?[1,2]:[2,3,4]).map(n=>`<button type="button" ${n===Number(r.people)?'disabled':''} onclick="calendarReservationAction('people',${id},${n})">${n}名${n===Number(r.people)?'<small>現在</small>':''}</button>`).join('')}</div><p>人数を選ぶと、変更内容の確認へ進みます。</p></section>`:''}
  </article>`;
 }
 function calendarReservationMarkup(date){
