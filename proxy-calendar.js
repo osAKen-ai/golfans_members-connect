@@ -15,7 +15,7 @@ function bookingShort(date){const parts=date.split('-').map(Number);return `${pa
 function bookingDayClass(date){return bookingDay(date)===0||isJapaneseHoliday(date)?'sun':bookingDay(date)===6?'sat':'';}
 function bookingSlots(date,side=draft.side||'OUT'){
  const seed=Number(date.replaceAll('-',''))+(draft.course==='新コース'?5:0)+(side==='IN'?3:0);
- return Array.from({length:34},(_,i)=>{const minutes=7*60+2+i*7,time=Math.floor(minutes/60)+':'+String(minutes%60).padStart(2,'0'),pattern=(seed+i)%10;
+ return bookingTeeMinutes(date,side).map((minutes,i)=>{const time=Math.floor(minutes/60)+':'+String(minutes%60).padStart(2,'0'),pattern=(seed+i)%10;
   const kind=demoBookingSlotKind(date,time,pattern);
   let occupied=pattern===0?4:pattern===1?3:pattern===2?1:pattern===5?2:pattern===6?3:pattern===7?4:0;
   // Group reservations start at two players; only member-time samples may have one.

@@ -5,6 +5,7 @@ function bookingGroupIssue(rows){
  if(rows.some(r=>r.status!=='cancelled'&&r.kind==='intro'&&bookingRequiresAccompaniment(r.date)))return '土日祝はメンバー同伴が必要です。紹介枠はご予約いただけません。';
  const introIssue=bookingIntroLimitIssue(rows);if(introIssue)return introIssue;
  const accompaniedIssue=bookingAccompaniedLimitIssue(rows);if(accompaniedIssue)return accompaniedIssue;
+ const consecutiveIssue=bookingConsecutiveIssue(rows);if(consecutiveIssue)return consecutiveIssue;
  const parties=new Map();
  for(const row of rows){
   if(row.kind==='member'||row.status==='cancelled')continue;
@@ -121,3 +122,17 @@ function bookingAccompaniedLimitIssue(rows,existing=bookingExistingReservations(
 
 // Keep every group of a start side together, then order its tee times.
 function bookingGroupDisplayOrder(a,b){return (a.date||'').localeCompare(b.date||'') || ((a.side||'OUT')==='IN'?1:0)-((b.side||'OUT')==='IN'?1:0) || (a.time||'').padStart(5,'0').localeCompare((b.time||'').padStart(5,'0'));}
+
+// Shared unfiltered timetable: availability filters must not collapse gaps.
+function bookingTeeMinutes(date,side){return Array.from({length:34},(_,i)=>7*60+2+i*7);}
+function bookingConsecutiveIssue(rows){
+ const active=rows.filter(r=>r.status!=='cancelled');
+ if(active.length<2)return '';
+ const first=active[0];
+ const message='複数組の予約は、同じコース・同じOUT／INの連続したスタート枠をお選びください。';
+ if(active.some(r=>r.date!==first.date||r.course!==first.course||(r.side||'OUT')!==(first.side||'OUT')))return message;
+ const timetable=bookingTeeMinutes(first.date,first.side||'OUT');
+ const indexes=active.map(r=>{const parts=(r.time||'').split(':').map(Number);return timetable.indexOf(parts[0]*60+parts[1]);}).sort((a,b)=>a-b);
+ if(indexes.some((n,i)=>n<0||(i>0&&n!==indexes[i-1]+1)))return message;
+ return '';
+}

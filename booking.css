@@ -30,3 +30,5 @@
 .companion-picker-view .cp-player-selection{margin:0;padding:0;border:0;border-radius:0}.companion-picker-view .cp-next{width:calc(100% - 24px);margin:0 12px 10px;min-height:44px;padding:10px;font-size:15px}.companion-picker-view .cp-selected-person>strong{color:white}.companion-picker-view .cp-selected-person>strong.unselected{color:#d8d4ca}
 
 .bk-seat.bk-member-group{font-size:25px;font-weight:700;color:#535650}.bk-seat.bk-member-group.selected{color:#fff}.bk-seat.bk-member-group.selected:after{content:none}
+
+.booking-view .bk-seat:disabled{opacity:.3;cursor:not-allowed;background:#eee;color:#65645e;border-color:#aaa;box-shadow:none}.booking-view .bk-select-time:disabled{opacity:.3;cursor:not-allowed}
