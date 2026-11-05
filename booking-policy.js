@@ -15,8 +15,7 @@ function policyCompositionIssue(r){
  const n=Number(r.people),g=policyPeople(r),m=n-g;
  if(!Number.isInteger(n)||n<1||n>4||!Number.isInteger(g)||g<0||g>n)return '人数の内訳を確認してください。';
  if(r.kind==='normal'&&(g<2||m<1))return 'メンバー同伴枠はメンバー1名以上・ゲスト2名以上でご予約ください。';
- if(r.kind==='member'&&r.memberTimeMode==='group'&&g!==0)return '1組予約は全員メンバーでご予約ください。';
- if(r.kind==='member'&&r.memberTimeMode!=='group'&&(n>2||n===2&&g!==1))return '個人予約は本人1名、または本人とゲスト1名です。全員メンバーの場合は1組予約をお選びください。';
+ if(r.kind==='member'&&r.memberTimeMode!=='group'&&(n>2||n===2&&g!==1))return '個人予約は本人1名、または本人とゲスト1名です。メンバー複数名の場合は1組予約をお選びください。';
  if(r.kind==='member'&&(g>1||m<1||r.memberPlaying===false))return 'メンバータイムは予約者本人の同伴必須・ゲスト最大1名です。';
  if(r.kind==='intro'&&g!==n)return '紹介枠はゲストのみの予約です。';
  const names=(r.guests||[]).filter(n=>n&&n!=='未定');
@@ -28,7 +27,7 @@ function policyCompositionIssue(r){
 function policyConsecutiveIssue(rows){
  const active=rows.filter(r=>r.status!=='cancelled');
  if(active.length<2)return '';
- if(active.some(r=>r.kind==='member'))return 'メンバータイムは本人同伴の個人予約、または全員メンバーの1組予約をご利用ください。';
+ if(active.some(r=>r.kind==='member'))return 'メンバータイムは本人同伴の個人予約、または1組予約をご利用ください。';
  const first=active[0];
  if(active.some(r=>r.date!==first.date||r.course!==first.course||(r.side||'OUT')!==(first.side||'OUT')))return '複数組は同じ日・コース・OUT／INの連続枠でご予約ください。';
  const times=active.map(r=>bookingMinutes(r.time)).sort((a,b)=>a-b);
@@ -65,7 +64,7 @@ function policyOptions(r,i){
  if(r.kind==='intro')return '';
  const cap=Math.min(r.memberTimeMode==='group'?4:2,Number(r.availableCapacity)||4);
  const group=r.memberTimeMode==='group';
- return `<div class="bk-composition"><strong>${r.side||'OUT'} ${r.time} の内訳</strong>${r.kind==='member'?`<label>予約方法<select aria-label="${i+1}組目の予約方法" onchange="policySetMode(${i},this.value)"><option value="individual" ${!group?'selected':''}>個人予約（本人＋ゲスト1名まで）</option><option value="group" ${group?'selected':''}>1組予約（全員メンバー）</option></select></label>`:''}${r.kind==='member'?`<label>予約人数<select aria-label="${i+1}組目の予約人数" onchange="policySetPeople(${i},Number(this.value))">${Array.from({length:cap},(_,n)=>n+1).map(n=>`<option value="${n}" ${n===Number(r.people)?'selected':''}>${n}名</option>`).join('')}</select></label>`:''}<label>ゲスト<select aria-label="${i+1}組目のゲスト人数" onchange="policySetGuests(${i},Number(this.value))">${(r.kind==='member'?(group?[0]:r.people>1?[1]:[0]):Array.from({length:Math.max(0,r.people-2)},(_,n)=>n+2)).map(n=>`<option value="${n}" ${n===policyPeople(r)?'selected':''}>${n}名</option>`).join('')}</select></label><span>メンバー ${r.people-policyPeople(r)}名${r.memberPlaying!==false?'（ご本人含む）':''}</span><small>${r.kind==='member'?(group?'全員メンバー・本人同伴必須・最大4名':'本人同伴必須・ゲスト最大1名'):'メンバー1名以上・ゲスト2名以上'}</small></div>`;
+ return `<div class="bk-composition"><strong>${r.side||'OUT'} ${r.time} の内訳</strong>${r.kind==='member'?`<label>予約方法<select aria-label="${i+1}組目の予約方法" onchange="policySetMode(${i},this.value)"><option value="individual" ${!group?'selected':''}>個人予約（本人＋ゲスト1名まで）</option><option value="group" ${group?'selected':''}>1組予約（ゲスト1名まで）</option></select></label>`:''}${r.kind==='member'?`<label>予約人数<select aria-label="${i+1}組目の予約人数" onchange="policySetPeople(${i},Number(this.value))">${Array.from({length:cap},(_,n)=>n+1).map(n=>`<option value="${n}" ${n===Number(r.people)?'selected':''}>${n}名</option>`).join('')}</select></label>`:''}<label>ゲスト<select aria-label="${i+1}組目のゲスト人数" onchange="policySetGuests(${i},Number(this.value))">${(r.kind==='member'?(group?(r.people>1?[0,1]:[0]):r.people>1?[1]:[0]):Array.from({length:Math.max(0,r.people-2)},(_,n)=>n+2)).map(n=>`<option value="${n}" ${n===policyPeople(r)?'selected':''}>${n}名</option>`).join('')}</select></label><span>メンバー ${r.people-policyPeople(r)}名${r.memberPlaying!==false?'（ご本人含む）':''}</span><small>${r.kind==='member'?(group?'本人同伴必須・最大4名のうちゲスト1名まで':'本人同伴必須・ゲスト最大1名'):'メンバー1名以上・ゲスト2名以上'}</small></div>`;
 }
 function policySetMode(i,mode){
  const r=policyRows()[i];if(!r||r.kind!=='member')return;
@@ -75,7 +74,7 @@ function policySetMode(i,mode){
 }
 function policySetPeople(i,n){
  const r=policyRows()[i];if(!r||r.kind!=='member')return;
- const next={...r,people:n,seat:0,guestPlayers:r.memberTimeMode==='group'?0:n-1};
+ const next={...r,people:n,seat:0,guestPlayers:r.memberTimeMode==='group'?Math.min(policyPeople(r),n-1):n-1};
  const issue=policyCompositionIssue(next)||policyCapacityIssue(next);
  if(issue){toast(issue);policyRefresh();return;}
  Object.assign(r,next);r.guests=(r.guests||[]).slice(0,n-1);policyInit(r);policyRefresh();
@@ -105,7 +104,7 @@ function policySearchWindows(date=draft.date,side=draft.side||'OUT',count=Number
 function policySearchMarkup(){
  if(draft.edit)return '';
  const count=Number(bookingUI.groups)||1,limit=10;
- return `<section class="bk-consecutive"><label>連続枠検索<select aria-label="連続で予約する組数" onchange="bookingUI.groups=Number(this.value);policyRender()"><option value="1" ${count===1?'selected':''}>1組・個別選択</option>${Array.from({length:Math.min(10,limit)-1},(_,i)=>i+2).map(n=>`<option value="${n}" ${n===count?'selected':''}>${n}組連続</option>`).join('')}</select></label>${count===1?`<div class="bk-member-modes" role="group" aria-label="メンバータイムの予約方法"><button aria-pressed="${bookingUI.memberMode!=='group'}" onclick="bookingUI.memberMode='individual';policyRender()">個人予約</button><button aria-pressed="${bookingUI.memberMode==='group'}" onclick="bookingUI.memberMode='group';policyRender()">1組予約・全員メンバー</button></div>`:''}${count>1?'<small>同じコース・OUT／INの連続枠をまとめて選べます。</small>':''}</section>`;
+ return `<section class="bk-consecutive"><label>連続枠検索<select aria-label="連続で予約する組数" onchange="bookingUI.groups=Number(this.value);policyRender()"><option value="1" ${count===1?'selected':''}>1組・個別選択</option>${Array.from({length:Math.min(10,limit)-1},(_,i)=>i+2).map(n=>`<option value="${n}" ${n===count?'selected':''}>${n}組連続</option>`).join('')}</select></label>${count===1?`<div class="bk-member-modes" role="group" aria-label="メンバータイムの予約方法"><button aria-pressed="${bookingUI.memberMode!=='group'}" onclick="bookingUI.memberMode='individual';policyRender()">個人予約</button><button aria-pressed="${bookingUI.memberMode==='group'}" onclick="bookingUI.memberMode='group';policyRender()">1組予約・最大4名</button></div>`:''}${count>1?'<small>同じコース・OUT／INの連続枠をまとめて選べます。</small>':''}</section>`;
 }
 function policySearchResults(){
  const rows=policySearchWindows();
@@ -126,7 +125,7 @@ function policyTimeRows(...args){
   const time=buttons.match(/aria-label="(?:OUT|IN) (\d+:\d+)/)?.[1];
   if(!time)return all;
   const cap=(buttons.match(/<button/g)||[]).length;
-  return `<div class="bk-choices"><button class="bk-member-group" style="grid-column:${5-cap} / span ${cap}" onclick="policySelectGroup('${time}')">全員メンバーで予約<small>最大${cap}名</small></button></div>`;
+  return `<div class="bk-choices"><button class="bk-member-group" style="grid-column:${5-cap} / span ${cap}" onclick="policySelectGroup('${time}')">1組まとめて予約<small>最大${cap}名</small></button></div>`;
  });
 }
 function policySelectGroup(time){
