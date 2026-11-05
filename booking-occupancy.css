@@ -62,3 +62,12 @@
 .booking-times-view .bk-slot-main .bk-guest-band:not([data-seats="1"]),
 .booking-times-view .bk-owned-main .bk-guest-band:not([data-seats="1"]){justify-content:flex-end;text-align:right;padding-right:0}
 .booking-times-view .bk-slot-main>.bk-intro{text-align:left;justify-self:stretch}
+
+/* Burgundy identifies individual member seats; the existing square 4 stays gold. */
+.booking-times-view .bk-slot-main .bk-seat.bk-member-individual{border:2px solid #7b2033;background:#fff8f9;color:#7b2033}
+.booking-times-view .bk-slot-main .bk-seat.bk-member-individual.selected{background:#7b2033;border-color:#7b2033;color:#fff}
+.booking-times-view .bk-slot-main .bk-seat.bk-member-individual:focus-visible{outline:2px solid #7b2033;outline-offset:3px}
+.booking-times-view .bk-slot-main .bk-seat.bk-member-individual:disabled{background:#eee;border-color:#aaa;opacity:.3}
+.booking-times-view .bk-slot:has(.bk-member-individual.selected){background:#fcf4f6;box-shadow:inset 3px 0 0 #7b2033}
+.bk-individual-legend{color:#7b2033;font-weight:700}
+.bk-member-guest-option input{accent-color:#7b2033}
