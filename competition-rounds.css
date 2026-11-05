@@ -1,4 +1,4 @@
-/* Shared score layout: fixed identity, scrollable totals and round breakdown. */
+/* Small screens keep identity fixed; desktop shows every round together. */
 .competition-format{display:flex;align-items:flex-start;gap:10px;text-align:left;margin:14px 0 20px;color:#756440;font-size:12px;line-height:1.7}
 .competition-format>strong{flex:none;background:#eae5d8;border-radius:4px;padding:2px 8px;white-space:nowrap}
 .competition-format>span{padding-top:2px}
@@ -40,4 +40,17 @@
 .event-results-page .results-scroll .result-name-col{width:104px}
 .event-results-page .results-scroll .round-score-col{width:60px}
 .event-results-page .results-scroll .rounds-leaderboard th,.event-results-page .results-scroll .rounds-leaderboard td{min-width:60px}
+}
+
+/* Use the desktop modal's width for the full 27H / 36H leaderboard. */
+@media(min-width:900px){
+ body .sheet:has(.rounds-leaderboard){width:min(960px,calc(100vw - 40px))!important;max-width:960px!important}
+ .event-results-page:has(.rounds-leaderboard){max-width:none}
+ .event-results-page:has(.rounds-leaderboard) .score-scroll-hint{display:none}
+ .event-results-page .results-scroll .rounds-leaderboard{width:100%;min-width:0}
+ .event-results-page .results-scroll .round-score-col{width:auto}
+ .event-results-page .results-scroll .rounds-leaderboard th,
+ .event-results-page .results-scroll .rounds-leaderboard td{min-width:0;padding-left:4px;padding-right:4px}
+ .event-results-page .results-scroll .rounds-leaderboard .fixed-rank{position:static;width:36px;min-width:0}
+ .event-results-page .results-scroll .rounds-leaderboard .fixed-name{position:static;width:112px;min-width:0;box-shadow:none;padding-left:8px}
 }

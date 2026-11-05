@@ -111,3 +111,20 @@ body .bk-calendar .bk-day:disabled{color:#d1d1d1}
 /* Keep confirmation times and party sizes aligned across every group. */
 .bk-batch-confirm .bk-batch-group h4>strong.bk-confirm-slot{display:grid;grid-template-columns:2.4em minmax(3.1em,1fr) 2em;column-gap:.35em;align-items:baseline;font-variant-numeric:tabular-nums;white-space:nowrap}
 .bk-confirm-slot .bk-confirm-people{text-align:right}
+
+/* Desktop My Page: keep the membership card at a readable, compact scale. */
+@media(min-width:1000px){
+ .profile-identity:not(.checkin-identity){width:420px;max-width:100%;margin:16px auto 24px;padding:0 0 20px}
+ .profile-identity:not(.checkin-identity):before{left:0;right:0;top:65px;border-radius:10px}
+ .profile-identity:not(.checkin-identity) .profile-portrait{width:110px;margin:0 auto}
+ .profile-identity:not(.checkin-identity) .profile-member-name{margin:10px 0 0;font-size:30px}
+ .profile-identity:not(.checkin-identity) .profile-english-name{margin:2px 0 0;font-size:16px}
+ .profile-identity:not(.checkin-identity) .profile-tenure{margin:12px 0 0;font-size:18px}
+ .profile-identity:not(.checkin-identity) .profile-joined{margin:2px 0 0;font-size:14px}
+ .profile-identity:not(.checkin-identity) .profile-birthday{margin:10px 0 0;font-size:16px}
+ .profile-identity:not(.checkin-identity) .profile-handicap{width:86%;margin-top:12px}
+ .profile-identity:not(.checkin-identity) .profile-handicap-cell{padding:10px 0}
+ .profile-identity:not(.checkin-identity) .profile-membership{margin-top:12px}
+ .profile-identity:not(.checkin-identity) .profile-barcode{margin-top:12px}
+ .profile-identity:not(.checkin-identity) .profile-barcode-number{margin-top:6px}
+}
