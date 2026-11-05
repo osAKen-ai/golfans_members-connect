@@ -55,3 +55,5 @@
  .booking-times-view .bk-introduced-party,.booking-times-view .bk-introducer {column-gap:12px}
  .booking-times-view .bk-introducer-avatar {width:42px;height:42px;max-width:42px}
 }
+
+.bk-select-time{border:0;background:transparent;color:inherit;font:inherit;font-weight:800;text-align:left;padding:8px 0;cursor:pointer;min-height:44px}.bk-select-time:focus-visible{outline:2px solid #99865b;outline-offset:2px}

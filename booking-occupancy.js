@@ -18,28 +18,25 @@ function memberTimeIssue(r){
 }
 function memberTimeCanAddGuest(r){
  const previous=draft;let available;try{draft={...r};available=bookingSlots(r.date,r.side||'OUT').find(s=>s.time===r.time)?.available;}finally{draft=previous;}
- return available&&r.kind==='member'&&r.memberPlaying!==false&&!memberTimeIssue({...r,people:2,memberGuestReserved:true,guests:['']});
+ return Number(r.people)>=2&&available&&r.kind==='member'&&r.memberPlaying!==false&&!memberTimeIssue({...r,memberGuestReserved:true,guests:[]});
 }
 const occupancyValid=bookingSelectionValid;
 bookingSelectionValid=function(){
  if(memberTimeIssue(draft))return false;
- if(draft.kind==='member'&&Number(draft.people)===2&&draft.memberGuestReserved){
-  const s=memberTimeBackground(draft);
-  return draft.date>now&&!!s&&(s.kind==='member'||!!currentEditingReservation())&&memberTimeCanAddGuest(draft);
- }
+ if(draft.kind==='member'){const slot=memberTimeBackground(draft);return draft.date>now&&!!slot&&Number(draft.people)>=1&&Number(draft.people)<=4&&!memberTimeIssue(draft);}
  return occupancyValid();
 };
 const occupancySelection=bookingSelectionMarkup;
 bookingSelectionMarkup=function(){
  let html=occupancySelection();
  const rows=selectionTrayRows();
- const options=rows.map((r,i)=>r.kind==='member'&&r.memberPlaying!==false?`<label class="bk-member-guest-option"><input type="checkbox" ${r.memberGuestReserved?'checked':''} ${!r.memberGuestReserved&&!memberTimeCanAddGuest(r)?'disabled':''} onchange="setMemberTimeGuest(${i},this.checked)"><span>${r.time} ゲスト1名を同伴<small>${memberTimeCanAddGuest(r)?'ご本人と合わせて2枠を予約します':'空き枠不足、またはこの組のゲスト枠は予約済みです'}</small></span></label>`:'').join('');
+ const options=rows.map((r,i)=>r.kind==='member'&&r.memberPlaying!==false?`<label class="bk-member-guest-option"><input type="checkbox" ${r.memberGuestReserved?'checked':''} ${!r.memberGuestReserved&&!memberTimeCanAddGuest(r)?'disabled':''} onchange="setMemberTimeGuest(${i},this.checked)"><span>${r.time} 選択した${r.people}名のうち1名をゲストにする<small>${memberTimeCanAddGuest(r)?'人数は変わりません。ゲストは1組最大1名です':Number(r.people)<2?'2枠以上選択すると指定できます':'この組のゲスト枠は予約済みです'}</small></span></label>`:'').join('');
  return options?html.replace('<div class="bk-selection-actions">',options+'<div class="bk-selection-actions">'):html;
 };
 function setMemberTimeGuest(index,checked){
  const r=selectionTrayRows()[index];if(!r||r.kind!=='member')return;
  if(checked&&!memberTimeCanAddGuest(r)){toast('この組ではゲスト同伴を追加できません');refreshBookingSelection();return;}
- r.people=checked?2:1;r.memberGuestReserved=checked;if(checked)r.seat=Math.min(Number(r.seat)||0,Math.max(0,(memberTimeBackground(r)?.capacity||4)-2));r.guests=checked?r.guests.slice(0,1):[];
+ r.memberGuestReserved=checked;
  if(draft.edit){draft.people=r.people;draft.memberGuestReserved=checked;}
  refreshBookingSelection();
 }
@@ -62,8 +59,28 @@ commitBooking=function(){
  return occupancyCommit();
 };
 
+function memberSelectedSeats(r){return Array.isArray(r?.selectedSeats)?r.selectedSeats:Array.from({length:Number(r?.people)||0},(_,i)=>(Number(r?.seat)||0)+i);}
 const occupancySelect=selectBookingSlot;
+function setMemberSeats(time,seats){
+ const slot=bookingSlots(draft.date).find(s=>s.time===time);
+ if(!slot?.available||slot.kind!=='member')return;
+ seats=[...new Set(seats)].filter(i=>Number.isInteger(i)&&i>=0&&i<slot.capacity).sort((a,b)=>a-b);
+ const old=selectedBookingForSlot(slot);
+ if(!seats.length){if(old)removeBookingSelection(draft.edit?0:bookingBatch.slots.indexOf(old));return;}
+ const candidate={...(old||{}),date:draft.date,course:draft.course,side:draft.side||'OUT',time,kind:'member',people:seats.length,seat:seats[0],selectedSeats:seats,availableCapacity:slot.capacity,guests:(old?.guests||[]).slice(0,seats.length-1),memberGuestReserved:seats.length>=2&&!!old?.memberGuestReserved};
+ const issue=bookingGroupIssue(memberGroupRows(candidate))||memberTimeIssue(candidate);if(issue){toast(issue);return;}
+ if(draft.edit){Object.assign(draft,candidate);bookingUI.selected=true;}
+ else {const i=bookingBatch.slots.findIndex(r=>bookingSlotKey(r)===bookingSlotKey(candidate));if(i<0)bookingBatch.slots.push(candidate);else bookingBatch.slots[i]=candidate;normalizeBookingBatch();Object.assign(draft,{time,people:seats.length,kind:'member'});}
+ bookingUI.seat=seats[0];refreshBookingSelection();
+}
 selectBookingSlot=function(time,people,kind,seat=0){
- if(draft.edit&&Number(people)===1)draft.memberGuestReserved=false;
- return occupancySelect(time,people,kind,seat);
+ if(kind!=='member')return occupancySelect(time,people,kind,seat);
+ const slot=bookingSlots(draft.date).find(s=>s.time===time);if(!slot)return;
+ const seats=memberSelectedSeats(selectedBookingForSlot(slot));
+ setMemberSeats(time,seats.includes(seat)?seats.filter(i=>i!==seat):[...seats,seat]);
 };
+function toggleMemberTimeAll(time){
+ const slot=bookingSlots(draft.date).find(s=>s.time===time);if(!slot?.available||slot.kind!=='member')return;
+ const seats=memberSelectedSeats(selectedBookingForSlot(slot));
+ setMemberSeats(time,seats.length===slot.capacity?[]:Array.from({length:slot.capacity},(_,i)=>i));
+}
