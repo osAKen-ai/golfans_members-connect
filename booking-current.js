@@ -32,7 +32,7 @@ bookingSlots=function(date,side=draft.side||'OUT'){
  }
  if(!r||r.date!==date||r.course!==draft.course||(r.side||'OUT')!==side)return rows;
  const kind=r.kind||(Number(r.people)===1?'member':'normal');
- const current={time:r.time,hour:Number(r.time.split(':')[0]),kind,occupied:Number(r.people),capacity:4,choices:kind==='member'?[1,2,3,4]:kind==='normal'?[3,4]:[2,3,4],available:date>now,currentReservation:r};
+ const current={time:r.time,hour:Number(r.time.split(':')[0]),kind,occupied:Number(r.people),capacity:4,choices:kind==='member'?(r.memberGuestReserved?[1,2]:[1]):[2,3,4],available:date>now,currentReservation:r};
  const sameTime=t=>t.padStart(5,'0')===r.time.padStart(5,'0');
  const found=rows.some(s=>sameTime(s.time));
  return (found?rows.map(s=>sameTime(s.time)?{...s,...current}:s):[...rows,current]).sort((a,b)=>a.time.padStart(5,'0').localeCompare(b.time.padStart(5,'0')));

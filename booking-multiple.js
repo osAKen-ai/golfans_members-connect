@@ -5,7 +5,7 @@ const singleBooking={reset:resetBooking,select:selectBookingSlot,clear:clearBook
 function bookingSlotKey(r){return [r.date,r.course,r.side||'OUT',r.time].join('|');}
 function memberGroupRows(candidate=draft){return candidate.edit?bookingGroupEditRows(candidate,state.reservations):bookingGroupCandidate(bookingBatch.slots,candidate,bookingSlotKey);}
 function memberGroupChoiceIssue(time,people,kind,seat=0){
- const candidate={...draft,guestPlayers:undefined,memberGuestReserved:false,time,people,kind,seat,side:draft.side||'OUT',availableCapacity:bookingSlots(draft.date).find(s=>s.time===time)?.capacity||4};
+ const candidate={...draft,time,people,kind,seat,side:draft.side||'OUT',availableCapacity:bookingSlots(draft.date).find(s=>s.time===time)?.capacity||4};
  const selected=!draft.edit&&bookingBatch.slots.find(row=>bookingSlotKey(row)===bookingSlotKey(candidate));
  if(selected&&selected.people===people&&selected.seat===seat)return '';
  return bookingGroupIssue(memberGroupRows(candidate));
