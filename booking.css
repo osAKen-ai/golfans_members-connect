@@ -32,3 +32,10 @@
 .bk-seat.bk-member-group{font-size:25px;font-weight:700;color:#535650}.bk-seat.bk-member-group.selected{color:#fff}.bk-seat.bk-member-group.selected:after{content:none}
 
 .booking-view .bk-seat:disabled{opacity:.3;cursor:not-allowed;background:#eee;color:#65645e;border-color:#aaa;box-shadow:none}.booking-view .bk-select-time:disabled{opacity:.3;cursor:not-allowed}
+
+/* Keep calendar dimensions stable while acknowledging a filter update. */
+.bk-calendar-pair.bk-availability-updating{position:relative;min-height:180px}
+.bk-availability-feedback{position:absolute;inset:0;z-index:5;display:flex;align-items:flex-start;justify-content:center;gap:10px;padding-top:85px;background:#fff;color:#756440;font-size:15px;box-sizing:border-box}
+.bk-availability-spinner{width:20px;height:20px;flex:none;border:3px solid #e7e0d0;border-top-color:#99865b;border-radius:50%;animation:bk-availability-spin .7s linear infinite}
+@keyframes bk-availability-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.bk-availability-spinner{animation:none}}

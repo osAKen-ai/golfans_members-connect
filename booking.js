@@ -74,16 +74,45 @@ function bookingCount(date){
  },0);
 }
 function bookingControls(){return `<div class="bk-controls"><div class="bk-courses" role="group" aria-label="コース選択">${['旧コース','新コース'].map(c=>`<button aria-pressed="${draft.course===c}" class="${draft.course===c?'active':''}" onclick="setBookingFilter('course','${c}')">${c}</button>`).join('')}</div><div class="bk-filters">${bookingTypePickerMarkup()}<label>連続枠<span>${bookingIcon('person')}<select aria-label="連続枠" onchange="setBookingFilter('consecutive',Number(this.value))">${[[0,'指定なし'],...Array.from({length:9},(_,i)=>[i+2,(i+2)+'組連続'])].map(([v,t])=>`<option value="${v}" ${bookingUI.consecutive===v?'selected':''}>${t}</option>`).join('')}</select></span></label></div></div>`;}
-function setBookingFilter(key,value){if(key==='course')draft.course=value;else bookingUI[key]=value;clearBookingSelection(false);render(current.k);}
+function selectAvailableBookingSide(){
+ // Explicit reservation navigation must keep the saved booking in view.
+ if(draft.edit||bookingUI.focusReservationId||!draft.date||draft.date<=now)return;
+ if(bookingUI.type==='intro'&&bookingRequiresAccompaniment(draft.date))bookingUI.type='all';
+ const hasAvailability=side=>{
+  const slots=bookingSlots(draft.date,side),matched=bookingConsecutiveTimes(draft.date,side,slots);
+  return slots.some(s=>s.available&&!s.currentReservation&&!s.ownReservation&&bookingMatch(s)&&(!matched||matched.has(s.time)));
+ };
+ const side=draft.side||'OUT',other=side==='OUT'?'IN':'OUT';
+ if(!hasAvailability(side)&&hasAvailability(other))draft.side=other;
+ if(typeof bookingBatch!=='undefined')bookingBatch.browseSide=draft.side||'OUT';
+}
+let bookingAvailabilityFeedbackTimer;
+function showBookingAvailabilityFeedback(){
+ if(current?.k!=='booking')return;
+ const calendar=document.querySelector('.bk-calendar-pair');
+ if(!calendar)return;
+ clearTimeout(bookingAvailabilityFeedbackTimer);
+ const content=[...calendar.children];
+ content.forEach(node=>{node.inert=true;});
+ calendar.classList.add('bk-availability-updating');calendar.setAttribute('aria-busy','true');
+ const feedback=document.createElement('div');feedback.className='bk-availability-feedback';feedback.setAttribute('role','status');
+ feedback.innerHTML='<span class="bk-availability-spinner" aria-hidden="true"></span><strong>空き枠を確認中…</strong>';
+ calendar.append(feedback);
+ // A brief visual transition for local demo filtering, independent of future API latency.
+ bookingAvailabilityFeedbackTimer=setTimeout(()=>{
+  content.forEach(node=>{node.inert=false;});calendar.removeAttribute('aria-busy');calendar.classList.remove('bk-availability-updating');feedback.remove();
+ },500);
+}
+function setBookingFilter(key,value){const changed=(key==='course'?draft.course:bookingUI[key])!==value;if(key==='course')draft.course=value;else bookingUI[key]=value;clearBookingSelection(false);if(current.k==='times')selectAvailableBookingSide();render(current.k);if(changed)showBookingAvailabilityFeedback();}
 function bookingCalendar(){
  return `${bookingControls()}${bookingMonthNavigationMarkup(year,month,'pickBookingMonth')}${bookingCalendarPairMarkup(year,month,'pickBookingDate')}<p class="bk-note">操作体験版・空き枠は表示例です。${typeof bookingBatch!=='undefined'?'複数のスタート枠をまとめて予約できます。':'1組ずつ予約できます。'}</p>`;
 }
 function pickBookingMonth(y,m){year=y;month=m;render('booking');}
-function pickBookingDate(date){prepareBookingDayBrowse(date);draft.date=date;bookingUI.anchor=date;bookingUI.hour=8;clearBookingSelection(false);openPanel('times');}
+function pickBookingDate(date){prepareBookingDayBrowse(date);draft.date=date;bookingUI.anchor=date;bookingUI.hour=8;clearBookingSelection(false);selectAvailableBookingSide();openPanel('times');}
 function bookingReturnCalendar(){year=Number(draft.date.slice(0,4));month=Number(draft.date.slice(5,7))-1;openBookingStep('booking');}
 function openBookingStep(k){const depth=history.state?.depth||1;history.replaceState({portal:true,route:{k,arg:null},depth},'',location.pathname+location.search+'#'+k);render(k);}
 function bookingDays(){const anchor=bookingUI.anchor||draft.date;return Array.from({length:113},(_,i)=>bookingShift(anchor,i-56)).filter(d=>d>now).map(date=>`<button class="${bookingDayClass(date)} ${date===draft.date?'active':''}" title="${japaneseHolidayName(date)}" aria-label="${formatDate(date,true)} ${japaneseHolidayName(date)}" aria-pressed="${date===draft.date}" onclick="changeBookingDay('${date}')"><small>${'日月火水木金土'[bookingDay(date)]}</small>${Number(date.slice(8))}</button>`).join('');}
-function changeBookingDay(date){prepareBookingDayBrowse(date);draft.date=date;clearBookingSelection(false);render('times');}
+function changeBookingDay(date){prepareBookingDayBrowse(date);draft.date=date;clearBookingSelection(false);selectAvailableBookingSide();render('times');}
 function changeBookingSide(side){draft.side=side;clearBookingSelection(false);render('times');}
 function bookingRows(){const slots=bookingSlots(draft.date),matched=bookingConsecutiveTimes(draft.date,draft.side||'OUT',slots);return slots.filter(s=>s.currentReservation||s.ownReservation||bookingMatch(s)&&(!matched||matched.has(s.time))&&(!bookingUI.only||s.available)).map(s=>{
  if(s.currentReservation)return currentReservationRowMarkup(s,draft.side||'OUT');
