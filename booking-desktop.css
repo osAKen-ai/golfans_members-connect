@@ -38,7 +38,7 @@
  .bd-calendar .bk-calendar-title{display:none}
  .bd-calendar .bk-calendar{height:100%;min-height:360px;grid-template-rows:26px;grid-auto-rows:minmax(52px,1fr);padding:0 0 6px!important;gap:5px}
  .bd-calendar .bk-calendar-pair .bk-day{height:100%;min-height:52px;font-size:23px;padding:4px 0;gap:3px}
- .bd-calendar .bk-day small{font-size:12px}
+ .bd-calendar .bk-day small{font-size:17px;font-weight:700;line-height:1.2}
  .bd-calendar>.bk-own-calendar-legend{grid-column:1;grid-row:3;margin:8px 20px;text-align:left;font-size:12px}
  .bd-calendar>.wl-legend{grid-column:1;grid-row:4;margin:0 20px 5px;font-size:12px}
  .bd-calendar>.wl-entry{grid-column:1;grid-row:5;margin:4px 20px 8px;width:calc(100% - 40px);min-height:44px;padding:8px 12px;font-size:14px}
@@ -132,7 +132,7 @@
  .booking-times-view .bk-slot-main :is(.bk-people,.bk-seat,.bk-avatar,.bk-guest){width:38px;height:38px;min-width:38px;max-width:38px;min-height:38px;font-size:20px}
  .booking-times-view .bk-slot.unavailable time{color:#798080}
  .booking-times-view .bk-hours button{min-height:52px}
- .booking-times-view .bk-slot .bk-intro{font-size:10px;grid-column:5!important;grid-row:1;align-self:end;line-height:1.1}
+ .booking-times-view .bk-slot .bk-intro{font-size:14px;grid-column:1 / span 2!important;grid-row:1;align-self:center;justify-self:start;text-align:left;white-space:nowrap;line-height:1.3}
  .booking-times-view .bk-slot-main:has(.bk-intro) .bk-full{align-self:start;padding-top:4px}
  .booking-times-view .bk-slot:has(.bk-owned-main),.booking-times-view .bk-slot:has(.bk-current-main){justify-content:flex-start}
  .booking-times-view .bk-slot-main.bk-owned-main{grid-template-columns:1fr;flex:1}
