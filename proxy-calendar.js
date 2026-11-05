@@ -22,7 +22,7 @@ function bookingSlots(date,side=draft.side||'OUT'){
   if(kind!=='member'&&occupied===1)occupied=2;
   const existing=state.reservations.find(r=>r.id!==draft.id&&r.date===date&&r.course===draft.course&&(r.side||'OUT')===side&&r.time===time);
   if(existing)occupied=4;
-  const capacity=4-occupied,choices=(kind==='member'?[1]:[2,3,4]).filter(n=>n<=capacity);
+  const capacity=4-occupied,choices=(kind==='member'?[1]:[3,4]).filter(n=>n<=capacity);
   return {time,hour:Math.floor(minutes/60),kind,occupied,capacity,choices,reservedName:occupied?(existing?proxyMemberInfo().name:proxyReservedNames[(seed+i)%proxyReservedNames.length]):'',ownReservation:!!existing,available:date>now&&choices.length>0};
  });
 }

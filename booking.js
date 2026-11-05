@@ -25,7 +25,7 @@ function bookingSlots(date,side=draft.side||'OUT',ignoreSaved=false){
   if(kind!=='member'&&occupied===1)occupied=2;
   const existing=state.reservations.find(r=>r.id!==draft.id&&r.date===date&&r.course===draft.course&&(r.side||'OUT')===side&&r.time===time);
   if(existing&&!ignoreSaved)occupied=4;
-  const capacity=4-occupied,choices=(kind==='member'?(memberMode==='group'?[4]:[1,2,3,4]):[2,3,4]).filter(n=>n<=capacity);
+  const capacity=4-occupied,choices=(kind==='member'?(memberMode==='group'?[4]:[1,2,3,4]):[3,4]).filter(n=>n<=capacity);
   return {time,hour:Math.floor(minutes/60),kind,memberMode,occupied,capacity,choices,member:(seed+i)%bookingMembers.length,variant:i,available:date>now&&choices.length>0};
  });
 }
