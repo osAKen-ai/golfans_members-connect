@@ -47,7 +47,7 @@ function wlOpen(date,id){
   const data=wlRead();const existing=data.reservations.filter(r=>r.date===date&&r.status!=='cancelled');
   const record=existing.find(r=>r.id===id)||existing[0];
   if(record&&existing.length>1&&!id){wlView='choose';wlForm={date};wlShow();return;}
-  wlForm={date,mode:record?'change':'new',original:record?JSON.parse(JSON.stringify(record)):null,course:(id?record?.course:draft?.course)||record?.course||'旧コース',kind:record?(record.kind==='member'?'member':record.kind==='intro'?'intro':'normal'):(!isDelegateBooking&&bookingUI.type==='member'?'member':'normal'),hours:[7,8,9,10],people:record?.people||4,line:data.line===true,email:false,emails:data.waitlistDemo?.emails||'',owner:wlOwner()};
+  wlForm={date,mode:record?'change':'new',original:record?JSON.parse(JSON.stringify(record)):null,course:(id?record?.course:draft?.course)||record?.course||'旧コース',kind:record?(record.kind==='member'?'member':record.kind==='intro'?'intro':'normal'):(!isDelegateBooking&&['member','individual'].includes(bookingUI.type)?'member':'normal'),hours:[7,8,9,10],people:record?.people||(!isDelegateBooking&&bookingUI.type==='individual'?1:4),line:data.line===true,email:false,emails:data.waitlistDemo?.emails||'',owner:wlOwner()};
   if(wlForm.kind==='member')wlForm.people=1;wlMutate((data,w,t)=>wlSeed(w,date,wlForm.kind,t));wlView='form';wlShow();
  }catch(e){wlError(e);}
 }

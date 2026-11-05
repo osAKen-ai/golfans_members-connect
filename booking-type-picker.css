@@ -1,0 +1,26 @@
+/* Use rendered outlines so iPhone and desktop retain the same booking colors. */
+.bk-type-icon{display:inline-block;flex:none;width:15px;height:15px;box-sizing:border-box;border:3px solid #99865b;border-radius:2px;vertical-align:middle}
+.bk-type-icon.is-individual{border-color:#7b2033}
+.bk-type-icon.is-circle{border-radius:50%}
+.bk-type-field{min-width:0;font-size:12px;font-weight:500;line-height:1.5}
+.bk-type-field-label{display:block}
+.bk-type-trigger{display:flex;align-items:center;gap:7px;width:100%;min-height:43px;margin-top:5px;padding:5px 9px;border:1px solid #ccc;border-radius:5px;background:#fff;color:#2d3538;text-align:left;font:inherit;font-size:14px}
+.bk-type-copy{display:block;min-width:0;font-weight:600;line-height:1.4}
+.bk-type-copy small{display:block;font-size:10px;font-weight:600;white-space:nowrap;color:#7b2033;line-height:1.5}
+.bk-type-chevron{margin-left:auto;flex:none;font-size:17px;color:#756440}
+.bk-type-trigger:focus-visible{outline:2px solid #99865b;outline-offset:2px}
+.bk-type-summary{display:inline-flex;align-items:center;gap:5px;vertical-align:middle}
+.bk-type-summary .bk-type-icon{width:12px;height:12px;border-width:2px}
+body #bookingTypeMenu{position:fixed;inset:auto;margin:0;padding:6px;box-sizing:border-box;max-width:calc(100vw - 24px)!important;min-height:0;height:auto;max-height:calc(100dvh - 24px);overflow:auto;border:1px solid #d7d0c1;border-radius:12px;background:#fff;color:#2d3538;box-shadow:0 12px 40px #0003}
+#bookingTypeMenu::backdrop{background:#0002}
+#bookingTypeMenu [role="option"]{display:flex;align-items:center;gap:11px;width:100%;min-height:51px;padding:10px 12px;border:0;border-radius:6px;background:transparent;text-align:left;font:inherit;font-size:17px;color:#2d3538;cursor:pointer}
+#bookingTypeMenu [role="option"][aria-selected="true"]{background:#fff}
+#bookingTypeMenu [role="option"]:focus-visible{outline:2px solid #99865b;outline-offset:-2px;background:#fff}
+#bookingTypeMenu [data-type="individual"]{min-height:68px}
+#bookingTypeMenu .bk-type-icon{width:19px;height:19px}
+#bookingTypeMenu .bk-type-copy small{font-size:13px;margin-top:2px}
+#bookingTypeMenu .bk-type-check{width:18px;flex:none;font-weight:700;color:#756440}
+#bookingTypeMenu [data-type="individual"] .bk-type-check{color:#7b2033}
+@media(min-width:700px){.bk-type-field{font-size:14px}.bk-type-trigger{min-height:48px;font-size:16px}}
+@media(min-width:1000px){.bd-calendar>.bk-controls .bk-type-field{font-size:13px;color:#202e40}.bd-calendar>.bk-controls .bk-type-trigger{min-height:44px;margin-top:8px}.bk-type-copy small{font-size:11px}}
+@media(max-width:360px){.bk-type-trigger{gap:4px;padding:5px;font-size:12px}.bk-type-trigger .bk-type-icon{width:12px;height:12px}.bk-type-trigger .bk-type-copy small{font-size:9px}}
