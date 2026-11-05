@@ -43,15 +43,20 @@ function bookingGroupNoticeMarkup(rows){
 
 // Demonstration timetable per course/tee: four member-time starts per day.
 // Weekdays: one in each hour; weekends/holidays: two each in the 8 and 9 o'clock hours.
+function bookingMinutes(time){const [h,m]=time.split(':').map(Number);return h*60+m;}
+function bookingDemoRun(date){return Number(date.slice(-2))%3!==0;}
 function demoBookingSlotKind(date,time,pattern){
- const [hour,minute]=time.split(':').map(Number);
- const day=new Date(date+'T12:00:00Z').getUTCDay();
- const weekend=day===0||day===6||(typeof isJapaneseHoliday==='function'&&isJapaneseHoliday(date));
- const slotIndex=Math.round((hour*60+minute-(7*60+2))/7);
- const firstInHour=Math.max(0,Math.ceil((hour*60-(7*60+2))/7));
- const position=slotIndex-firstInHour;
- const member=weekend?(hour===8||hour===9)&&[1,5].includes(position):position===2;
- return member?'member':!weekend&&(pattern===3||pattern===4)?'intro':'normal';
+ const minutes=bookingMinutes(time);
+ if(bookingRequiresAccompaniment(date))return minutes>=510?'member':'normal';
+ // Leave a ten-start run available for trying weekday group bookings.
+ if(bookingDemoRun(date)&&minutes<492)return 'normal';
+ const hour=Math.floor(minutes/60),index=Math.round((minutes-422)/7);
+ const position=index-Math.max(0,Math.ceil((hour*60-422)/7));
+ return position===2?'member':pattern===3||pattern===4?'intro':'normal';
+}
+function demoBookingOccupied(date,time,kind,occupied){
+ if(bookingDemoRun(date)&&(bookingMinutes(time)<510||kind==='member'&&bookingMinutes(time)<540))return 0;
+ return kind==='normal'?occupied?4:0:occupied;
 }
 
 // Shared member/delegate restriction, using the existing holiday calendar.

@@ -26,7 +26,9 @@ function wlDemoOpenKeys(date){
  const candidates=['OUT','IN'].flatMap(side=>wlOriginalSlots(date,side).filter(s=>s.available).map(s=>({side,time:s.time})));
  const rank=s=>{let hash=2166136261;for(const c of date+'|'+draft.course+'|'+s.side+'|'+s.time){hash=Math.imul(hash^c.charCodeAt(0),16777619)>>>0;}return hash;};
  candidates.sort((a,b)=>rank(a)-rank(b)||a.side.localeCompare(b.side)||a.time.localeCompare(b.time));
- return new Set(candidates.slice(0,wlDemoTarget(date)).map(s=>s.side+'|'+s.time));
+ const keys=new Set(candidates.slice(0,wlDemoTarget(date)).map(s=>s.side+'|'+s.time));
+ if(bookingDemoRun(date))for(const s of candidates)if(bookingMinutes(s.time)<540)keys.add(s.side+'|'+s.time);
+ return keys;
 }
 function wlSeed(w,date,kind,t){
  const tag=date+'|'+kind+'|varied-v2';if(w.seeded.includes(tag))return;

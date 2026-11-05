@@ -20,9 +20,10 @@ function bookingSlots(date,side=draft.side||'OUT'){
   let occupied=pattern===0?4:pattern===1?3:pattern===2?1:pattern===5?2:pattern===6?3:pattern===7?4:0;
   // Group reservations start at two players; only member-time samples may have one.
   if(kind!=='member'&&occupied===1)occupied=2;
+  occupied=demoBookingOccupied(date,time,kind,occupied);
   const existing=state.reservations.find(r=>r.id!==draft.id&&r.date===date&&r.course===draft.course&&(r.side||'OUT')===side&&r.time===time);
   if(existing)occupied=4;
-  const capacity=4-occupied,choices=(kind==='member'?[1]:[2,3,4]).filter(n=>n<=capacity);
+  const capacity=4-occupied,choices=(kind==='member'?[1,2,3,4]:kind==='normal'?[3,4]:[2,3,4]).filter(n=>n<=capacity);
   return {time,hour:Math.floor(minutes/60),kind,occupied,capacity,choices,reservedName:occupied?(existing?proxyMemberInfo().name:proxyReservedNames[(seed+i)%proxyReservedNames.length]):'',ownReservation:!!existing,available:date>now&&choices.length>0};
  });
 }

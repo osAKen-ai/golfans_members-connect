@@ -21,9 +21,10 @@ function bookingSlots(date,side=draft.side||'OUT',ignoreSaved=false){
   let occupied=pattern===0?4:pattern===1?3:pattern===2?1:pattern===5?2:pattern===6?3:pattern===7?4:pattern===3&&i%2===0?4:0;
   // Group reservations start at two players; only member-time samples may have one.
   if(kind!=='member'&&occupied===1)occupied=2;
+  occupied=demoBookingOccupied(date,time,kind,occupied);
   const existing=state.reservations.find(r=>r.id!==draft.id&&r.date===date&&r.course===draft.course&&(r.side||'OUT')===side&&r.time===time);
   if(existing&&!ignoreSaved)occupied=4;
-  const capacity=4-occupied,choices=(kind==='member'?[1]:[2,3,4]).filter(n=>n<=capacity);
+  const capacity=4-occupied,choices=(kind==='member'?[1,2,3,4]:kind==='normal'?[3,4]:[2,3,4]).filter(n=>n<=capacity);
   return {time,hour:Math.floor(minutes/60),kind,occupied,capacity,choices,member:(seed+i)%bookingMembers.length,variant:i,available:date>now&&choices.length>0};
  });
 }
@@ -79,7 +80,7 @@ function bookingSelectionFacts(r){return `<dl class="bk-selection-facts"><dt>プ
 // Preserve the four seat columns. Only available member seats use an empty square.
 function sampleBookingParticipants(slot){
  const count=Math.min(4,Number(slot.occupied)||0);
- const guestCount=slot.kind==='intro'?count:slot.kind==='member'?(count>=3&&slot.variant%2!==0?1:0):Math.max(0,count-(1+(slot.variant||0)%Math.max(1,count)));
+ const guestCount=slot.kind==='intro'?count:slot.kind==='member'?(count>=3&&slot.variant%2!==0?1:0):(count>=3?2+(count===4?(slot.variant||0)%2:0):0);
  const members=[0,1,2,4,6];
  return [...Array.from({length:count-guestCount},(_,i)=>({type:'member',name:bookingMembers[members[((slot.member||0)+i)%members.length]].name})),...Array.from({length:guestCount},()=>({type:'guest'}))];
 }
@@ -89,7 +90,11 @@ function bookingRecordParticipants(r){
  for(let i=0;i<Math.min(4,Number(r.people))-players.filter(p=>p.own).length;i++){
   const name=(r.guests||[])[i];
   const person=name&&name!=='未定'&&typeof findCompanionByName==='function'?findCompanionByName(name):null;
-  players.push(person?{...person,type:person.type==='member'?'member':'guest'}:{type:name&&name!=='未定'?'guest':r.kind==='intro'||r.memberGuestReserved?'guest':'pending'});
+  players.push(person?{...person,type:person.type==='member'?'member':'guest'}:{type:name&&name!=='未定'?'guest':r.kind==='intro'||(r.guestPlayers===undefined&&r.memberGuestReserved)?'guest':'pending'});
+ }
+ if(r.guestPlayers!==undefined){
+  let remaining=Math.max(0,Number(r.guestPlayers)-players.filter(p=>p.type==='guest').length);
+  for(const p of players)if(p.type==='pending'&&remaining>0){p.type='guest';remaining--;}
  }
  return players;
 }

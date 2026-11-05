@@ -22,7 +22,7 @@ function proxyBatchContext(){const key=[proxyMember,draft?.date,draft?.course].j
 function proxyNormalizeBatch(){if(!proxyBatch.slots.some(r=>proxySlotKey(r)===proxyBatch.owner&&r.kind!=='intro'))proxyBatch.owner=proxyBatch.slots.find(r=>r.kind!=='intro')?proxySlotKey(proxyBatch.slots.find(r=>r.kind!=='intro')):null;for(const r of proxyBatch.slots){r.memberPlaying=r.kind!=='intro'&&proxySlotKey(r)===proxyBatch.owner;r.guests=r.guests.slice(0,proxyGuestCount(r));}proxyBatch.slots.sort(bookingGroupDisplayOrder);}
 function proxyGroupRows(candidate=draft){return candidate.edit?bookingGroupEditRows(candidate,state.reservations):bookingGroupCandidate(proxyBatch.slots,candidate,proxySlotKey);}
 function proxyGroupChoiceIssue(time,people,side,kind,seat=0){
- const candidate={...draft,time,people,side,kind,seat,availableCapacity:bookingSlots(draft.date,side).find(s=>s.time===time)?.capacity||4};
+ const candidate={...draft,guestPlayers:undefined,memberGuestReserved:false,time,people,side,kind,seat,availableCapacity:bookingSlots(draft.date,side).find(s=>s.time===time)?.capacity||4};
  const selected=!draft.edit&&proxyBatch.slots.find(row=>proxySlotKey(row)===proxySlotKey(candidate));
  if(selected&&selected.people===people&&selected.seat===seat)return '';
  return bookingGroupIssue(proxyGroupRows(candidate));
