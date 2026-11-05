@@ -63,7 +63,7 @@ function bookingRequiresAccompaniment(date){
 function bookingTypeOptions(){
  const restricted=typeof current!=='undefined'&&current?.k==='times'&&bookingRequiresAccompaniment(draft.date);
  if(restricted&&bookingUI.type==='intro')bookingUI.type='all';
- return [['all','全てを見る'],['member','メンバータイム'],['normal','通常枠'],...(!restricted?[['intro','紹介枠']]:[])];
+ return [['all','全てを見る'],['member','□ メンバー枠'],['normal','○ 同伴枠'],...(!restricted?[['intro','○ 紹介枠']]:[])];
 }
 function removeWeekendIntroDemo(data){
  const invalid=r=>r.kind==='intro'&&bookingRequiresAccompaniment(r.date);
