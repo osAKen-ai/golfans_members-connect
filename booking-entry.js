@@ -140,7 +140,7 @@ function showBookingQuickHelp(dialog,summary){
  dialog.scrollTop=0;dialog.querySelector('[data-quick-help-back]').focus({preventScroll:true});
 }
 function showBookingQuickSummary(dialog){
- setBookingHelpCloseDisabled(false);
+ setBookingHelpCloseDisabled(true);
  const helpType=dialog.dataset.helpType,scroll=dialog._quickReturnScroll||0;
  delete dialog.dataset.calendarMonth;delete dialog.dataset.helpType;
  dialog.innerHTML=bookingQuickMarkup();
@@ -188,5 +188,5 @@ function openBookingQuick(trigger,preserveDate=false){
   if(e.target.matches('[data-quick-consecutive]')){bookingUI.consecutive=Number(e.target.value);clearBookingSelection(false);}
   refreshBookingQuick(dialog);
  });
- document.body.append(dialog);dialog.showModal();startBookingQuickLoading(dialog);dialog.querySelector('.bk-quick-close').focus({preventScroll:true});
+ document.body.append(dialog);dialog.showModal();setBookingHelpCloseDisabled(true);startBookingQuickLoading(dialog);dialog.querySelector('.bk-quick-close').focus({preventScroll:true});
 }
