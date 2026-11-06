@@ -5,15 +5,37 @@ function bookingTypeIcon(type){return type==='all'?'':`<i class="bk-type-icon ${
 function bookingTypeCopy(type){return type==='individual'?'<span class="bk-type-copy">メンバー枠<small>（お一人専用　試験導入）</small></span>':`<span class="bk-type-copy">${{all:'全てを見る',member:'メンバー枠',normal:'同伴枠',intro:'紹介枠'}[type]||'全てを見る'}</span>`;}
 function bookingTypeSummaryMarkup(){return `<span class="bk-type-summary">${bookingTypeIcon(bookingUI.type)}<span>${{all:'全ての枠',member:'メンバー枠',individual:'メンバー枠（お一人専用　試験導入）',normal:'同伴枠',intro:'紹介枠'}[bookingUI.type]||'全ての枠'}</span></span>`;}
 function bookingTypePickerMarkup(){bookingMemberTypeOptions();return `<section class="bk-type-field"><span class="bk-type-field-label">予約枠の種類</span><button type="button" class="bk-type-trigger" aria-label="予約枠の種類" aria-haspopup="dialog" aria-expanded="false" onclick="openBookingTypeMenu(this)">${bookingTypeIcon(bookingUI.type)}${bookingTypeCopy(bookingUI.type)}<span class="bk-type-chevron" aria-hidden="true">⌄</span></button></section>`;}
+// Count each category independently of the currently selected type.
+function bookingTypeRemaining(type){
+ const date=draft.date;if(!date||date<=now)return 0;
+ return ['OUT','IN'].reduce((total,side)=>{
+  const slots=bookingSlots(date,side),matched=bookingConsecutiveTimes(date,side,slots,type);
+  return total+slots.filter(s=>s.available&&!s.currentReservation&&!s.ownReservation&&bookingMatch(s,type)&&(!matched||matched.has(s.time))).reduce((n,s)=>n+(type==='individual'?s.capacity:1),0);
+ },0);
+}
+function bookingTypeMenuMarkup(){
+ const dated=current?.k==='times',restricted=dated&&bookingRequiresAccompaniment(draft.date);
+ const options=bookingMemberTypeOptions();
+ if(restricted)options.push(['intro','○ 紹介枠']);
+ const header=dated?`<header class="bk-type-menu-heading"><strong>${esc(formatDate(draft.date,true))}</strong><span>${esc(draft.course)} ／ OUT・IN合計${bookingUI.consecutive?' ／ '+bookingUI.consecutive+'組連続':''}</span></header>`:'';
+ return header+'<section role="listbox" aria-label="予約枠の種類">'+options.map(([type])=>{
+  const disabled=restricted&&type==='intro';
+  const count=dated&&type!=='all'&&!disabled?bookingTypeRemaining(type):null;
+  const remaining=count===null?'':`<strong class="bk-type-remaining ${count===0?'is-empty':''}">${count>0?'残り'+count+(type==='individual'?'名':'組'):'空きなし'}</strong>`;
+  const label={all:'全てを見る',member:'メンバー枠',individual:'メンバー枠',normal:'同伴枠',intro:'紹介枠'}[type];
+  const detail=disabled?'<small class="bk-type-unavailable">土日祝は対象外</small>':type==='individual'?'<small class="bk-type-trial">（お一人専用　試験導入）</small>':'';
+  return `<button type="button" role="option" aria-selected="${bookingUI.type===type}" data-type="${type}" ${disabled?'disabled aria-disabled="true"':''}><span class="bk-type-check" aria-hidden="true">${bookingUI.type===type?'✓':''}</span>${bookingTypeIcon(type)}<span class="bk-type-option-body"><span class="bk-type-option-line"><span>${label}</span>${remaining}</span>${detail}</span></button>`;
+ }).join('')+'</section>';
+}
 function openBookingTypeMenu(trigger){
  document.querySelector('#bookingTypeMenu')?.remove();
  const menu=document.createElement('dialog');menu.id='bookingTypeMenu';menu.setAttribute('aria-label','予約枠の種類');
- menu.innerHTML='<section role="listbox" aria-label="予約枠の種類">'+bookingMemberTypeOptions().map(([type])=>`<button type="button" role="option" aria-selected="${bookingUI.type===type}" data-type="${type}"><span class="bk-type-check" aria-hidden="true">${bookingUI.type===type?'✓':''}</span>${bookingTypeIcon(type)}${bookingTypeCopy(type)}</button>`).join('')+'</section>';
- menu.addEventListener('click',event=>{const option=event.target.closest('[data-type]');if(option){const type=option.dataset.type;menu.close();setBookingFilter('type',type);document.querySelector('.bk-type-trigger')?.focus();return;}const r=menu.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)menu.close();});
- menu.addEventListener('keydown',event=>{const options=[...menu.querySelectorAll('[role="option"]')];let i=options.indexOf(document.activeElement);if(event.key==='ArrowDown')i=(i+1)%options.length;else if(event.key==='ArrowUp')i=(i-1+options.length)%options.length;else if(event.key==='Home')i=0;else if(event.key==='End')i=options.length-1;else return;event.preventDefault();options[i].focus();});
+ menu.innerHTML=bookingTypeMenuMarkup();
+ menu.addEventListener('click',event=>{const option=event.target.closest('[data-type]');if(option&&!option.disabled){const type=option.dataset.type;menu.close();setBookingFilter('type',type);document.querySelector('.bk-type-trigger')?.focus();return;}const r=menu.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)menu.close();});
+ menu.addEventListener('keydown',event=>{const options=[...menu.querySelectorAll('[role="option"]:not(:disabled)')];let i=options.indexOf(document.activeElement);if(event.key==='ArrowDown')i=(i+1)%options.length;else if(event.key==='ArrowUp')i=(i-1+options.length)%options.length;else if(event.key==='Home')i=0;else if(event.key==='End')i=options.length-1;else return;event.preventDefault();options[i].focus();});
  menu.addEventListener('close',()=>{trigger.setAttribute('aria-expanded','false');menu.remove();});
  document.body.append(menu);trigger.setAttribute('aria-expanded','true');
- const rect=trigger.getBoundingClientRect(),width=Math.min(Math.max(rect.width,310),innerWidth-24);
+ const rect=trigger.getBoundingClientRect(),width=Math.min(Math.max(rect.width,current?.k==='times'?360:310),innerWidth-24);
  menu.style.setProperty('width',width+'px','important');menu.showModal();
  const height=menu.getBoundingClientRect().height;
  menu.style.left=Math.max(12,Math.min(rect.left,innerWidth-width-12))+'px';
@@ -49,15 +71,15 @@ function bookingSlots(date,side=draft.side||'OUT',ignoreSaved=false){
   return {time,hour:Math.floor(minutes/60),kind,memberMode,occupied,capacity,choices,member:(seed+i)%bookingMembers.length,variant:i,available:date>now&&choices.length>0};
  });
 }
-function bookingMatch(slot){const type=bookingUI.type;const matches=type==='all'||type==='individual'&&slot.kind==='member'&&slot.memberMode!=='group'||type==='member'&&slot.kind==='member'&&slot.memberMode==='group'||!['member','individual'].includes(type)&&slot.kind===type;return matches&&(!bookingUI.party||slot.choices.includes(bookingUI.party));}
+function bookingMatch(slot,type=bookingUI.type){const matches=type==='all'||type==='individual'&&slot.kind==='member'&&slot.memberMode!=='group'||type==='member'&&slot.kind==='member'&&slot.memberMode==='group'||!['member','individual'].includes(type)&&slot.kind===type;return matches&&(!bookingUI.party||slot.choices.includes(bookingUI.party));}
 // Match windows against the full timetable; filtering never closes occupied gaps.
-function bookingConsecutiveTimes(date,side,slots=bookingSlots(date,side)){
+function bookingConsecutiveTimes(date,side,slots=bookingSlots(date,side),type=bookingUI.type){
  const n=Number(bookingUI.consecutive)||0;
  if(n<2)return null;
  const matched=new Set(),timetable=bookingTeeMinutes(date,side);
  for(let i=0;i<=slots.length-n;i++){
   const window=slots.slice(i,i+n);
-  if(window.some(s=>!s.available||s.currentReservation||s.ownReservation||!bookingMatch(s)))continue;
+  if(window.some(s=>!s.available||s.currentReservation||s.ownReservation||!bookingMatch(s,type)))continue;
   const rows=window.map(s=>({date,course:draft.course,side,time:s.time,kind:s.kind,people:Math.max(...s.choices),availableCapacity:s.capacity}));
   if(bookingGroupIssue(rows))continue;
   const indexes=window.map(s=>{const [h,m]=s.time.split(':').map(Number);return timetable.indexOf(h*60+m)});
