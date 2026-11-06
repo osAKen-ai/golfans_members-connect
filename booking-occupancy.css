@@ -71,3 +71,12 @@
 .booking-times-view .bk-slot:has(.bk-member-individual.selected){background:#fcf4f6;box-shadow:inset 3px 0 0 #7b2033}
 .bk-individual-legend{color:#7b2033;font-weight:700}
 .bk-member-guest-option input{accent-color:#7b2033}
+
+/* Make bookable starts easy to scan while retaining distinct selected states. */
+.booking-times-view .bk-slot:not(.unavailable):not(.bk-current-reservation):not(.bk-owned-reservation):has(.bk-people:not(:disabled),.bk-seat:not(:disabled)):not(:has(.bk-people.selected,.bk-seat.selected)){
+ background:#fcf1f3;
+}
+.booking-times-view .bk-slot:not(.unavailable):has(.bk-people:not(:disabled),.bk-seat:not(:disabled))>time{
+ color:#242124;font-weight:800;
+}
+.booking-times-view .bk-slot-main :is(.bk-people,.bk-seat):not(.selected):not(:disabled){background:#fff}
