@@ -126,3 +126,6 @@ body #bookingQuickDialog{position:fixed;inset:0;margin:auto;width:min(560px,calc
 .bk-quick-wait button{min-height:48px;padding:10px}
 .bk-quick-footer{margin-top:10px}
 #bookingQuickDialog:has(.bk-quick-wait) .bk-quick-footer p{display:none}
+
+/* The background close action is unavailable while reading an explanation. */
+body .sheethead .close.is-help-disabled{background:#b9b9b5;color:#eeeeeb;border-color:#b9b9b5;box-shadow:none;opacity:.5;cursor:default;pointer-events:none}

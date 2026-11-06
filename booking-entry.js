@@ -14,6 +14,7 @@ function showBookingEntry(){bookingEntryMode='choose';render('booking');}
 bookingReturnCalendar=function(){bookingEntryMode='calendar';entryOriginal.returnCalendar();};
 backPanel=function(){if(current?.k==='booking'&&bookingEntryMode==='calendar'){showBookingEntry();return;}entryOriginal.back();};
 render=function(k,arg){
+ setBookingHelpCloseDisabled(false);
  document.querySelector('#bookingQuickDialog')?.remove();
  if(k==='booking'&&arg?.quickReturn){
   bookingEntryMode='choose';
@@ -123,6 +124,10 @@ function showBookingQuickCalendar(dialog,view,focusSelector){
   (dialog.querySelector('.is-selected:not(:disabled)')||dialog.querySelector('.bk-quick-day:not(:disabled)'))?.focus({preventScroll:true});
  }
 }
+function setBookingHelpCloseDisabled(disabled){
+ const close=document.querySelector('.sheethead .close');
+ if(close){close.disabled=disabled;close.classList.toggle('is-help-disabled',disabled);}
+}
 function showBookingQuickHelp(dialog,summary){
  stopBookingQuickLoading(dialog);
  const type=summary.dataset.quickHelp;
@@ -130,10 +135,12 @@ function showBookingQuickHelp(dialog,summary){
  if(!label)return;
  const content=summary.parentElement.querySelector('div').innerHTML;
  dialog._quickReturnScroll=dialog.scrollTop;dialog.dataset.helpType=type;
+ setBookingHelpCloseDisabled(true);
  dialog.innerHTML=`<button type="button" class="bk-quick-help-back" data-quick-help-back>‹ かんたん検索に戻る</button><header class="bk-quick-heading"><h2 id="bookingQuickTitle">${label}の説明</h2></header><div class="bk-quick-help-content">${content}</div><div class="bk-quick-help-footer"><button type="button" class="bk-quick-date-cancel" data-quick-help-back>説明を閉じる</button></div>`;
  dialog.scrollTop=0;dialog.querySelector('[data-quick-help-back]').focus({preventScroll:true});
 }
 function showBookingQuickSummary(dialog){
+ setBookingHelpCloseDisabled(false);
  const helpType=dialog.dataset.helpType,scroll=dialog._quickReturnScroll||0;
  delete dialog.dataset.calendarMonth;delete dialog.dataset.helpType;
  dialog.innerHTML=bookingQuickMarkup();
@@ -147,13 +154,14 @@ function bookingQuickInitialDate(base=now){
  return [bookingISO(y,m+1,Math.min(d,last)),bookingQuickLastDate].sort()[0];
 }
 function openBookingQuick(trigger,preserveDate=false){
+ setBookingHelpCloseDisabled(false);
  document.querySelector('#bookingQuickDialog')?.remove();
  if(!preserveDate)setBookingQuickDate(bookingQuickInitialDate());
  if(draft.date>bookingQuickLastDate)setBookingQuickDate(bookingQuickLastDate);
  const dialog=document.createElement('dialog');dialog.id='bookingQuickDialog';dialog.setAttribute('aria-labelledby','bookingQuickTitle');
  dialog.innerHTML=bookingQuickMarkup();
  dialog.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'&&(dialog.dataset.calendarMonth||dialog.dataset.helpType)){e.preventDefault();showBookingQuickSummary(dialog);}});
- dialog.addEventListener('close',()=>{stopBookingQuickLoading(dialog);dialog.remove();if(current?.k==='booking'&&history.state?.route?.arg?.quickReturn)history.replaceState({...history.state,route:{k:'booking',arg:null}},'');if(trigger?.isConnected)trigger.focus({preventScroll:true});});
+ dialog.addEventListener('close',()=>{setBookingHelpCloseDisabled(false);stopBookingQuickLoading(dialog);dialog.remove();if(current?.k==='booking'&&history.state?.route?.arg?.quickReturn)history.replaceState({...history.state,route:{k:'booking',arg:null}},'');if(trigger?.isConnected)trigger.focus({preventScroll:true});});
  dialog.addEventListener('click',e=>{
   const help=e.target.closest('[data-quick-help]');
   if(help){e.preventDefault();showBookingQuickHelp(dialog,help);return;}
