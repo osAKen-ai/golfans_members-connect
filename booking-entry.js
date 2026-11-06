@@ -31,7 +31,7 @@ function bookingQuickHelpMarkup(type){
   intro:'<p><strong>メンバーのご紹介で、ゲストだけでプレーする枠です。</strong><br>ご紹介者のメンバーは同伴しません。</p><p>ゲスト紹介の誓約事項をご確認・ご承諾のうえ、お申し込みください。</p><p>平日にご利用いただけます。土日祝は対象外です。</p>'
  };
  const label={member:'メンバー枠',individual:'新・メンバー枠',normal:'同伴枠',intro:'紹介枠'}[type];
- return `<details class="bk-quick-help"><summary aria-label="${label}の説明"><span aria-hidden="true">？</span></summary><div>${copy[type]}</div></details>`;
+ return `<details class="bk-quick-help"><summary data-quick-help="${type}" aria-label="${label}の説明"><span aria-hidden="true">？</span></summary><div>${copy[type]}</div></details>`;
 }
 function bookingQuickRowsMarkup(){
  let hasEmpty=false;
@@ -115,10 +115,23 @@ function showBookingQuickCalendar(dialog,view,focusSelector){
   (dialog.querySelector('.is-selected:not(:disabled)')||dialog.querySelector('.bk-quick-day:not(:disabled)'))?.focus({preventScroll:true});
  }
 }
+function showBookingQuickHelp(dialog,summary){
+ stopBookingQuickLoading(dialog);
+ const type=summary.dataset.quickHelp;
+ const label={member:'メンバー枠',individual:'新・メンバー枠',normal:'同伴枠',intro:'紹介枠'}[type];
+ if(!label)return;
+ const content=summary.parentElement.querySelector('div').innerHTML;
+ dialog._quickReturnScroll=dialog.scrollTop;dialog.dataset.helpType=type;
+ dialog.innerHTML=`<button type="button" class="bk-quick-help-back" data-quick-help-back>‹ かんたん検索に戻る</button><header class="bk-quick-heading"><h2 id="bookingQuickTitle">${label}の説明</h2></header><div class="bk-quick-help-content">${content}</div><div class="bk-quick-help-footer"><button type="button" class="bk-quick-date-cancel" data-quick-help-back>説明を閉じる</button></div>`;
+ dialog.scrollTop=0;dialog.querySelector('[data-quick-help-back]').focus({preventScroll:true});
+}
 function showBookingQuickSummary(dialog){
- delete dialog.dataset.calendarMonth;dialog.innerHTML=bookingQuickMarkup();dialog.scrollTop=0;
- dialog.querySelector('[data-quick-calendar]').focus({preventScroll:true});
- startBookingQuickLoading(dialog);
+ const helpType=dialog.dataset.helpType,scroll=dialog._quickReturnScroll||0;
+ delete dialog.dataset.calendarMonth;delete dialog.dataset.helpType;
+ dialog.innerHTML=bookingQuickMarkup();
+ const target=helpType?dialog.querySelector('[data-quick-help="'+helpType+'"]'):dialog.querySelector('[data-quick-calendar]');
+ target?.focus({preventScroll:true});dialog.scrollTop=helpType?scroll:0;
+ if(!helpType)startBookingQuickLoading(dialog);
 }
 function openBookingQuick(trigger){
  document.querySelector('#bookingQuickDialog')?.remove();
@@ -126,9 +139,12 @@ function openBookingQuick(trigger){
  if(draft.date>bookingQuickLastDate)setBookingQuickDate(bookingQuickLastDate);
  const dialog=document.createElement('dialog');dialog.id='bookingQuickDialog';dialog.setAttribute('aria-labelledby','bookingQuickTitle');
  dialog.innerHTML=bookingQuickMarkup();
- dialog.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'&&dialog.dataset.calendarMonth){e.preventDefault();showBookingQuickSummary(dialog);}});
+ dialog.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'&&(dialog.dataset.calendarMonth||dialog.dataset.helpType)){e.preventDefault();showBookingQuickSummary(dialog);}});
  dialog.addEventListener('close',()=>{stopBookingQuickLoading(dialog);dialog.remove();if(trigger?.isConnected)trigger.focus({preventScroll:true});});
  dialog.addEventListener('click',e=>{
+  const help=e.target.closest('[data-quick-help]');
+  if(help){e.preventDefault();showBookingQuickHelp(dialog,help);return;}
+  if(e.target.closest('[data-quick-help-back]')){showBookingQuickSummary(dialog);return;}
   if(e.target.closest('[data-quick-waitlist]')){const date=draft.date;stopBookingQuickLoading(dialog);dialog.close();wlOpen(date);return;}
   if(e.target.closest('[data-quick-calendar-back]')){showBookingQuickSummary(dialog);return;}
   if(e.target.closest('.bk-quick-close')){dialog.close();return;}
