@@ -60,9 +60,9 @@ function bookingRequiresAccompaniment(date){
  const day=new Date(date+'T12:00:00Z').getUTCDay();
  return day===0||day===6||(typeof isJapaneseHoliday==='function'&&isJapaneseHoliday(date));
 }
-function bookingTypeOptions(){
+function bookingTypeOptions(preserveIntro=false){
  const restricted=typeof current!=='undefined'&&current?.k==='times'&&bookingRequiresAccompaniment(draft.date);
- if(restricted&&bookingUI.type==='intro')bookingUI.type='all';
+ if(restricted&&!preserveIntro&&bookingUI.type==='intro')bookingUI.type='all';
  return [['all','全てを見る'],['member','□ メンバー枠'],['normal','○ 同伴枠'],...(!restricted?[['intro','○ 紹介枠']]:[])];
 }
 function removeWeekendIntroDemo(data){
