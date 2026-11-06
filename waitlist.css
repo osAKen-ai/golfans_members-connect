@@ -54,3 +54,8 @@
 .wl-types .is-individual small{color:#7b2033}
 .wl-types .is-individual.selected{border-color:#7b2033;color:#7b2033;background:#faf1f3;box-shadow:inset 0 0 0 1px #7b2033}
 @media(min-width:700px){.wl-types{grid-template-columns:1fr 1fr}}
+
+/* One address per field; keep mobile inputs comfortable without browser zoom. */
+.wl-settings label[for^="wlEmail"]{display:block;margin-top:12px;font-weight:700}
+.wl-settings label[for^="wlEmail"] small{font-size:12px;font-weight:400;color:#6d6b63}
+.wl-body .wl-settings input[type="email"]{display:block;width:100%;min-width:0;min-height:46px;padding:11px 12px;margin-top:6px;border:1px solid #c9c3af;border-radius:6px;background:#fff;color:#2d3538;font-size:16px}
