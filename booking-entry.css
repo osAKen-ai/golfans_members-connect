@@ -71,3 +71,11 @@ body #bookingQuickDialog{position:fixed;inset:0;margin:auto;width:min(560px,calc
 @media(min-width:700px){.bk-quick-date-label small{font-size:15px}.bk-quick-month-nav select{font-size:21px}.bk-quick-calendar-grid{gap:7px;grid-template-rows:auto repeat(6,54px)}.bk-quick-day small{font-size:12px}#bookingQuickDialog .bk-quick-day{height:54px;font-size:23px}}
 @media(min-width:700px){.bk-entry{padding-top:26px}.bk-entry-card{min-height:130px}.bk-entry-card strong{font-size:25px}.bk-entry-card small{font-size:16px}body #bookingQuickDialog{padding:24px 28px}.bk-quick-date-label strong{font-size:23px}.bk-quick-row .bk-type-copy{font-size:21px}.bk-quick-row .bk-type-copy small{font-size:14px}.bk-quick-count{font-size:21px}.bk-quick-footer p{font-size:16px}}
 @media(max-width:359px){.bk-entry-card{gap:10px;padding-inline:12px}.bk-entry-card>svg{width:30px;height:30px}.bk-entry-card strong{font-size:19px}.bk-entry-card small{font-size:13px}body #bookingQuickDialog{padding-inline:14px}.bk-quick-date-label>svg{display:none}.bk-quick-date-label strong{font-size:16px}.bk-quick-row .bk-type-copy{font-size:16px}.bk-quick-count{font-size:16px}}
+
+/* Keep the modal stable during the brief availability refresh. */
+.bk-quick-results{position:relative}
+.bk-quick-rows.is-loading{visibility:hidden;pointer-events:none}
+.bk-quick-loading:not([hidden]){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:12px;color:#7b2033;font-size:17px;font-weight:700;background:#fff}
+.bk-quick-loading>span{width:24px;height:24px;border:3px solid #eadde0;border-top-color:#7b2033;border-radius:50%;animation:bk-quick-spin .8s linear infinite}
+@keyframes bk-quick-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.bk-quick-loading>span{animation:none}}
