@@ -5,17 +5,19 @@ const hour=3600000;
 const day=t=>new Date(t+9*hour).toISOString().slice(0,10);
 const minute=t=>{const d=new Date(t+9*hour);return d.getUTCHours()*60+d.getUTCMinutes();};
 const deadline=date=>Date.parse(date+'T00:00:00+09:00')-6*hour; // previous day 18:00, provisional
-const key=s=>[s.date,s.course,s.side||'OUT',s.time,s.kind].join('|');
+const memberMode=r=>r.kind==='member'?(r.memberMode||'individual'):'';
+const sameType=(a,b)=>a.kind===b.kind&&memberMode(a)===memberMode(b);
+const key=s=>[s.date,s.course,s.side||'OUT',s.time,s.kind,memberMode(s)].join('|');
 const fingerprint=r=>JSON.stringify([r.id,r.date,r.course,r.side||'OUT',r.time,r.people,r.kind||'normal']);
 const order=(a,b)=>(a.mode==='change'?0:1)-(b.mode==='change'?0:1)||a.created-b.created||a.id.localeCompare(b.id);
-function matches(r,s){return r.date===s.date&&r.kind===s.kind&&(r.course==='any'||r.course===s.course)&&r.hours.includes(Number(s.time.split(':')[0]))&&r.people<=s.capacity&&(!r.original||r.original.course!==s.course||r.original.time!==s.time||(r.original.side||'OUT')!==(s.side||'OUT'));}
+function matches(r,s){return r.date===s.date&&sameType(r,s)&&(r.course==='any'||r.course===s.course)&&r.hours.includes(Number(s.time.split(':')[0]))&&r.people<=s.capacity&&(!r.original||r.original.course!==s.course||r.original.time!==s.time||(r.original.side||'OUT')!==(s.side||'OUT'));}
 function init(data,base){if(!data.waitlistDemo)data.waitlistDemo={requests:[],slots:[],log:[],seeded:[],clock:base,wall:Date.now(),serial:0};return data.waitlistDemo;}
 function clock(w){return w.clock+Math.max(0,Date.now()-w.wall);}
 function log(w,r,text,t){w.log.unshift({id:r.id,text,at:t,owner:r.owner});w.log=w.log.slice(0,60);}
 function add(w,r,t){
  if(t>=deadline(r.date))throw Error('この日のキャンセル待ち受付は終了しました。');
  if(!r.hours.length||r.hours.some(h=>![7,8,9,10].includes(h)))throw Error('希望時間帯を選択してください。');
- if(r.kind==='member'&&r.people!==1)throw Error('メンバータイムはご本人1名です。');
+ if(r.kind==='member'&&memberMode(r)!=='group'&&r.people!==1)throw Error('新・メンバー枠はご本人1名です。');
  if(w.requests.some(x=>x.owner===r.owner&&x.date===r.date&&['waiting','queued','offered'].includes(x.status)))throw Error('同じ日の待ち登録があります。「待ち状況」からご確認ください。');
  const row={...r,id:'wait-'+(++w.serial),created:t,status:'waiting'};w.requests.push(row);return row;
 }
@@ -52,18 +54,18 @@ function accept(data,id,t,owner,operator){
  if(r.mode==='change'){
   record=data.reservations.find(x=>x.id===r.original.id);
   if(!record||fingerprint(record)!==r.fingerprint)throw Error('元の予約が変更されています。');
-  const old={date:record.date,course:record.course,side:record.side||'OUT',time:record.time,kind:record.kind==='member'?'member':record.kind==='intro'?'intro':'normal',capacity:record.kind==='member'?1:4};
+  const old={date:record.date,course:record.course,side:record.side||'OUT',time:record.time,kind:record.kind==='member'?'member':record.kind==='intro'?'intro':'normal',memberMode:record.memberMode,capacity:record.kind==='member'&&memberMode(record)!=='group'?1:4};
   Object.assign(record,{course:s.course,side:s.side,time:s.time});
   release(w,[old]);
  }else{
   if(data.reservations.some(x=>x.date===r.date))throw Error('同日に予約があります。変更待ちをご利用ください。');
-  record={id:'wait-booking-'+r.id,date:r.date,course:s.course,side:s.side,time:s.time,kind:r.kind,people:r.people,memberPlaying:true,guests:Array(Math.max(0,r.people-1)).fill('未定'),createdAt:day(t),source:'キャンセル待ち',proxy:operator.id!=='ito'};
+  record={id:'wait-booking-'+r.id,date:r.date,course:s.course,side:s.side,time:s.time,kind:r.kind,memberMode:r.memberMode,people:r.people,memberPlaying:r.kind!=='intro',guests:Array(Math.max(0,r.people-(r.kind==='intro'?0:1))).fill('未定'),createdAt:day(t),source:'キャンセル待ち',proxy:operator.id!=='ito'};
   data.reservations.push(record);
  }
  record.audit=[...(record.audit||[]),{action:r.mode==='change'?'waitlist-change':'waitlist-book',operatorId:operator.id,operatorName:operator.name,at:new Date(t).toISOString()}];
  record.updatedAt=day(t);s.status='booked';r.status='accepted';log(w,r,'予約を確定しました',t);tick(w,t,data.reservations,owner);return record;
 }
-function rank(w,r,h){return 1+w.requests.filter(x=>x.id!==r.id&&['waiting','queued','offered'].includes(x.status)&&x.mode===r.mode&&x.date===r.date&&x.kind===r.kind&&x.hours.includes(h)&&(r.course==='any'||x.course==='any'||x.course===r.course)&&(x.created<r.created||x.created===r.created&&x.id<r.id)).length;}
+function rank(w,r,h){return 1+w.requests.filter(x=>x.id!==r.id&&['waiting','queued','offered'].includes(x.status)&&x.mode===r.mode&&x.date===r.date&&sameType(x,r)&&x.hours.includes(h)&&(r.course==='any'||x.course==='any'||x.course===r.course)&&(x.created<r.created||x.created===r.created&&x.id<r.id)).length;}
 root.WaitlistEngine={hour,day,minute,deadline,key,fingerprint,order,matches,init,clock,add,release,tick,decline,accept,rank};
 if(typeof module!=='undefined')module.exports=root.WaitlistEngine;
 })(typeof globalThis!=='undefined'?globalThis:this);
