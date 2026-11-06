@@ -15,12 +15,18 @@ bookingReturnCalendar=function(){bookingEntryMode='calendar';entryOriginal.retur
 backPanel=function(){if(current?.k==='booking'&&bookingEntryMode==='calendar'){showBookingEntry();return;}entryOriginal.back();};
 render=function(k,arg){
  document.querySelector('#bookingQuickDialog')?.remove();
+ if(k==='booking'&&arg?.quickReturn){
+  bookingEntryMode='choose';
+  Object.assign(draft,{date:arg.quickReturn.date,course:arg.quickReturn.course});
+  bookingUI.consecutive=arg.quickReturn.consecutive;
+ }
  entryOriginal.render(k,arg);
  const entry=k==='booking'&&bookingEntryMode==='choose';
  document.querySelector('.sheet')?.classList.toggle('booking-entry-view',entry);
  if(k==='booking'){
   document.querySelector('#panelTitle').textContent=entry?'メンバー予約':'予約カレンダー';
   if(!entry)document.querySelector('.sheet .back').hidden=false;
+  if(arg?.quickReturn)openBookingQuick(document.querySelector('.bk-entry-card.is-quick'),true);
  }
 };
 function bookingQuickHelpMarkup(type){
@@ -43,7 +49,7 @@ function bookingQuickRowsMarkup(){
   return `<div class="bk-quick-item"><button type="button" class="bk-quick-row ${type==='individual'?'is-individual':''}" data-quick-type="${type}" ${restricted?'disabled':''}>${bookingTypeIcon(type)}<span class="bk-quick-label">${bookingTypeCopy(type)}</span><strong class="bk-quick-count ${!count?'is-empty':''}">${remaining}</strong><b aria-hidden="true">${restricted?'':'›'}</b></button>${bookingQuickHelpMarkup(type)}</div>`;
  }).join('');
  const waiting=hasEmpty&&typeof wlEligible==='function'&&wlEligible(draft.date);
- return rows+(waiting?`<div class="bk-quick-wait"><p>ご希望の枠に空きがない方へ</p><button type="button" data-quick-waitlist>キャンセル待ちを申し込む <span aria-hidden="true">›</span></button><small>希望の枠・人数・時間帯を次の画面で選べます。</small></div>`:'');
+ return rows+(waiting?`<div class="bk-quick-wait"><button type="button" data-quick-waitlist>キャンセル待ちを申し込む <span aria-hidden="true">›</span></button></div>`:'');
 }
 function bookingQuickDateMarkup(){const text=esc(formatDate(draft.date,true)),at=text.indexOf('（');return at<0?text:text.slice(0,at)+'<wbr><span class="bk-quick-weekday-label">'+text.slice(at)+'</span>';}
 function bookingQuickMarkup(){
@@ -78,6 +84,8 @@ function refreshBookingQuick(dialog){
 }
 function chooseBookingQuickType(type){
  if(!['member','individual','normal','intro'].includes(type)||type==='intro'&&bookingRequiresAccompaniment(draft.date))return;
+ // The previous history entry reopens the search, including browser Back.
+ history.replaceState({...history.state,route:{k:'booking',arg:{quickReturn:{date:draft.date,course:draft.course,consecutive:bookingUI.consecutive}}}},'',location.pathname+location.search+'#booking');
  // Do not use pickBookingDate: its full-day fallback deliberately clears filters.
  bookingUI.type=type;bookingUI.only=true;bookingUI.anchor=draft.date;bookingUI.hour=8;
  clearBookingSelection(false);selectAvailableBookingSide();openPanel('times');
@@ -133,14 +141,19 @@ function showBookingQuickSummary(dialog){
  target?.focus({preventScroll:true});dialog.scrollTop=helpType?scroll:0;
  if(!helpType)startBookingQuickLoading(dialog);
 }
-function openBookingQuick(trigger){
+function bookingQuickInitialDate(base=now){
+ const [y,m,d]=base.split('-').map(Number);
+ const last=new Date(Date.UTC(y,m+2,0)).getUTCDate();
+ return [bookingISO(y,m+1,Math.min(d,last)),bookingQuickLastDate].sort()[0];
+}
+function openBookingQuick(trigger,preserveDate=false){
  document.querySelector('#bookingQuickDialog')?.remove();
- if(!draft.date||draft.date<=now)setBookingQuickDate(bookingShift(now,1));
+ if(!preserveDate)setBookingQuickDate(bookingQuickInitialDate());
  if(draft.date>bookingQuickLastDate)setBookingQuickDate(bookingQuickLastDate);
  const dialog=document.createElement('dialog');dialog.id='bookingQuickDialog';dialog.setAttribute('aria-labelledby','bookingQuickTitle');
  dialog.innerHTML=bookingQuickMarkup();
  dialog.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'&&(dialog.dataset.calendarMonth||dialog.dataset.helpType)){e.preventDefault();showBookingQuickSummary(dialog);}});
- dialog.addEventListener('close',()=>{stopBookingQuickLoading(dialog);dialog.remove();if(trigger?.isConnected)trigger.focus({preventScroll:true});});
+ dialog.addEventListener('close',()=>{stopBookingQuickLoading(dialog);dialog.remove();if(current?.k==='booking'&&history.state?.route?.arg?.quickReturn)history.replaceState({...history.state,route:{k:'booking',arg:null}},'');if(trigger?.isConnected)trigger.focus({preventScroll:true});});
  dialog.addEventListener('click',e=>{
   const help=e.target.closest('[data-quick-help]');
   if(help){e.preventDefault();showBookingQuickHelp(dialog,help);return;}

@@ -113,3 +113,16 @@ body #bookingQuickDialog{position:fixed;inset:0;margin:auto;width:min(560px,calc
 #bookingQuickDialog[data-help-type] h2{padding-left:0}
 .bk-quick-help-back{display:block;min-height:48px;margin:0 0 12px;padding:8px 12px;border:1.5px solid #99865b;border-radius:8px;background:#fff;color:#756440;font:inherit;font-size:16px;font-weight:700}
 #bookingQuickDialog .bk-quick-help-footer button{background:#7b2033;color:#fff;border-color:#7b2033;font-size:18px;min-height:48px}
+
+/* Compact summary keeps the waitlist action within the mobile view. */
+#bookingQuickDialog:not([data-help-type]):not([data-calendar-month]){padding-top:14px;padding-bottom:14px}
+#bookingQuickDialog:not([data-help-type]):not([data-calendar-month]) .bk-quick-heading{margin-bottom:12px}
+.bk-quick-date>.bk-quick-date-label{min-height:64px;padding:5px}
+.bk-quick-course{margin:7px 0 10px}
+.bk-quick-consecutive{margin-bottom:10px}
+#bookingQuickDialog .bk-quick-item .bk-quick-row{min-height:60px;padding-top:8px;padding-bottom:8px}
+.bk-quick-help summary{top:8px}
+.bk-quick-wait{padding:10px 0 0}
+.bk-quick-wait button{min-height:48px;padding:10px}
+.bk-quick-footer{margin-top:10px}
+#bookingQuickDialog:has(.bk-quick-wait) .bk-quick-footer p{display:none}
