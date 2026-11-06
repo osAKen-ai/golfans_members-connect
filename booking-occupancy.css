@@ -72,8 +72,8 @@
 .bk-individual-legend{color:#7b2033;font-weight:700}
 .bk-member-guest-option input{accent-color:#7b2033}
 
-/* Make bookable starts easy to scan while retaining distinct selected states. */
-.booking-times-view .bk-slot:not(.unavailable):not(.bk-current-reservation):not(.bk-owned-reservation):has(.bk-people:not(:disabled),.bk-seat:not(:disabled)):not(:has(.bk-people.selected,.bk-seat.selected)){
+/* Highlight available starts only when showing all starts; preserve personal reservations. */
+.booking-times-view .bk-time-main:has(.bk-slot-toolbar input[type="checkbox"]:not(:checked)) .bk-slot:not(.unavailable):not(.bk-current-reservation):not(.bk-owned-reservation):has(.bk-people:not(:disabled),.bk-seat:not(:disabled)):not(:has(.bk-people.selected,.bk-seat.selected)){
  background:#fcf1f3;
 }
 .booking-times-view .bk-slot:not(.unavailable):has(.bk-people:not(:disabled),.bk-seat:not(:disabled))>time{
