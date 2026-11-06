@@ -38,7 +38,7 @@ function bookingQuickHelpMarkup(type){
   intro:'<p><strong>メンバーのご紹介で、ゲストだけでプレーする枠です。</strong><br>ご紹介者のメンバーは同伴しません。</p><p>ゲスト紹介の誓約事項をご確認・ご承諾のうえ、お申し込みください。</p><p>平日にご利用いただけます。土日祝は対象外です。</p>'
  };
  const label={member:'メンバー枠',individual:'新・メンバー枠',normal:'同伴枠',intro:'紹介枠'}[type];
- return `<details class="bk-quick-help"><summary data-quick-help="${type}" aria-label="${label}の説明"><span aria-hidden="true">？</span></summary><div>${copy[type]}</div></details>`;
+ return `<details class="bk-quick-help"><summary data-quick-help="${type}" aria-label="${label}の説明"><span aria-hidden="true">i</span></summary><div>${copy[type]}</div></details>`;
 }
 function bookingQuickRowsMarkup(){
  let hasEmpty=false;
@@ -47,7 +47,7 @@ function bookingQuickRowsMarkup(){
   const count=restricted?0:bookingTypeRemaining(type);
   if(!restricted&&!count)hasEmpty=true;
   const remaining=restricted?'土日祝は対象外':count?'残り'+count+(type==='individual'?'名':'組'):'空きなし';
-  return `<div class="bk-quick-item"><button type="button" class="bk-quick-row ${type==='individual'?'is-individual':''}" data-quick-type="${type}" ${restricted?'disabled':''}>${bookingTypeIcon(type)}<span class="bk-quick-label">${bookingTypeCopy(type)}</span><strong class="bk-quick-count ${!count?'is-empty':''}">${remaining}</strong><b aria-hidden="true">${restricted?'':'›'}</b></button>${bookingQuickHelpMarkup(type)}</div>`;
+  return `<div class="bk-quick-item">${bookingQuickHelpMarkup(type)}<button type="button" class="bk-quick-row ${type==='individual'?'is-individual':''}" data-quick-type="${type}" ${restricted?'disabled':''}>${bookingTypeIcon(type)}<span class="bk-quick-label">${bookingTypeCopy(type)}</span><strong class="bk-quick-count ${!count?'is-empty':''}">${remaining}</strong><b aria-hidden="true">${restricted?'':'›'}</b></button></div>`;
  }).join('');
  const waiting=hasEmpty&&typeof wlEligible==='function'&&wlEligible(draft.date);
  return rows+(waiting?`<div class="bk-quick-wait"><button type="button" data-quick-waitlist>キャンセル待ちを申し込む <span aria-hidden="true">›</span></button></div>`:'');
@@ -147,7 +147,8 @@ function showBookingQuickHelp(dialog,summary){
  const type=summary.dataset.quickHelp;
  const label={member:'メンバー枠',individual:'新・メンバー枠',normal:'同伴枠',intro:'紹介枠'}[type];
  if(!label)return;
- const content=summary.parentElement.querySelector('div').innerHTML;
+ const marker=['member','individual'].includes(type)?`<div class="bk-quick-marker-note">${bookingTypeIcon(type)}<span><strong>${label}の目印です</strong><small>予約画面では、この□で表示します。</small></span></div>`:'';
+ const content=marker+summary.parentElement.querySelector('div').innerHTML;
  dialog._quickReturnScroll=dialog.scrollTop;dialog.dataset.helpType=type;
  setBookingHelpCloseDisabled(true);
  dialog.innerHTML=`<button type="button" class="bk-quick-help-back" data-quick-help-back>‹ かんたん検索に戻る</button><header class="bk-quick-heading"><h2 id="bookingQuickTitle">${label}の説明</h2></header><div class="bk-quick-help-content">${content}</div><div class="bk-quick-help-footer"><button type="button" class="bk-quick-date-cancel" data-quick-help-back>説明を閉じる</button></div>`;
