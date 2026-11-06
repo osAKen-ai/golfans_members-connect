@@ -91,6 +91,20 @@ function chooseBookingQuickType(type){
  bookingUI.type=type;bookingUI.only=true;bookingUI.anchor=draft.date;bookingUI.hour=8;
  clearBookingSelection(false);selectAvailableBookingSide();openPanel('times');
 }
+function bookingQuickWaitlistType(){
+ // This button belongs to the displayed empty categories, not a stale start-list filter.
+ return ['member','individual','normal','intro'].find(type=>
+  !(type==='intro'&&bookingRequiresAccompaniment(draft.date))&&!bookingTypeRemaining(type)
+ )||'member';
+}
+function openBookingQuickWaitlist(dialog){
+ const quickReturn={date:draft.date,course:draft.course,consecutive:bookingUI.consecutive};
+ const type=bookingQuickWaitlistType();
+ stopBookingQuickLoading(dialog);
+ // Remove synchronously: a queued close handler must not unlock a newer modal.
+ dialog.remove();
+ wlOpen(quickReturn.date,undefined,{type,quickReturn});
+}
 function bookingQuickCalendarMarkup(y,m){
  const minMonth=now.slice(0,7),view=bookingISO(y,m,1).slice(0,7),start=bookingDay(view+'-01'),days=new Date(Date.UTC(y,m+1,0)).getUTCDate();
  const firstYear=Number(now.slice(0,4)),lastYear=2028;
@@ -166,7 +180,7 @@ function openBookingQuick(trigger,preserveDate=false){
   const help=e.target.closest('[data-quick-help]');
   if(help){e.preventDefault();showBookingQuickHelp(dialog,help);return;}
   if(e.target.closest('[data-quick-help-back]')){showBookingQuickSummary(dialog);return;}
-  if(e.target.closest('[data-quick-waitlist]')){const date=draft.date;stopBookingQuickLoading(dialog);dialog.close();wlOpen(date);return;}
+  if(e.target.closest('[data-quick-waitlist]')){openBookingQuickWaitlist(dialog);return;}
   if(e.target.closest('[data-quick-calendar-back]')){showBookingQuickSummary(dialog);return;}
   if(e.target.closest('.bk-quick-close')){dialog.close();return;}
   if(e.target.closest('[data-quick-calendar]')){showBookingQuickCalendar(dialog,draft.date.slice(0,7));return;}
