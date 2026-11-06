@@ -58,7 +58,7 @@ body #bookingQuickDialog{position:fixed;inset:0;margin:auto;width:min(560px,calc
 .bk-quick-month-nav>div{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;min-width:0}
 .bk-quick-month-nav select{min-width:0;padding:8px 4px;min-height:46px;border:1px solid #b5aa90;border-radius:6px;background:#fff;color:#2d3538;font:inherit;font-size:18px;font-weight:750}
 .bk-quick-month-nav>button:disabled{opacity:.4;cursor:default}
-.bk-quick-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px 2px}
+.bk-quick-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:auto repeat(6,48px);gap:5px 2px}
 .bk-quick-weekday{text-align:center;font-size:16px;font-weight:700;padding:8px 0}
 #bookingQuickDialog .bk-quick-day{position:relative;height:48px;min-width:0;border:2px solid transparent;border-radius:8px;background:#fff;color:#555;font:inherit;font-size:21px;font-weight:750;padding:0;line-height:1}
 #bookingQuickDialog .bk-quick-day.sun{color:var(--calendar-sunday,#d64550)}
@@ -68,6 +68,6 @@ body #bookingQuickDialog{position:fixed;inset:0;margin:auto;width:min(560px,calc
 .bk-quick-day small{position:absolute;right:2px;bottom:1px;font-size:10px;line-height:1}
 .bk-quick-calendar-legend{display:flex;justify-content:center;gap:22px;font-size:14px;font-weight:700;margin:18px 0}
 .bk-quick-date-cancel{display:block;width:100%;min-height:48px;border:1px solid #99865b;border-radius:8px;background:#fff;color:#756440;font:inherit;font-size:16px;font-weight:700}
-@media(min-width:700px){.bk-quick-date-label small{font-size:15px}.bk-quick-month-nav select{font-size:21px}.bk-quick-calendar-grid{gap:7px}.bk-quick-day small{font-size:12px}#bookingQuickDialog .bk-quick-day{height:54px;font-size:23px}}
+@media(min-width:700px){.bk-quick-date-label small{font-size:15px}.bk-quick-month-nav select{font-size:21px}.bk-quick-calendar-grid{gap:7px;grid-template-rows:auto repeat(6,54px)}.bk-quick-day small{font-size:12px}#bookingQuickDialog .bk-quick-day{height:54px;font-size:23px}}
 @media(min-width:700px){.bk-entry{padding-top:26px}.bk-entry-card{min-height:130px}.bk-entry-card strong{font-size:25px}.bk-entry-card small{font-size:16px}body #bookingQuickDialog{padding:24px 28px}.bk-quick-date-label strong{font-size:23px}.bk-quick-row .bk-type-copy{font-size:21px}.bk-quick-row .bk-type-copy small{font-size:14px}.bk-quick-count{font-size:21px}.bk-quick-footer p{font-size:16px}}
 @media(max-width:359px){.bk-entry-card{gap:10px;padding-inline:12px}.bk-entry-card>svg{width:30px;height:30px}.bk-entry-card strong{font-size:19px}.bk-entry-card small{font-size:13px}body #bookingQuickDialog{padding-inline:14px}.bk-quick-date-label>svg{display:none}.bk-quick-date-label strong{font-size:16px}.bk-quick-row .bk-type-copy{font-size:16px}.bk-quick-count{font-size:16px}}
