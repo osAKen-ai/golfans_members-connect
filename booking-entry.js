@@ -87,8 +87,8 @@ function chooseBookingQuickType(type){
  if(!['member','individual','normal','intro'].includes(type)||type==='intro'&&bookingRequiresAccompaniment(draft.date)||!bookingTypeRemaining(type))return;
  // The previous history entry reopens the search, including browser Back.
  history.replaceState({...history.state,route:{k:'booking',arg:{quickReturn:{date:draft.date,course:draft.course,consecutive:bookingUI.consecutive}}}},'',location.pathname+location.search+'#booking');
- // Do not use pickBookingDate: its full-day fallback deliberately clears filters.
- bookingUI.type=type;bookingUI.only=true;bookingUI.anchor=draft.date;bookingUI.hour=8;
+ // Keep the selected quick-search category for the start list.
+ bookingUI.type=type;bookingUI.onlyOwnDate=null;bookingUI.only=true;bookingUI.anchor=draft.date;bookingUI.hour=8;
  clearBookingSelection(false);selectAvailableBookingSide();openPanel('times');
 }
 function bookingQuickWaitlistType(){

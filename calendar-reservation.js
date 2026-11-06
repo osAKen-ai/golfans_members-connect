@@ -93,7 +93,7 @@ function calendarReservationAction(action,id,people){
  else if(action==='slots'){
   const records=calendarOwnReservations(calendarReservationDate);
   const target=records.find(item=>String(item.id)===anchorId)||records.find(item=>item.course===draft.course)||records[0];
-  if(target){draft.course=target.course;draft.side=target.side||'OUT';bookingUI.only=false;bookingUI.focusReservationId=target.id;}
+  if(target){draft.course=target.course;draft.side=target.side||'OUT';bookingUI.focusReservationId=target.id;prepareBookingDateAvailability(calendarReservationDate,true,target.id);}
   calendarPickDateBeforePreview(calendarReservationDate);
  }
  else if(action==='list'){
