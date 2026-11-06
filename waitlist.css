@@ -54,3 +54,5 @@
 .wl-types .is-individual small{color:#7b2033}
 .wl-types .is-individual.selected{border-color:#7b2033;color:#7b2033;background:#faf1f3;box-shadow:inset 0 0 0 1px #7b2033}
 @media(min-width:700px){.wl-types{grid-template-columns:1fr 1fr}}
+
+.wl-email-heading{font-weight:800;margin:12px 0}.wl-email-heading small{font-weight:600}.wl-email-fields>label{display:block;font-weight:700;margin-top:12px}.wl-email-fields>label small{font-size:12px;font-weight:400}.wl-body .wl-email-fields>input{display:block;width:100%;min-width:0;min-height:48px;padding:12px;margin-top:6px;border:1px solid #c9c3af;border-radius:6px;background:#fff;color:#2d3538;font-size:16px}
