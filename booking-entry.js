@@ -23,13 +23,27 @@ render=function(k,arg){
   if(!entry)document.querySelector('.sheet .back').hidden=false;
  }
 };
+function bookingQuickHelpMarkup(type){
+ const copy={
+  member:'<p><strong>メンバー同士で楽しむ枠です。</strong><br>ゲストも1名までご一緒いただけます。</p><p>ご予約はお一人2組まで。3組以上をご希望の場合は、倶楽部へお電話ください。</p><p>2名でお申し込みの場合は、ほかの2名の方との組み合わせや、スタート時間の変更をお願いすることがあります。</p>',
+  individual:'<p><strong>お一人から、気軽に参加できる枠です。</strong></p><p>えんじ色の□を1つ選ぶと、1名分のご予約になります。「残り○名」は、参加できる人数です。</p><p>ただいま試験導入中です。</p>',
+  normal:'<p><strong>メンバーがゲスト2名以上と一緒にプレーする枠です。</strong></p><p>土日祝は、メンバーお一人につき次の組数までご予約いただけます。</p><table><thead><tr><th>プレー月</th><th>土曜</th><th>日曜・祝日</th></tr></thead><tbody><tr><th>4〜5月・10〜11月</th><td>3組</td><td>1組</td></tr><tr><th>6〜9月・12〜3月</th><td>6組</td><td>3組</td></tr></tbody></table><p>2名でお申し込みの場合は、ほかのお客様と組み合わせになることがあります。</p>',
+  intro:'<p><strong>メンバーのご紹介で、ゲストだけでプレーする枠です。</strong><br>ご紹介者のメンバーは同伴しません。</p><p>ゲスト紹介の誓約事項をご確認・ご承諾のうえ、お申し込みください。</p><p>平日にご利用いただけます。土日祝は対象外です。</p>'
+ };
+ const label={member:'メンバー枠',individual:'新・メンバー枠',normal:'同伴枠',intro:'紹介枠'}[type];
+ return `<details class="bk-quick-help"><summary aria-label="${label}の説明"><span aria-hidden="true">？</span></summary><div>${copy[type]}</div></details>`;
+}
 function bookingQuickRowsMarkup(){
- return ['member','individual','normal','intro'].map(type=>{
+ let hasEmpty=false;
+ const rows=['member','individual','normal','intro'].map(type=>{
   const restricted=type==='intro'&&bookingRequiresAccompaniment(draft.date);
   const count=restricted?0:bookingTypeRemaining(type);
+  if(!restricted&&!count)hasEmpty=true;
   const remaining=restricted?'土日祝は対象外':count?'残り'+count+(type==='individual'?'名':'組'):'空きなし';
-  return `<button type="button" class="bk-quick-row ${type==='individual'?'is-individual':''}" data-quick-type="${type}" ${restricted?'disabled':''}>${bookingTypeIcon(type)}<span class="bk-quick-label">${bookingTypeCopy(type)}</span><strong class="bk-quick-count ${!count?'is-empty':''}">${remaining}</strong><b aria-hidden="true">${restricted?'':'›'}</b></button>`;
+  return `<div class="bk-quick-item"><button type="button" class="bk-quick-row ${type==='individual'?'is-individual':''}" data-quick-type="${type}" ${restricted?'disabled':''}>${bookingTypeIcon(type)}<span class="bk-quick-label">${bookingTypeCopy(type)}</span><strong class="bk-quick-count ${!count?'is-empty':''}">${remaining}</strong><b aria-hidden="true">${restricted?'':'›'}</b></button>${bookingQuickHelpMarkup(type)}</div>`;
  }).join('');
+ const waiting=hasEmpty&&typeof wlEligible==='function'&&wlEligible(draft.date);
+ return rows+(waiting?`<div class="bk-quick-wait"><p>ご希望の枠に空きがない方へ</p><button type="button" data-quick-waitlist>キャンセル待ちを申し込む <span aria-hidden="true">›</span></button><small>希望の枠・人数・時間帯を次の画面で選べます。</small></div>`:'');
 }
 function bookingQuickDateMarkup(){const text=esc(formatDate(draft.date,true)),at=text.indexOf('（');return at<0?text:text.slice(0,at)+'<wbr><span class="bk-quick-weekday-label">'+text.slice(at)+'</span>';}
 function bookingQuickMarkup(){
@@ -115,6 +129,7 @@ function openBookingQuick(trigger){
  dialog.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'&&dialog.dataset.calendarMonth){e.preventDefault();showBookingQuickSummary(dialog);}});
  dialog.addEventListener('close',()=>{stopBookingQuickLoading(dialog);dialog.remove();if(trigger?.isConnected)trigger.focus({preventScroll:true});});
  dialog.addEventListener('click',e=>{
+  if(e.target.closest('[data-quick-waitlist]')){const date=draft.date;stopBookingQuickLoading(dialog);dialog.close();wlOpen(date);return;}
   if(e.target.closest('[data-quick-calendar-back]')){showBookingQuickSummary(dialog);return;}
   if(e.target.closest('.bk-quick-close')){dialog.close();return;}
   if(e.target.closest('[data-quick-calendar]')){showBookingQuickCalendar(dialog,draft.date.slice(0,7));return;}

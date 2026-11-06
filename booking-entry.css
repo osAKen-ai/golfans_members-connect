@@ -79,3 +79,23 @@ body #bookingQuickDialog{position:fixed;inset:0;margin:auto;width:min(560px,calc
 .bk-quick-loading>span{width:24px;height:24px;border:3px solid #eadde0;border-top-color:#7b2033;border-radius:50%;animation:bk-quick-spin .8s linear infinite}
 @keyframes bk-quick-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.bk-quick-loading>span{animation:none}}
+
+/* Explain each category without competing with the availability action. */
+.bk-quick-item{position:relative;border-bottom:1px solid #dcd7cc}
+#bookingQuickDialog .bk-quick-item .bk-quick-row{grid-template-columns:22px minmax(0,1fr) auto;border-bottom:0;padding:14px 44px 14px 0;min-height:76px}
+.bk-quick-item .bk-quick-row>b{display:none}
+.bk-quick-help{margin:0}
+.bk-quick-help[open]{padding-bottom:12px}
+.bk-quick-help summary{position:absolute;right:0;top:16px;display:flex;align-items:center;justify-content:center;width:40px;min-height:44px;padding:0;color:#756440;font-size:14px;font-weight:700;cursor:pointer;list-style:none;border-radius:6px}
+.bk-quick-help summary:focus-visible{outline:2px solid #99865b;outline-offset:1px}
+.bk-quick-help summary::-webkit-details-marker{display:none}
+.bk-quick-help summary>span{display:inline-grid;place-items:center;border:1.5px solid currentColor;border-radius:50%;width:25px;height:25px;font-size:17px}
+.bk-quick-help[open] summary{color:#7b2033}
+.bk-quick-help>div{padding:12px;border-radius:8px;background:#f7f5ef;color:#2d3538;font-size:16px;line-height:1.8}
+.bk-quick-help p{margin:0 0 12px}.bk-quick-help p:last-child{margin-bottom:0}
+.bk-quick-help table{border-collapse:collapse;width:100%;font-size:14px;background:white;margin:12px 0}
+.bk-quick-help th,.bk-quick-help td{border:1px solid #c7bda5;padding:6px 4px;text-align:center}
+.bk-quick-wait{padding:16px 0 4px;text-align:center}
+.bk-quick-wait p{font-size:16px;font-weight:700;margin:0 0 10px}
+.bk-quick-wait button{display:block;width:100%;min-height:52px;padding:12px;border:0;border-radius:8px;background:#7b2033;color:#fff;font:inherit;font-size:18px;font-weight:700}
+.bk-quick-wait small{display:block;margin-top:8px;font-size:13px;line-height:1.6;color:#635e53}
