@@ -81,12 +81,13 @@ body #bookingQuickDialog{position:fixed;inset:0;margin:auto;width:min(560px,calc
 @media(prefers-reduced-motion:reduce){.bk-quick-loading>span{animation:none}}
 
 /* Explain each category without competing with the availability action. */
-.bk-quick-item{position:relative;display:grid;grid-template-columns:36px minmax(0,1fr);align-items:center;border-bottom:1px solid #dcd7cc}
-#bookingQuickDialog .bk-quick-item .bk-quick-row{grid-template-columns:22px minmax(0,1fr) auto;border-bottom:0;padding:14px 0;min-height:76px}
-.bk-quick-item .bk-quick-row>b{display:none}
+.bk-quick-item{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:4px;align-items:center;border-bottom:1px solid #dcd7cc}
+#bookingQuickDialog .bk-quick-item .bk-quick-row{grid-template-columns:22px minmax(0,1fr) auto 8px;gap:8px;border-bottom:0;padding:14px 0;min-height:76px}
+.bk-quick-item .bk-quick-row>b{display:block;color:#756440;font-size:24px;font-weight:600;text-align:right;line-height:1}
+.bk-quick-item .bk-quick-row:active:not(:disabled){background:#f7f5ef}
 .bk-quick-help{margin:0;align-self:center}
 .bk-quick-help[open]{padding-bottom:12px}
-.bk-quick-help summary{position:static;display:flex;align-items:center;justify-content:center;width:36px;min-height:44px;padding:0;color:#756440;font-size:14px;font-weight:700;cursor:pointer;list-style:none;border-radius:6px}
+.bk-quick-help summary{position:static;display:flex;align-items:center;justify-content:center;width:44px;min-height:44px;padding:0;color:#756440;font-size:14px;font-weight:700;cursor:pointer;list-style:none;border-radius:6px}
 .bk-quick-help summary:focus-visible{outline:2px solid #99865b;outline-offset:1px}
 .bk-quick-help summary::-webkit-details-marker{display:none}
 .bk-quick-help summary>span{display:inline-grid;place-items:center;border:0;border-radius:50%;width:19px;height:19px;background:#7b2033;color:#fff;font-family:Georgia,serif;font-size:16px;font-weight:700;font-style:normal;line-height:1}
@@ -136,3 +137,9 @@ body .sheethead .close.is-help-disabled{background:#b9b9b5;color:#eeeeeb;border-
 .bk-quick-marker-note strong{display:block;font-size:16px;line-height:1.5}
 .bk-quick-marker-note small{display:block;margin-top:3px;font-size:13px;line-height:1.6}
 
+
+/* Unavailable booking actions stay distinct from the always-accessible help. */
+#bookingQuickDialog .bk-quick-row:disabled{background:#f4f3ef;color:#77746d}
+#bookingQuickDialog .bk-quick-row:disabled .bk-type-icon{border-color:#99968d}
+#bookingQuickDialog .bk-quick-row:disabled .bk-type-copy,
+#bookingQuickDialog .bk-quick-row:disabled .bk-type-copy small{color:#77746d}

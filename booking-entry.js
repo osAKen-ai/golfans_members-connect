@@ -33,7 +33,7 @@ render=function(k,arg){
 function bookingQuickHelpMarkup(type){
  const copy={
   member:'<p><strong>メンバー同士で楽しむ枠です。</strong><br>ゲストも1名までご一緒いただけます。</p><p>ご予約はお一人2組まで。3組以上をご希望の場合は、倶楽部へお電話ください。</p><p>2名でお申し込みの場合は、ほかの2名の方との組み合わせや、スタート時間の変更をお願いすることがあります。</p>',
-  individual:'<p><strong>お一人から、気軽に参加できる枠です。</strong></p><p>えんじ色の□を1つ選ぶと、1名分のご予約になります。「残り○名」は、参加できる人数です。</p><p>ただいま試験導入中です。</p>',
+  individual:'<p><strong>お一人から、気軽に参加できる枠です。</strong></p><p>えんじ色の□を1つ選ぶと、1名分のご予約になります。</p><p>例：「残り3名」は、あと3名参加できることを表します。</p><p>ただいま試験導入中です。</p>',
   normal:'<p><strong>メンバーがゲスト2名以上と一緒にプレーする枠です。</strong></p><p>土日祝は、メンバーお一人につき次の組数までご予約いただけます。</p><table><thead><tr><th>プレー月</th><th>土曜</th><th>日曜・祝日</th></tr></thead><tbody><tr><th>4〜5月・10〜11月</th><td>3組</td><td>1組</td></tr><tr><th>6〜9月・12〜3月</th><td>6組</td><td>3組</td></tr></tbody></table><p>2名でお申し込みの場合は、ほかのお客様と組み合わせになることがあります。</p>',
   intro:'<p><strong>メンバーのご紹介で、ゲストだけでプレーする枠です。</strong><br>ご紹介者のメンバーは同伴しません。</p><p>ゲスト紹介の誓約事項をご確認・ご承諾のうえ、お申し込みください。</p><p>平日にご利用いただけます。土日祝は対象外です。</p>'
  };
@@ -47,7 +47,7 @@ function bookingQuickRowsMarkup(){
   const count=restricted?0:bookingTypeRemaining(type);
   if(!restricted&&!count)hasEmpty=true;
   const remaining=restricted?'土日祝は対象外':count?'残り'+count+(type==='individual'?'名':'組'):'空きなし';
-  return `<div class="bk-quick-item">${bookingQuickHelpMarkup(type)}<button type="button" class="bk-quick-row ${type==='individual'?'is-individual':''}" data-quick-type="${type}" ${restricted?'disabled':''}>${bookingTypeIcon(type)}<span class="bk-quick-label">${bookingTypeCopy(type)}</span><strong class="bk-quick-count ${!count?'is-empty':''}">${remaining}</strong><b aria-hidden="true">${restricted?'':'›'}</b></button></div>`;
+  return `<div class="bk-quick-item">${bookingQuickHelpMarkup(type)}<button type="button" class="bk-quick-row ${type==='individual'?'is-individual':''}" data-quick-type="${type}" ${restricted||!count?'disabled':''}>${bookingTypeIcon(type)}<span class="bk-quick-label">${bookingTypeCopy(type)}</span><strong class="bk-quick-count ${!count?'is-empty':''}">${remaining}</strong><b aria-hidden="true">${restricted||!count?'':'›'}</b></button></div>`;
  }).join('');
  const waiting=hasEmpty&&typeof wlEligible==='function'&&wlEligible(draft.date);
  return rows+(waiting?`<div class="bk-quick-wait"><button type="button" data-quick-waitlist>キャンセル待ちを申し込む <span aria-hidden="true">›</span></button></div>`:'');
@@ -84,7 +84,7 @@ function refreshBookingQuick(dialog){
  startBookingQuickLoading(dialog);
 }
 function chooseBookingQuickType(type){
- if(!['member','individual','normal','intro'].includes(type)||type==='intro'&&bookingRequiresAccompaniment(draft.date))return;
+ if(!['member','individual','normal','intro'].includes(type)||type==='intro'&&bookingRequiresAccompaniment(draft.date)||!bookingTypeRemaining(type))return;
  // The previous history entry reopens the search, including browser Back.
  history.replaceState({...history.state,route:{k:'booking',arg:{quickReturn:{date:draft.date,course:draft.course,consecutive:bookingUI.consecutive}}}},'',location.pathname+location.search+'#booking');
  // Do not use pickBookingDate: its full-day fallback deliberately clears filters.
@@ -179,7 +179,7 @@ function openBookingQuick(trigger,preserveDate=false){
  dialog.addEventListener('close',()=>{setBookingHelpCloseDisabled(false);stopBookingQuickLoading(dialog);dialog.remove();if(current?.k==='booking'&&history.state?.route?.arg?.quickReturn)history.replaceState({...history.state,route:{k:'booking',arg:null}},'');if(trigger?.isConnected)trigger.focus({preventScroll:true});});
  dialog.addEventListener('click',e=>{
   const help=e.target.closest('[data-quick-help]');
-  if(help){e.preventDefault();showBookingQuickHelp(dialog,help);return;}
+  if(help){e.preventDefault();e.stopPropagation();showBookingQuickHelp(dialog,help);return;}
   if(e.target.closest('[data-quick-help-back]')){showBookingQuickSummary(dialog);return;}
   if(e.target.closest('[data-quick-waitlist]')){openBookingQuickWaitlist(dialog);return;}
   if(e.target.closest('[data-quick-calendar-back]')){showBookingQuickSummary(dialog);return;}
