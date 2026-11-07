@@ -169,3 +169,14 @@ body .sheethead .close.is-help-disabled{background:#b9b9b5;color:#eeeeeb;border-
  body .bk-entry-card:active{box-shadow:none;transform:translateY(1px)}
  .bk-entry .bk-courses button{border:2px solid #99865b;box-shadow:0 2px 0 #d7cebb;cursor:pointer}
 }
+
+/* Use the available phone height and share the added room among booking rows. */
+@media(max-width:699px){
+ body #bookingQuickDialog:not([data-help-type]):not([data-calendar-month]){height:min(660px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);padding-top:10px;padding-bottom:10px;display:flex;flex-direction:column}
+ #bookingQuickDialog:not([data-help-type]):not([data-calendar-month])> :not(.bk-quick-results){flex-shrink:0}
+ #bookingQuickDialog .bk-quick-results{display:flex;flex-direction:column;flex:1 0 auto}
+ #bookingQuickDialog .bk-quick-rows{display:flex;flex-direction:column;flex:1}
+ #bookingQuickDialog .bk-quick-item{flex:1}
+ #bookingQuickDialog .bk-quick-item .bk-quick-row{height:100%;box-sizing:border-box}
+ #bookingQuickDialog .bk-quick-wait{flex:none}
+}
