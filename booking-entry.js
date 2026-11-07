@@ -54,7 +54,13 @@ function bookingQuickRowsMarkup(){
 }
 function bookingQuickDateMarkup(){const text=esc(formatDate(draft.date,true)),at=text.indexOf('（');return at<0?text:text.slice(0,at)+'<wbr><span class="bk-quick-weekday-label">'+text.slice(at)+'</span>';}
 function bookingQuickMarkup(){
- return `<header class="bk-quick-heading"><h2 id="bookingQuickTitle">かんたん検索</h2><button type="button" class="bk-quick-close" aria-label="かんたん検索を閉じる">×</button></header><div class="bk-quick-date"><button type="button" data-quick-shift="-1" aria-label="前の日" ${draft.date<=bookingShift(now,1)?'disabled':''}>‹</button><button type="button" class="bk-quick-date-label" data-quick-calendar aria-label="カレンダーから日付を選ぶ" aria-haspopup="dialog"><span><strong id="bookingQuickDateText" class="${bookingDayClass(draft.date)}">${bookingQuickDateMarkup()}</strong><small>${bookingEntryIcon('calendar')}カレンダーから日付を選ぶ ▾</small></span></button><button type="button" data-quick-shift="1" aria-label="次の日" ${draft.date>=bookingQuickLastDate?'disabled':''}>›</button></div><p class="bk-quick-course">${esc(draft.course)} ／ OUT・IN合計</p><label class="bk-quick-consecutive"><span>連続枠</span><select aria-label="連続枠" data-quick-consecutive>${[[0,'指定なし'],...Array.from({length:9},(_,i)=>[i+2,(i+2)+'組連続'])].map(([n,t])=>`<option value="${n}" ${bookingUI.consecutive===n?'selected':''}>${t}</option>`).join('')}</select></label><p class="bk-quick-filter-note" ${bookingUI.consecutive?'':'hidden'}>連続して予約できる枠の残数です。</p><div class="bk-quick-results"><div class="bk-quick-rows" aria-live="polite" aria-atomic="true">${bookingQuickRowsMarkup()}</div><div class="bk-quick-loading" role="status" hidden><span aria-hidden="true"></span>空き状況を確認中…</div></div><footer class="bk-quick-footer"><p>枠を選ぶと、スタート時間が表示されます。</p><small>空き枠は表示例です。</small></footer>`;
+ return `<header class="bk-quick-heading"><h2 id="bookingQuickTitle">かんたん検索</h2><button type="button" class="bk-quick-close" aria-label="かんたん検索を閉じる">×</button></header><div class="bk-quick-date"><button type="button" data-quick-shift="-1" aria-label="前の日" ${draft.date<=bookingShift(now,1)?'disabled':''}>‹</button><button type="button" class="bk-quick-date-label" data-quick-calendar aria-label="カレンダーから日付を選ぶ" aria-haspopup="dialog"><span><strong id="bookingQuickDateText" class="${bookingDayClass(draft.date)}">${bookingQuickDateMarkup()}</strong><small>${bookingEntryIcon('calendar')}カレンダーから日付を選ぶ ▾</small></span></button><button type="button" data-quick-shift="1" aria-label="次の日" ${draft.date>=bookingQuickLastDate?'disabled':''}>›</button></div><p class="bk-quick-course">${esc(draft.course)} ／ OUT・IN合計</p><div class="bk-quick-filters"><label class="bk-quick-consecutive"><span>連続枠</span><select aria-label="連続枠" data-quick-consecutive>${[[0,'指定なし'],...Array.from({length:9},(_,i)=>[i+2,(i+2)+'組連続'])].map(([n,t])=>`<option value="${n}" ${bookingUI.consecutive===n?'selected':''}>${t}</option>`).join('')}</select></label><label class="bk-quick-course-select"><span>コース</span><select aria-label="コース選択" data-quick-course>${['旧コース','新コース'].map(course=>`<option value="${course}" ${draft.course===course?'selected':''}>${course}</option>`).join('')}</select></label></div><p class="bk-quick-filter-note" ${bookingUI.consecutive?'':'hidden'}>連続して予約できる枠の残数です。</p><div class="bk-quick-results"><div class="bk-quick-rows" aria-live="polite" aria-atomic="true">${bookingQuickRowsMarkup()}</div><div class="bk-quick-loading" role="status" hidden><span aria-hidden="true"></span>空き状況を確認中…</div></div><footer class="bk-quick-footer"><p>枠を選ぶと、スタート時間が表示されます。</p><small>空き枠は表示例です。</small></footer>`;
+}
+function setBookingQuickCourse(course){
+ if(!['旧コース','新コース'].includes(course))return false;
+ draft.course=course;clearBookingSelection(false);
+ document.querySelectorAll('.bk-entry .bk-courses button').forEach(button=>{const active=button.textContent===course;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
+ return true;
 }
 function setBookingQuickDate(date){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<=now||date>bookingQuickLastDate||!Number.isFinite(Date.parse(date+'T12:00:00Z')))return false;
@@ -75,6 +81,7 @@ function startBookingQuickLoading(dialog){
  },400);
 }
 function refreshBookingQuick(dialog){
+ dialog.querySelector('.bk-quick-course').textContent=draft.course+' ／ OUT・IN合計';
  dialog.querySelector('#bookingQuickDateText').innerHTML=bookingQuickDateMarkup();
  dialog.querySelector('#bookingQuickDateText').className=bookingDayClass(draft.date);
  dialog.querySelector('[data-quick-shift="-1"]').disabled=draft.date<=bookingShift(now,1);
@@ -200,6 +207,7 @@ function openBookingQuick(trigger,preserveDate=false){
    const y=Number(dialog.querySelector('[data-quick-year]').value),m=Number(dialog.querySelector('[data-quick-month]').value);
    showBookingQuickCalendar(dialog,bookingISO(y,m,1).slice(0,7),e.target.matches('[data-quick-year]')?'[data-quick-year]':'[data-quick-month]');return;
   }
+  if(e.target.matches('[data-quick-course]'))setBookingQuickCourse(e.target.value);
   if(e.target.matches('[data-quick-consecutive]')){bookingUI.consecutive=Number(e.target.value);clearBookingSelection(false);}
   refreshBookingQuick(dialog);
  });
