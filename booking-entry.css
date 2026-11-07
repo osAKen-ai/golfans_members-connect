@@ -2,10 +2,10 @@
 body .booking-entry-view #panelBody{background:#fff}
 .bk-entry{max-width:660px;margin:0 auto;padding:18px 16px 38px}
 .bk-entry .bk-courses{display:flex;gap:12px}
-.bk-entry .bk-courses button{flex:1;min-height:54px;font-size:21px;font-weight:750;border-radius:10px}
+.bk-entry .bk-courses button{cursor:pointer;flex:1;min-height:54px;font-size:21px;font-weight:750;border-radius:10px}
 .bk-entry h3{text-align:center;font-size:19px;margin:30px 0 24px;color:#2d3538}
 .bk-entry-options{display:grid;gap:18px}
-body .bk-entry-card{width:100%;display:flex;align-items:center;gap:15px;padding:22px 16px;min-height:114px;border:2px solid #99865b;border-radius:12px;background:#fff;color:#2d3538;text-align:left}
+body .bk-entry-card{cursor:pointer;width:100%;display:flex;align-items:center;gap:15px;padding:22px 16px;min-height:114px;border:2px solid #99865b;border-radius:12px;background:#fff;color:#2d3538;text-align:left}
 .bk-entry-card>svg{width:38px;height:38px;flex:none;color:#756440}
 .bk-entry-card>span{flex:1;min-width:0}
 .bk-entry-card strong{display:block;font-size:21px;font-weight:750;line-height:1.5}
@@ -154,12 +154,7 @@ body .sheethead .close.is-help-disabled{background:#b9b9b5;color:#eeeeeb;border-
 @media(min-width:700px){
  .bk-quick-filters>label{font-size:17px}
  .bk-quick-filters select{padding:8px;min-height:48px}
- body .bk-entry-card{background:#f7f4ed;box-shadow:0 3px 0 #d7cebb;cursor:pointer}
- body .bk-entry-card.is-quick{border-color:#862d40;background:#fbf1f3;box-shadow:0 3px 0 #e5cbd1}
- body .bk-entry-card:hover{background:#eee7d9}
- body .bk-entry-card.is-quick:hover{background:#f5e2e7}
- body .bk-entry-card:active{box-shadow:none;transform:translateY(1px)}
- .bk-entry .bk-courses button{border:2px solid #99865b;box-shadow:0 2px 0 #d7cebb;cursor:pointer}
+
 }
 
 /* Use the available phone height and share the added room among booking rows. */

@@ -220,3 +220,24 @@
  .booking-times-view .bd-time-sidebar:has(.bk-chosen-row:nth-child(2)) .bk-selection-actions{gap:6px}
  .booking-times-view .bd-time-sidebar .bk-selection .bk-selection-actions>.bk-clear-all{min-height:28px;height:28px;padding:2px;font-size:12px;line-height:24px}
 }
+
+/* The PC calendar shares the phone's course and five-month navigation at the top. */
+@media(min-width:1000px){
+ .sheet.booking-view #panelBody.bd-calendar,.proxy-flow-content.bd-calendar{grid-template-rows:64px 58px minmax(0,1fr)}
+ .bd-calendar>.bk-courses{grid-column:1 / -1;grid-row:1;display:flex;gap:10px;margin:0;padding:12px 20px 8px;box-sizing:border-box}
+ .bd-calendar>.bk-courses button{flex:1;min-width:0;height:44px;font-size:21px;border-radius:8px}
+ .booking-view .bd-calendar>.bk-month-navigation,.bd-calendar>.bk-month-navigation{grid-column:1 / -1;grid-row:2;display:flex;width:100%;max-width:none;box-sizing:border-box;padding:0 20px 10px!important;gap:8px;align-items:stretch}
+ .bd-calendar .bk-month-navigation .bk-months{display:flex;flex:1;min-width:0;padding:0;gap:8px;overflow:visible}
+ .bd-calendar .bk-month-navigation .bk-months button{flex:1;min-width:0;font-size:18px;padding:8px 4px}
+ .bd-calendar .bk-month-navigation .bd-month-label{display:none}
+ .bd-calendar .bk-month-arrow{height:48px;flex-basis:40px}
+ .bd-calendar>.bk-controls{grid-column:2;grid-row:3;min-height:0;border-top:1px solid #e4dfd4}
+ .bd-calendar>.bk-controls .bk-calendar-toolbar:before{content:'予約条件';font-size:17px;font-weight:750;flex:1}
+ .bd-calendar>.bk-controls .bk-calendar-toolbar{align-items:center}
+ .bd-calendar>.bk-calendar-pair{grid-column:1;grid-row:3;max-width:none;padding:0 20px 14px;box-sizing:border-box;border-top:1px solid #e4dfd4}
+ .bd-calendar .bk-month-panel:not(.bk-month-secondary){display:flex;flex-direction:column;min-height:0}
+ .bd-calendar .bk-calendar-title{display:block;flex:none;font-size:18px;font-weight:750;padding:10px 0 8px}
+ .bd-calendar .bk-calendar-title small{display:none}
+ .bd-calendar .bk-calendar{flex:1;height:auto;min-height:0;grid-template-rows:26px;grid-auto-rows:minmax(44px,1fr)}
+ .booking-view .bd-calendar .bk-calendar-pair .bk-day{min-height:44px}
+}

@@ -49,6 +49,8 @@
    document.querySelectorAll('.bk-calendar-pair').forEach(pair=>{
     const parent=pair.parentElement;parent.classList.add('bd-calendar');
     const controls=parent.querySelector(':scope > .bk-controls');
+    const courses=controls?.querySelector('.bk-courses');
+    if(courses)move(courses,parent);
     if(controls)parent.querySelectorAll(':scope > .bk-own-calendar-legend, :scope > .wl-legend, :scope > .wl-entry, :scope > .bk-note').forEach(node=>move(node,controls));
     const nav=parent.querySelector(':scope > .bk-month-navigation');
     if(nav&&!nav.querySelector('.bd-month-label')){
