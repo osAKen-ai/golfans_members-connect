@@ -150,18 +150,10 @@ body .sheethead .close.is-help-disabled{background:#b9b9b5;color:#eeeeeb;border-
 .bk-quick-filters>label>span{flex:none;white-space:nowrap}
 .bk-quick-filters select{flex:1;width:0;min-width:0;min-height:44px;box-sizing:border-box;padding:7px 3px;border:1.5px solid #99865b;border-radius:7px;background:#fff;color:#2d3538;font:inherit;cursor:pointer}
 @media(max-width:359px){.bk-quick-filters{gap:7px}.bk-quick-filters>label{gap:4px;font-size:13px}}
-/* Desktop actions have visible edges, a subtle fill, and clear feedback. */
+/* Desktop sizing shares the same plain quick-search rows as mobile. */
 @media(min-width:700px){
  .bk-quick-filters>label{font-size:17px}
- .bk-quick-filters select{padding:8px;min-height:48px;background:#f7f4ed;border-width:2px}
- #bookingQuickDialog .bk-quick-rows{border-top:0;display:grid;gap:10px}
- #bookingQuickDialog .bk-quick-item{border-bottom:0;column-gap:8px}
- #bookingQuickDialog .bk-quick-item .bk-quick-row{padding:10px 12px;border:2px solid #99865b;border-radius:9px;background:#f7f4ed;box-shadow:0 2px 0 #d7cebb;cursor:pointer}
- #bookingQuickDialog .bk-quick-item .bk-quick-row.is-individual{border-color:#862d40;background:#fbf1f3;box-shadow:0 2px 0 #e5cbd1}
- #bookingQuickDialog .bk-quick-item .bk-quick-row:disabled{border-color:#d1cec5;background:#f0efeb;box-shadow:none;cursor:default}
- #bookingQuickDialog .bk-quick-item .bk-quick-row:hover:not(:disabled){background:#eee7d9;border-color:#756440}
- #bookingQuickDialog .bk-quick-item .bk-quick-row.is-individual:hover:not(:disabled){background:#f5e2e7;border-color:#7b2033}
- #bookingQuickDialog .bk-quick-item .bk-quick-row:active:not(:disabled){box-shadow:none;transform:translateY(1px)}
+ .bk-quick-filters select{padding:8px;min-height:48px}
  body .bk-entry-card{background:#f7f4ed;box-shadow:0 3px 0 #d7cebb;cursor:pointer}
  body .bk-entry-card.is-quick{border-color:#862d40;background:#fbf1f3;box-shadow:0 3px 0 #e5cbd1}
  body .bk-entry-card:hover{background:#eee7d9}

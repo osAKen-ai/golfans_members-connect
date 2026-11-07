@@ -128,3 +128,14 @@ body .bk-calendar .bk-day:disabled{color:#d1d1d1}
  .profile-identity:not(.checkin-identity) .profile-barcode{margin-top:12px}
  .profile-identity:not(.checkin-identity) .profile-barcode-number{margin-top:6px}
 }
+
+/* Desktop home: tactile feedback for the four main navigation buttons. */
+@media(min-width:850px) and (hover:hover) and (pointer:fine){
+ .navigation-area .tiles>.copied-tile:not(.tile-checkin){border:2px solid var(--club-line);box-shadow:0 3px 0 #d9d2c3;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease,border-color .18s ease}
+ .navigation-area .tiles>.copied-tile:not(.tile-checkin):is(:hover,:focus-visible){transform:translateY(-4px);background-color:#f8edef;border-color:var(--club-burgundy);box-shadow:0 8px 16px #7b203326,0 3px 0 #c898a3}
+ .navigation-area .tiles>.copied-tile:not(.tile-checkin):active{transform:translateY(1px);background-color:#f0dce1;box-shadow:0 1px 2px #7b203326}
+}
+@media(min-width:850px) and (prefers-reduced-motion:reduce){
+ .navigation-area .tiles>.copied-tile:not(.tile-checkin){transition:none;transform:none}
+ .navigation-area .tiles>.copied-tile:not(.tile-checkin):is(:hover,:focus-visible,:active){transform:none}
+}
